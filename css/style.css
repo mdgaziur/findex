@@ -1,0 +1,25 @@
+.findex-query {
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    border: none;
+}
+
+.findex-result-row:active {
+    background: rgb(255, 255, 105);
+}
+
+.findex-result-row:active .findex-result-app-name {
+    color: black;
+}
+
+.findex-result-icon {
+    margin: 10px;
+}
+
+.findex-result-app-name {
+    color: white;
+    margin: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
