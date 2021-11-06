@@ -25,6 +25,11 @@ pub fn load_css() -> CssProvider {
         file = std::path::Path::new(css_path_1);
         if file.exists() {
             // copy the file to css path 0
+            let dirpath = shellexpand::tilde("~/.config/findex");
+            if !std::path::Path::new(dirpath.as_ref()).exists() {
+                std::fs::create_dir(dirpath.as_ref()).unwrap();
+            }
+
             std::fs::copy(css_path_1, css_path_0.as_ref()).unwrap();
         }
         else {
