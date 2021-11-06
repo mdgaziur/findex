@@ -181,7 +181,7 @@ fn get_icon(icon_name: &str) -> Pixbuf {
                 32,
                 IconLookupFlags::FORCE_SIZE | IconLookupFlags::USE_BUILTIN,
             )
-            .or::<Result<Pixbuf,()>>(Ok(Pixbuf::new(Colorspace::Rgb, true, 8, 1, 1)))
+            .or::<Result<Pixbuf,()>>(Ok(Pixbuf::new(Colorspace::Rgb, true, 8, 32, 32)))
             .unwrap()
             .unwrap();
     }
