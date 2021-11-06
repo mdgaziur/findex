@@ -5,10 +5,12 @@ Highly customizable finder with high performance. Written in Rust and uses GTK
 ------
 
 ## Installation
-## Automatic
-Clone `https://aur.archlinux.org/packages/findex-git/`  
-Cd to `findex-git`  
-Run `makepkg -si`  
+### Automatic
+#### Binary
+- Clone from `https://aur.archlinux.org/findex.git`
+#### From source
+- Clone from `https://aur.archlinux.org/findex-git.git`
+Now run `makepkg -si`
 
 ### Manual
 Make a release build using `cargo build --release`  
