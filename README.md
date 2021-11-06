@@ -9,7 +9,7 @@ Highly customizable finder with high performance. Written in Rust and uses GTK
 #### Binary
 - Clone from `https://aur.archlinux.org/findex.git`
 #### From source
-- Clone from `https://aur.archlinux.org/findex-git.git`
+- Clone from `https://aur.archlinux.org/findex-git.git`  
 Now run `makepkg -si`
 
 ### Manual
