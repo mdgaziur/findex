@@ -12,7 +12,7 @@ pub fn init_window(app: &Application) {
         .application(app)
         .window_position(WindowPosition::CenterAlways)
         .resizable(false)
-        .default_width(400)
+        .default_width(700)
         .decorated(false)
         .events(EventMask::FOCUS_CHANGE_MASK)
         .build();
