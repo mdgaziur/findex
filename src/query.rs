@@ -11,7 +11,8 @@ use std::process::{exit, Command};
 
 pub fn init_query() -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
-    let desktop_entries = get_entries();
+    let mut desktop_entries = get_entries("/usr/share/applications");
+    desktop_entries.extend(get_entries(shellexpand::tilde("~/.local/share/applications").as_ref()));
 
     query_box.style_context().add_class("findex-query");
     query_box.connect_changed({
@@ -62,19 +63,27 @@ fn on_text_changed(qb: &Entry, apps: &Vec<AppInfo>) {
         row.add(&container);
         row.style_context().add_class("findex-result-row");
         row.show_all();
+        row.focus_child();
 
-        list_box.connect_row_activated(|_, lbr| {
-            let container_w = &lbr.children()[0];
-            let container = container_w.downcast_ref::<gtk::Box>().unwrap();
-            let c_widget = &container.children()[2];
-            let command = c_widget.downcast_ref::<Label>().unwrap();
-
-            let splitted_cmd = shlex::split(&command.text().to_string());
-
-            spawn_process(&splitted_cmd.unwrap());
-        });
         list_box.add(&row);
     }
+
+    list_box.connect_row_activated(|_, lbr| {
+        let container_w = &lbr.children()[0];
+        let container = container_w.downcast_ref::<gtk::Box>().unwrap();
+        let c_widget = &container.children()[2];
+        let command = c_widget.downcast_ref::<Label>().unwrap();
+
+        let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
+        // strip parameters like %U %F etc
+        for idx in 0..splitted_cmd.len() {
+            if splitted_cmd[idx].starts_with("%") {
+                splitted_cmd.remove(idx);
+            }
+        }
+
+        spawn_process(&splitted_cmd);
+    });
 }
 
 #[derive(Clone)]
@@ -83,8 +92,8 @@ struct AppInfo {
     exec: String,
     icon: String,
 }
-fn get_entries() -> Vec<AppInfo> {
-    let apps_dir = std::fs::read_dir("/usr/share/applications/").unwrap();
+fn get_entries(dir: &str) -> Vec<AppInfo> {
+    let apps_dir = std::fs::read_dir(dir).unwrap();
     let mut apps = Vec::new();
 
     for app in apps_dir {
