@@ -1,5 +1,5 @@
 use crate::common::spawn_process;
-use gtk::gdk::gdk_pixbuf::Pixbuf;
+use gtk::gdk::gdk_pixbuf::{Colorspace,Pixbuf};
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{
@@ -181,6 +181,7 @@ fn get_icon(icon_name: &str) -> Pixbuf {
                 32,
                 IconLookupFlags::FORCE_SIZE | IconLookupFlags::USE_BUILTIN,
             )
+            .or::<Result<Pixbuf,()>>(Ok(Pixbuf::new(Colorspace::Rgb, true, 8, 32, 32)))
             .unwrap()
             .unwrap();
     }
