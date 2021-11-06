@@ -1,13 +1,11 @@
-use fork::{fork, Fork};
 use gtk::gdk::gdk_pixbuf::Pixbuf;
 use gtk::prelude::*;
 use gtk::{
-    Application, BoxBuilder, Entry, IconLookupFlags, IconTheme, Image, Label, ListBox, ListBoxRow,
+    BoxBuilder, Entry, IconLookupFlags, IconTheme, Image, Label, ListBox, ListBoxRow,
     Orientation, ScrolledWindow, Viewport,
 };
 use nix::unistd::execvp;
 use std::ffi::CString;
-use std::process::{exit, Command};
 
 pub fn init_query() -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
@@ -23,9 +21,9 @@ pub fn init_query() -> Entry {
     query_box
 }
 
-fn on_text_changed(qb: &Entry, apps: &Vec<AppInfo>) {
+fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
     let text = regex::escape(&qb.text().to_lowercase());
-    if text.len() == 0 {
+    if text.is_empty() {
         let list_box = get_list_box(qb);
         clear_listbox(&list_box);
         return;
@@ -77,7 +75,7 @@ fn on_text_changed(qb: &Entry, apps: &Vec<AppInfo>) {
         let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
         // strip parameters like %U %F etc
         for idx in 0..splitted_cmd.len() {
-            if splitted_cmd[idx].starts_with("%") {
+            if splitted_cmd[idx].starts_with('%') {
                 splitted_cmd.remove(idx);
             }
         }
@@ -135,7 +133,7 @@ fn get_entries(dir: &str) -> Vec<AppInfo> {
     apps
 }
 
-fn get_icon(icon_name: &String) -> Pixbuf {
+fn get_icon(icon_name: &str) -> Pixbuf {
     let icon;
     let icon_theme = IconTheme::default().unwrap();
 
@@ -178,7 +176,7 @@ fn get_list_box(qb: &Entry) -> ListBox {
     v_child.downcast_ref::<ListBox>().unwrap().clone()
 }
 
-fn spawn_process(cmd: &Vec<String>) {
+fn spawn_process(cmd: &[String]) {
     let p_name = CString::new(cmd[0].as_bytes()).unwrap();
     execvp(
         &p_name,

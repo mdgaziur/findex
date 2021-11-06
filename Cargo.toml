@@ -13,10 +13,9 @@ incremental = true
 lto = true
 
 [dependencies]
-gtk = { version = "0.14.3", features=["v3_22", "v3_24"] }
+gtk = { version = "0.14.3", features=["v3_22"] }
 freedesktop_entry_parser = "1.2.0"
 regex = "1"
 shlex = "1.1.0"
-fork = "0.1.18"
 nix = "0.23"
 shellexpand = "2.1.0"
