@@ -1,24 +1,66 @@
+use crate::common::spawn_process;
 use gtk::gdk::gdk_pixbuf::Pixbuf;
+use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{
-    BoxBuilder, Entry, IconLookupFlags, IconTheme, Image, Label, ListBox, ListBoxRow,
-    Orientation, ScrolledWindow, Viewport,
+    BoxBuilder, Entry, IconLookupFlags, IconTheme, Image, Label, ListBox, ListBoxRow, Orientation,
+    ScrolledWindow, Viewport,
 };
-use nix::unistd::execvp;
-use std::ffi::CString;
+use std::process::exit;
 
 pub fn init_query() -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
     let mut desktop_entries = get_entries("/usr/share/applications");
-    desktop_entries.extend(get_entries(shellexpand::tilde("~/.local/share/applications").as_ref()));
+    desktop_entries.extend(get_entries(
+        shellexpand::tilde("~/.local/share/applications").as_ref(),
+    ));
 
     query_box.style_context().add_class("findex-query");
     query_box.connect_changed({
         let de = desktop_entries.clone();
         move |qb| on_text_changed(qb, &de)
     });
+    query_box.connect_key_press_event(on_key_press);
 
     query_box
+}
+
+fn on_key_press(qb: &Entry, ev: &EventKey) -> Inhibit {
+    if ev.keyval().name().unwrap() == "Return" {
+        let list = get_list_box(qb);
+        let first_result = match list.row_at_index(0) {
+            Some(res) => res,
+            None => exit(0),
+        };
+        let container_w = &first_result.children()[0];
+        let container = container_w.downcast_ref::<gtk::Box>().unwrap();
+        let c_widget = &container.children()[2];
+        let command = c_widget.downcast_ref::<Label>().unwrap();
+
+        let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
+        // strip parameters like %U %F etc
+        for idx in 0..splitted_cmd.len() {
+            if splitted_cmd[idx].starts_with('%') {
+                splitted_cmd.remove(idx);
+            }
+        }
+
+        spawn_process(&splitted_cmd);
+
+        Inhibit(true)
+    } else if ev.keyval().name().unwrap() == "Down" {
+        let list_box = get_list_box(qb);
+        let first_row = list_box.row_at_index(1);
+
+        if let Some(first_row) = first_row {
+            list_box.select_row(Some(&first_row));
+            first_row.grab_focus();
+        }
+
+        Inhibit(true)
+    } else {
+        Inhibit(false)
+    }
 }
 
 fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
@@ -66,22 +108,9 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
         list_box.add(&row);
     }
 
-    list_box.connect_row_activated(|_, lbr| {
-        let container_w = &lbr.children()[0];
-        let container = container_w.downcast_ref::<gtk::Box>().unwrap();
-        let c_widget = &container.children()[2];
-        let command = c_widget.downcast_ref::<Label>().unwrap();
-
-        let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
-        // strip parameters like %U %F etc
-        for idx in 0..splitted_cmd.len() {
-            if splitted_cmd[idx].starts_with('%') {
-                splitted_cmd.remove(idx);
-            }
-        }
-
-        spawn_process(&splitted_cmd);
-    });
+    if let Some(first_row) = list_box.row_at_index(0) {
+        list_box.select_row(Some(&first_row));
+    }
 }
 
 #[derive(Clone)]
@@ -174,15 +203,4 @@ fn get_list_box(qb: &Entry) -> ListBox {
     let v_child = &view_port.children()[0];
 
     v_child.downcast_ref::<ListBox>().unwrap().clone()
-}
-
-fn spawn_process(cmd: &[String]) {
-    let p_name = CString::new(cmd[0].as_bytes()).unwrap();
-    execvp(
-        &p_name,
-        &cmd.iter()
-            .map(|s| CString::new(s.as_bytes()).unwrap())
-            .collect::<Vec<CString>>(),
-    )
-    .unwrap();
 }

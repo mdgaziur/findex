@@ -1,9 +1,47 @@
+use crate::common::spawn_process;
 use gtk::prelude::*;
-use gtk::ListBox;
+use gtk::{Entry, Label, ListBox, ScrolledWindow, Viewport};
 
 pub fn init_search_result() -> ListBox {
-    let list_view = ListBox::builder().name("findex-results").build();
-    list_view.style_context().add_class("findex-results");
+    let list_box = ListBox::builder().name("findex-results").build();
+    list_box.style_context().add_class("findex-results");
 
-    list_view
+    list_box.connect_key_press_event(|lb, ev| {
+        if ev.keyval().name().unwrap() == "Up" {
+            let selected_row_index = lb.clone().selected_row().unwrap().index();
+
+            if selected_row_index == 0 {
+                // focus to input box
+                let par = lb.parent().unwrap().downcast::<Viewport>().unwrap();
+                let scw = par.parent().unwrap().downcast::<ScrolledWindow>().unwrap();
+                let container = scw.parent().unwrap().downcast::<gtk::Box>().unwrap();
+                let child = &container.children()[0];
+                let entry = child.downcast_ref::<Entry>().unwrap();
+
+                entry.grab_focus();
+                entry.set_position(-1);
+                entry.activate();
+                return Inhibit(true);
+            }
+        }
+        Inhibit(false)
+    });
+    list_box.connect_row_activated(|_, lbr| {
+        let container_w = &lbr.children()[0];
+        let container = container_w.downcast_ref::<gtk::Box>().unwrap();
+        let c_widget = &container.children()[2];
+        let command = c_widget.downcast_ref::<Label>().unwrap();
+
+        let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
+        // strip parameters like %U %F etc
+        for idx in 0..splitted_cmd.len() {
+            if splitted_cmd[idx].starts_with('%') {
+                splitted_cmd.remove(idx);
+            }
+        }
+
+        spawn_process(&splitted_cmd);
+    });
+
+    list_box
 }

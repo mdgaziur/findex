@@ -1,3 +1,4 @@
+pub mod common;
 mod css;
 pub mod query;
 pub mod search_result;

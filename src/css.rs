@@ -20,7 +20,9 @@ pub fn load_css() -> CssProvider {
 
     let mut file = std::path::Path::new(css_path_0.as_ref());
     if !file.exists() {
-        eprintln!("Stylesheet wasn't found in user's home directory. Falling backing to default one.");
+        eprintln!(
+            "Stylesheet wasn't found in user's home directory. Falling backing to default one."
+        );
 
         file = std::path::Path::new(css_path_1);
         if file.exists() {
@@ -31,8 +33,7 @@ pub fn load_css() -> CssProvider {
             }
 
             std::fs::copy(css_path_1, css_path_0.as_ref()).unwrap();
-        }
-        else {
+        } else {
             eprintln!("Error: Couldn't find any stylesheet");
             return css;
         }
