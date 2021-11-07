@@ -120,7 +120,13 @@ struct AppInfo {
     icon: String,
 }
 fn get_entries(dir: &str) -> Vec<AppInfo> {
-    let apps_dir = std::fs::read_dir(dir).unwrap();
+    let apps_dir = match std::fs::read_dir(dir) {
+        Ok(path) => path,
+        Err(e) => {
+            println!("Could not access: {}, reason: {}", dir, e.to_string());
+            return vec![]
+        }
+    };
     let mut apps = Vec::new();
 
     for app in apps_dir {
