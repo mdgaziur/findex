@@ -33,12 +33,6 @@ pub fn init_search_result() -> ListBox {
         let command = c_widget.downcast_ref::<Label>().unwrap();
 
         let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
-        // strip parameters like %U %F etc
-        for idx in 0..splitted_cmd.len() {
-            if splitted_cmd[idx].starts_with('%') {
-                splitted_cmd.remove(idx);
-            }
-        }
 
         spawn_process(&splitted_cmd);
     });
