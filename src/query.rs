@@ -37,13 +37,7 @@ fn on_key_press(qb: &Entry, ev: &EventKey) -> Inhibit {
         let c_widget = &container.children()[2];
         let command = c_widget.downcast_ref::<Label>().unwrap();
 
-        let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
-        // strip parameters like %U %F etc
-        for idx in 0..splitted_cmd.len() {
-            if splitted_cmd[idx].starts_with('%') {
-                splitted_cmd.remove(idx);
-            }
-        }
+        let splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
 
         spawn_process(&splitted_cmd);
 
@@ -128,6 +122,7 @@ fn get_entries(dir: &str) -> Vec<AppInfo> {
         }
     };
     let mut apps = Vec::new();
+    let parameter_regex = regex::Regex::new("%.").unwrap();
 
     for app in apps_dir {
         let app = app.unwrap();
@@ -154,7 +149,9 @@ fn get_entries(dir: &str) -> Vec<AppInfo> {
         let name = section.attr("Name").unwrap();
         let icon = section.attr("Icon").unwrap_or("applications-other");
         let exec = match section.attr("Exec") {
-            Some(e) => e,
+            Some(e) => {
+                parameter_regex.replace_all(e, "")
+            },
             None => continue,
         };
 
