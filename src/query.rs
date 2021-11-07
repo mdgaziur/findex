@@ -1,4 +1,3 @@
-use crate::common::spawn_process;
 use gtk::gdk::gdk_pixbuf::{Colorspace,Pixbuf};
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
@@ -26,23 +25,21 @@ pub fn init_query() -> Entry {
 }
 
 fn on_key_press(qb: &Entry, ev: &EventKey) -> Inhibit {
-    if ev.keyval().name().unwrap() == "Return" {
+    let key_name = match ev.keyval().name() {
+        Some(name) => name,
+        None => return Inhibit(false)
+    };
+
+    if key_name == "Return" {
         let list = get_list_box(qb);
         let first_result = match list.row_at_index(0) {
             Some(res) => res,
             None => exit(0),
         };
-        let container_w = &first_result.children()[0];
-        let container = container_w.downcast_ref::<gtk::Box>().unwrap();
-        let c_widget = &container.children()[2];
-        let command = c_widget.downcast_ref::<Label>().unwrap();
-
-        let splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
-
-        spawn_process(&splitted_cmd);
+        first_result.emit_activate();
 
         Inhibit(true)
-    } else if ev.keyval().name().unwrap() == "Down" {
+    } else if key_name == "Down" {
         let list_box = get_list_box(qb);
         let first_row = list_box.row_at_index(1);
 

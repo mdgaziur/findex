@@ -1,13 +1,19 @@
-use crate::common::spawn_process;
 use gtk::prelude::*;
 use gtk::{Entry, Label, ListBox, ScrolledWindow, Viewport};
+use nix::unistd::execvp;
+use std::ffi::CString;
 
 pub fn init_search_result() -> ListBox {
     let list_box = ListBox::builder().name("findex-results").build();
     list_box.style_context().add_class("findex-results");
 
     list_box.connect_key_press_event(|lb, ev| {
-        if ev.keyval().name().unwrap() == "Up" {
+        let key_name = match ev.keyval().name() {
+            Some(name) => name,
+            None => return Inhibit(false)
+        };
+
+        if key_name == "Up" {
             let selected_row_index = lb.clone().selected_row().unwrap().index();
 
             if selected_row_index == 0 {
@@ -32,10 +38,22 @@ pub fn init_search_result() -> ListBox {
         let c_widget = &container.children()[2];
         let command = c_widget.downcast_ref::<Label>().unwrap();
 
-        let mut splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
+        let splitted_cmd = shlex::split(&command.text().to_string()).unwrap();
 
         spawn_process(&splitted_cmd);
     });
 
     list_box
 }
+
+pub fn spawn_process(cmd: &[String]) {
+    let p_name = CString::new(cmd[0].as_bytes()).unwrap();
+    execvp(
+        &p_name,
+        &cmd.iter()
+            .map(|s| CString::new(s.as_bytes()).unwrap())
+            .collect::<Vec<CString>>(),
+    )
+        .unwrap();
+}
+
