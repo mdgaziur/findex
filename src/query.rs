@@ -129,7 +129,7 @@ fn get_entries(dir: &str) -> Vec<AppInfo> {
         if app_path.is_dir() {
             continue;
         }
-        if app_path.extension().unwrap().to_str().unwrap() != "desktop" {
+        if app_path.extension().unwrap_or_default() != "desktop" {
             continue;
         }
 
