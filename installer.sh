@@ -1,6 +1,6 @@
 check_existing() {
 	if test -f "/usr/bin/findex"; then
-		return true
+		return 1
 	fi
 }
 
@@ -13,16 +13,44 @@ do_installation() {
 	echo Installation done!
 }
 
+do_removal() {
+    cargo clean
+    echo Removing files...
+    sudo rm /usr/bin/findex
+    sudo rm -r /opt/findex
+    echo Removal done! 
+}
+
 main() {
 	existing_installation=$(check_existing)
 
 	if $existing_installation; then
 		while true; do
-			read -p "Already found existing_installation. Do you want to continue? [y/N]" yn
+			read -p "Already found existing installation. Do you want to remove findex? [y/N]" yn
 			case $yn in
-				[Yy]*) do_installation; return 0 ;;
-				[Nn]*) return 0 ;;
-			esac
+		    [Yy]*)
+                read -p "Removal will also delete style.css. Continue? [y/N]" yn
+                case $yn in
+                [Yy]*)
+                    do_removal; return 0
+                    ;;
+                *)
+                    return 0
+                    ;;
+                esac
+                ;;
+            *)
+                read -p "Do you want to reinstall findex? [y/N]" yn
+                case $yn in
+                [Yy]*)
+                    do_installation; return 0
+                    ;;
+                *)
+                    return 0
+                    ;;
+			    esac
+                ;;
+            esac
 		done;
 	fi;
 	do_installation;
