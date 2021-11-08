@@ -69,7 +69,7 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
     clear_listbox(&list_box);
 
     for app in apps {
-        if !regex.is_match(&app.name.to_lowercase()) {
+        if !regex.is_match(&app.name.to_lowercase()) && !regex.is_match(&app.exec.to_lowercase()) {
             continue;
         }
 
