@@ -144,9 +144,12 @@ fn get_entries(dir: &str) -> Vec<AppInfo> {
 
         let section = desktop_entry.section("Desktop Entry");
 
-        let name: std::borrow::Cow<str> = match section.attr("Name") {
-            Some(name) => name.into(),
-            _ => app_path.file_name().unwrap_or_default().to_string_lossy(),
+        let name = match section.attr("Name") {
+            Some(n) => n,
+            None => {
+                eprintln!("Error occurred while parsing {}: {}", app_path.display(), "cannot find 'Name' field");
+                continue;
+            }
         };
         let icon = section.attr("Icon").unwrap_or("applications-other");
         let exec = match section.attr("Exec") {
