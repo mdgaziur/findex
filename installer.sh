@@ -1,3 +1,4 @@
+#!/bin/bash
 check_existing() {
 	if test -f "/usr/bin/findex"; then
 		return 1
@@ -23,7 +24,6 @@ do_removal() {
 
 main() {
 	existing_installation=$(check_existing)
-
 	if $existing_installation; then
 		while true; do
 			read -p "Already found existing installation. Do you want to remove findex? [y/N]" yn
