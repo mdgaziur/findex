@@ -143,7 +143,14 @@ fn get_entries(dir: &str) -> Vec<AppInfo> {
         };
 
         let section = desktop_entry.section("Desktop Entry");
-        let name = section.attr("Name").unwrap();
+
+        let name = match section.attr("Name") {
+            Some(n) => n,
+            None => {
+                eprintln!("Error occurred while parsing {}: {}", app_path.display(), "cannot find 'Name' field");
+                continue;
+            }
+        };
         let icon = section.attr("Icon").unwrap_or("applications-other");
         let exec = match section.attr("Exec") {
             Some(e) => {
