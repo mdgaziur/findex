@@ -1,4 +1,4 @@
-use gtk::gdk::gdk_pixbuf::{Colorspace,Pixbuf};
+use gtk::gdk::gdk_pixbuf::{Colorspace, Pixbuf};
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{

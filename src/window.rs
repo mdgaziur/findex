@@ -26,7 +26,7 @@ pub fn init_window(app: &Application) {
     win.connect_key_press_event(|win, ev| {
         let key_name = match ev.keyval().name() {
             Some(name) => name,
-            None => return Inhibit(false)
+            None => return Inhibit(false),
         };
 
         if key_name == "Escape" {

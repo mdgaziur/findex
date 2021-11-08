@@ -10,7 +10,7 @@ pub fn init_search_result() -> ListBox {
     list_box.connect_key_press_event(|lb, ev| {
         let key_name = match ev.keyval().name() {
             Some(name) => name,
-            None => return Inhibit(false)
+            None => return Inhibit(false),
         };
 
         if key_name == "Up" {
@@ -54,6 +54,5 @@ pub fn spawn_process(cmd: &[String]) {
             .map(|s| CString::new(s.as_bytes()).unwrap())
             .collect::<Vec<CString>>(),
     )
-        .unwrap();
+    .unwrap();
 }
-
