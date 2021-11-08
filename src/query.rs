@@ -6,6 +6,7 @@ use gtk::{
     ScrolledWindow, Viewport,
 };
 use std::process::exit;
+use fuse_rust::Fuse;
 
 pub fn init_query() -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
@@ -62,17 +63,54 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
         return;
     }
 
-    let regex = regex::Regex::new(&format!(r"^{}", text)).unwrap();
-
     let list_box = get_list_box(qb);
 
     clear_listbox(&list_box);
 
+    // filter stuff that didn't match
+    struct ScoredApp {
+        total_score: f64,
+        name: String,
+        exec: String,
+        icon: String
+    };
+    let mut filtered_apps = Vec::new();
+    let mut fuse = Fuse::default();
+    fuse.distance = 80;
     for app in apps {
-        if !regex.is_match(&app.name.to_lowercase()) {
-            continue;
+        let score_result_name = fuse.search_text_in_string(&text, &app.name);
+        let score_result_exec = fuse.search_text_in_string(&text, &app.exec);
+        let mut do_not_push = true;
+        let mut total_score = 0f64;
+
+        if let Some(result) = score_result_name {
+            if result.score <= 0.4 {
+                total_score += result.score;
+                do_not_push = false;
+            }
+        }
+        if let Some(result) = score_result_exec {
+            if result.score <= 0.4 {
+                total_score += result.score;
+                do_not_push = false;
+            }
         }
 
+        if !do_not_push {
+            filtered_apps.push(ScoredApp {
+                total_score,
+                name: app.name.clone(),
+                exec: app.exec.clone(),
+                icon: app.icon.clone()
+            });
+        }
+    }
+    filtered_apps.sort_by(|l, r| {
+       l.total_score.partial_cmp(&r.total_score).unwrap()
+    });
+
+
+    for app in filtered_apps {
         let icon = get_icon(&app.icon);
 
         let image = Image::builder().pixbuf(&icon).build();

@@ -158,6 +158,7 @@ name = "findex"
 version = "0.2.0"
 dependencies = [
  "freedesktop_entry_parser",
+ "fuse-rust",
  "gtk",
  "nix",
  "regex",
@@ -180,6 +181,12 @@ name = "funty"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fed34cd105917e91daa4da6b3728c47b068749d6a62c59811f06ed2ac71d9da7"
+
+[[package]]
+name = "fuse-rust"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d9ff709b73b2baf07e03076ffe6fb9a6e7309e67651d650e2775729a4fc0eaf"
 
 [[package]]
 name = "futures-channel"
