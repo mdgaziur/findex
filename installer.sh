@@ -29,15 +29,7 @@ main() {
 			read -p "Already found existing installation. Do you want to remove findex? [y/N]" yn
 			case $yn in
 		    [Yy]*)
-                read -p "Removal will also delete style.css. Continue? [y/N]" yn
-                case $yn in
-                [Yy]*)
-                    do_removal; return 0
-                    ;;
-                *)
-                    return 0
-                    ;;
-                esac
+                do_removal; return 0
                 ;;
             *)
                 read -p "Do you want to reinstall findex? [y/N]" yn
