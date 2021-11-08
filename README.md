@@ -6,6 +6,9 @@ Highly customizable finder with high performance. Written in Rust and uses GTK
 
 ## Installation
 ### Automatic
+Run `installer.sh`
+
+### Arch Linux or Arch based distros:
 #### Binary
 - Clone from `https://aur.archlinux.org/findex-bin.git`
 #### From source
