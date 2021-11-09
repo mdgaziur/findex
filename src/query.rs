@@ -73,7 +73,7 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
         name: String,
         exec: String,
         icon: String
-    };
+    }
     let mut filtered_apps = Vec::new();
     let mut fuse = Fuse::default();
     fuse.distance = 80;
