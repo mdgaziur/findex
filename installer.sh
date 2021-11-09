@@ -1,11 +1,14 @@
 #!/bin/bash
+existing_installation=false
+
 check_existing() {
 	if test -f "/usr/bin/findex"; then
-		return 1
+	  existing_installation=true
 	fi
 }
 
 do_installation() {
+  echo Installing Findex
 	cargo build --release
 	echo Copying files...
 	sudo cp target/release/findex /usr/bin/findex
@@ -15,7 +18,6 @@ do_installation() {
 }
 
 do_removal() {
-    cargo clean
     echo Removing files...
     sudo rm /usr/bin/findex
     sudo rm -r /opt/findex
@@ -23,26 +25,14 @@ do_removal() {
 }
 
 main() {
-	existing_installation=$(check_existing)
+  check_existing
 	if $existing_installation; then
 		while true; do
-			read -p "Already found existing installation. Do you want to remove findex? [y/N]" yn
-			case $yn in
-		    [Yy]*)
-                do_removal; return 0
-                ;;
-            *)
-                read -p "Do you want to reinstall findex? [y/N]" yn
-                case $yn in
-                [Yy]*)
-                    do_installation; return 0
-                    ;;
-                *)
-                    return 0
-                    ;;
-			    esac
-                ;;
-            esac
+			read -r -p "Already found existing installation. Do you want to remove findex? [y/N]" yn
+      case $yn in
+        [Yy]* ) do_removal; do_installation; exit;;
+        [Nn]* ) exit;;
+      esac
 		done;
 	fi;
 	do_installation;
