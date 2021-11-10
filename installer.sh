@@ -18,19 +18,29 @@ do_installation() {
 }
 
 do_removal() {
-    echo Removing files...
-    sudo rm /usr/bin/findex
-    sudo rm -r /opt/findex
-    echo Removal done! 
+  echo Removing files...
+  sudo rm /usr/bin/findex
+  sudo rm -r /opt/findex
+  echo Removal done!
+}
+
+prompt_for_installation() {
+  while true; do
+    read -r -p "Install findex? [Y/N] " yn
+    case $yn in
+      [Yy]* ) do_installation; break;;
+      [Nn]* ) break;;
+    esac
+  done;
 }
 
 main() {
   check_existing
 	if $existing_installation; then
 		while true; do
-			read -r -p "Already found existing installation. Do you want to remove findex? [y/N]" yn
+			read -r -p "Already found existing installation. Do you want to remove findex? [Y/N] " yn
       case $yn in
-        [Yy]* ) do_removal; do_installation; exit;;
+        [Yy]* ) do_removal; prompt_for_installation; exit;;
         [Nn]* ) exit;;
       esac
 		done;
