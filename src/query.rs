@@ -125,6 +125,7 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
         command.set_max_width_chars(1);
         command.set_hexpand(true);
         command.set_ellipsize(EllipsizeMode::End);
+        command.style_context().add_class("findex-result-command");
 
         let container = BoxBuilder::new()
             .orientation(Orientation::Horizontal)
