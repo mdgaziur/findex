@@ -48,6 +48,7 @@ pub fn init_window(app: &Application) {
         .orientation(Orientation::Vertical)
         .parent(&win)
         .build();
+    container.style_context().add_class("findex-container");
 
     let search_box = init_query();
     let scw = ScrolledWindow::builder()
