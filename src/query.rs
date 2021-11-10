@@ -7,6 +7,7 @@ use gtk::{
 };
 use std::process::exit;
 use fuse_rust::Fuse;
+use gtk::gdk::pango::EllipsizeMode;
 
 pub fn init_query() -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
@@ -120,6 +121,10 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
         name.style_context().add_class("findex-result-app-name");
 
         let command = Label::new(Some(&app.exec));
+        command.set_xalign(0f32);
+        command.set_max_width_chars(1);
+        command.set_hexpand(true);
+        command.set_ellipsize(EllipsizeMode::End);
 
         let container = BoxBuilder::new()
             .orientation(Orientation::Horizontal)

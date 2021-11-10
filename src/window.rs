@@ -1,11 +1,9 @@
 use crate::css::load_css;
 use crate::query::init_query;
 use crate::search_result::init_search_result;
-use gtk::gdk::EventMask;
+use gtk::gdk::{EventMask, Screen};
 use gtk::prelude::*;
-use gtk::{
-    Application, ApplicationWindow, BoxBuilder, Orientation, ScrolledWindow, WindowPosition,
-};
+use gtk::{Application, ApplicationWindow, BoxBuilder, Orientation, ScrolledWindow, WindowPosition};
 
 pub fn init_window(app: &Application) {
     let win = ApplicationWindow::builder()
@@ -18,6 +16,15 @@ pub fn init_window(app: &Application) {
         .build();
 
     win.style_context().add_class("findex-window");
+
+    let screen = Screen::default().unwrap();
+    let visual = screen.rgba_visual();
+
+    if screen.is_composited() {
+        if let Some(visual) = visual {
+            win.set_visual(Some(&visual));
+        }
+    }
 
     win.connect_focus_out_event(|win, _event| {
         win.close();
@@ -48,6 +55,7 @@ pub fn init_window(app: &Application) {
         .propagate_natural_height(true)
         .build();
     scw.add(&init_search_result());
+    scw.style_context().add_class("findex-results-scroll");
 
     container.add(&search_box);
     container.add(&scw);
