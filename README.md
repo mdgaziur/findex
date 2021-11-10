@@ -1,5 +1,5 @@
 # Findex
-Highly customizable finder with high performance. Written in Rust and uses GTK
+Highly customizable application finder with high performance. Written in Rust and uses GTK
 ------
 ![Screenshot](Screenshot_20211106_111608.png)
 ------
