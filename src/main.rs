@@ -2,6 +2,7 @@ mod css;
 pub mod query;
 pub mod search_result;
 mod window;
+pub mod common;
 
 use crate::window::init_window;
 use gtk::prelude::*;

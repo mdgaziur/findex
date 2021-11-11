@@ -4,6 +4,7 @@ use crate::search_result::init_search_result;
 use gtk::gdk::{EventMask, Screen};
 use gtk::prelude::*;
 use gtk::{Application, ApplicationWindow, BoxBuilder, Orientation, ScrolledWindow, WindowPosition};
+use crate::common::{add_app_to_listbox, get_entries};
 
 pub fn init_window(app: &Application) {
     let win = ApplicationWindow::builder()
@@ -50,12 +51,23 @@ pub fn init_window(app: &Application) {
         .build();
     container.style_context().add_class("findex-container");
 
-    let search_box = init_query();
+    let mut desktop_entries = get_entries("/usr/share/applications");
+    desktop_entries.extend(get_entries(
+        shellexpand::tilde("~/.local/share/applications").as_ref(),
+    ));
+
+    let search_box = init_query(&desktop_entries);
+    let list_box = init_search_result();
+    for app in &desktop_entries {
+        add_app_to_listbox(&list_box, &app);
+    }
+
     let scw = ScrolledWindow::builder()
+        .min_content_height(400)
         .max_content_height(400)
         .propagate_natural_height(true)
         .build();
-    scw.add(&init_search_result());
+    scw.add(&list_box);
     scw.style_context().add_class("findex-results-scroll");
 
     container.add(&search_box);
