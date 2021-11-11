@@ -1,12 +1,7 @@
 .findex-query {
-    color: white;
     padding: 15px;
     font-size: 20px;
     border: none;
-}
-
-.findex-result-row:selected .findex-result-app-name {
-    color: black;
 }
 
 .findex-result-icon {
@@ -14,7 +9,6 @@
 }
 
 .findex-result-app-name {
-    color: #fff;
     margin: 10px;
     font-weight: bold;
     font-size: 15px;
