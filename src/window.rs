@@ -58,9 +58,6 @@ pub fn init_window(app: &Application) {
 
     let search_box = init_query(&desktop_entries);
     let list_box = init_search_result();
-    for app in &desktop_entries {
-        add_app_to_listbox(&list_box, &app);
-    }
 
     let scw = ScrolledWindow::builder()
         .min_content_height(400)
@@ -81,4 +78,8 @@ pub fn init_window(app: &Application) {
     );
 
     win.show_all();
+
+    for app in &desktop_entries {
+        add_app_to_listbox(&list_box, &app);
+    }
 }

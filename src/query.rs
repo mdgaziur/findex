@@ -53,11 +53,6 @@ fn on_key_press(qb: &Entry, ev: &EventKey) -> Inhibit {
 fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
     let text = regex::escape(&qb.text().to_lowercase());
     if text.is_empty() {
-        let list_box = get_list_box(qb);
-        clear_listbox(&list_box);
-        for app in apps {
-            add_app_to_listbox(&list_box, app);
-        }
         return;
     }
 
