@@ -6,7 +6,7 @@ use gtk::{
 };
 use std::process::exit;
 use fuse_rust::Fuse;
-use crate::common::{add_app_to_listbox, ScoredApp, AppInfo, add_scored_app_to_listbox};
+use crate::common::{ScoredApp, AppInfo, add_scored_app_to_listbox};
 
 pub fn init_query(entries: &Vec<AppInfo>) -> Entry {
     let query_box = Entry::builder().name("findex-query").build();

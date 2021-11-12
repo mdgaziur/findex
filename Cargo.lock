@@ -155,7 +155,7 @@ dependencies = [
 
 [[package]]
 name = "findex"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "freedesktop_entry_parser",
  "fuse-rust",
