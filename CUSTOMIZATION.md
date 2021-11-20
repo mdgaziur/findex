@@ -1,7 +1,6 @@
 # Customization
 
-Findex can be customized by applying properties to certain css classes. Below is a table containing
-the class name and what they correspond to:
+Findex can be customized by applying properties to certain css classes. Below is a table containing class names and what they correspond to:
 
 | Class                  | Widget                                                            |
 |------------------------|-------------------------------------------------------------------|
@@ -15,5 +14,6 @@ the class name and what they correspond to:
 | findex-result-app-name | App name of result row                                            |
 | findex-result-command  | The command that'll be used to launch the app                     |
 
-To customize Findex, edit the style.css file in `~/.config/findex`. If you can't find the file, run Findex to generate that. After that, you
-can modify the appearance of Findex. If Findex isn't opening after editing stylesheet, run `findex` in terminal to see why the stylesheet is invalid.
+To customize Findex, edit the style.css file in `~/.config/findex`. If there is no such file, run Findex to generate it.
+
+If Findex isn't being executed after modifying `~/.config/findex`, run `findex` in terminal to see what went wrong in the stylesheet.

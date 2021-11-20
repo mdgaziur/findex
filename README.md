@@ -1,8 +1,8 @@
-# Findex (It's "faaindex", not "feendex")
-Highly customizable application finder with high performance. Written in Rust and uses GTK
-------
-![Screenshot](Screenshot_20211106_111608.png)
-------
+# Findex
+
+Findex is a highly customizable application finder written in Rust. It uses GTK and focuses on performance
+
+![Screenshot](screenshot.png)
 
 ## Installation
 Check [INSTALLATION.md](./INSTALLATION.md)
