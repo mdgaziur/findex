@@ -11,7 +11,9 @@ pub fn init_window(app: &Application) {
         .application(app)
         .window_position(WindowPosition::CenterAlways)
         .resizable(false)
-        .default_width(700)
+        .default_width(650)
+        .skip_pager_hint(true)
+        .skip_taskbar_hint(true)
         .decorated(false)
         .events(EventMask::FOCUS_CHANGE_MASK)
         .build();
