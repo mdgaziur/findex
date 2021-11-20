@@ -8,5 +8,4 @@ Highly customizable application finder with high performance. Written in Rust an
 Check [INSTALLATION.md](./INSTALLATION.md)
 
 ## Customization
-Customization can be done through the stylesheet located in ~/.config/findex/style.css.
-You only have to make sure that it's valid for gtk.
+Check [CUSTOMIZATION.md](./CUSTOMIZATION.md)
