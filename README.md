@@ -5,22 +5,7 @@ Highly customizable application finder with high performance. Written in Rust an
 ------
 
 ## Installation
-### Automatic
-Run `installer.sh`
-
-### Arch Linux or Arch based distros:
-#### Binary
-- Clone from `https://aur.archlinux.org/findex-bin.git`
-#### From source
-- Clone from `https://aur.archlinux.org/findex-git.git`  
-  
-Now run `makepkg -si`
-
-### Manual
-Make a release build using `cargo build --release`  
-Copy `target/release/findex` to `/usr/bin/`  
-Copy `css/style.css` to `/opt/findex/`  
-
+Check [INSTALLATION.md](./INSTALLATION.md)
 
 ## Customization
 Customization can be done through the stylesheet located in ~/.config/findex/style.css.
