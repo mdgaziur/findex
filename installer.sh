@@ -1,11 +1,4 @@
 #!/bin/bash
-existing_installation=false
-
-check_existing() {
-	if test -f "/usr/bin/findex"; then
-	  existing_installation=true
-	fi
-}
 
 do_installation() {
   echo Installing Findex
@@ -35,8 +28,7 @@ prompt_for_installation() {
 }
 
 main() {
-  check_existing
-	if $existing_installation; then
+	if test -f "/usr/bin/findex"; then
 		while true; do
 			read -r -p "Already found existing installation. Do you want to remove findex? [Y/N] " yn
       case $yn in
