@@ -11,7 +11,7 @@ pub fn init_window(app: &Application) {
         .application(app)
         .window_position(WindowPosition::CenterAlways)
         .resizable(false)
-        .default_width(550)
+        .default_width(600)
         .skip_pager_hint(true)
         .skip_taskbar_hint(true)
         .decorated(false)
