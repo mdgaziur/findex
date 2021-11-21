@@ -1,12 +1,9 @@
+use crate::common::{add_scored_app_to_listbox, AppInfo, ScoredApp};
+use fuse_rust::Fuse;
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
-use gtk::{
-    Entry, ListBox,
-    ScrolledWindow, Viewport,
-};
+use gtk::{Entry, ListBox, ScrolledWindow, Viewport};
 use std::process::exit;
-use fuse_rust::Fuse;
-use crate::common::{ScoredApp, AppInfo, add_scored_app_to_listbox};
 
 pub fn init_query(entries: &Vec<AppInfo>) -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
@@ -23,7 +20,7 @@ pub fn init_query(entries: &Vec<AppInfo>) -> Entry {
 fn on_key_press(qb: &Entry, ev: &EventKey) -> Inhibit {
     let key_name = match ev.keyval().name() {
         Some(name) => name,
-        None => return Inhibit(false)
+        None => return Inhibit(false),
     };
 
     if key_name == "Return" {
@@ -87,14 +84,11 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
                 total_score,
                 name: app.name.clone(),
                 exec: app.exec.clone(),
-                icon: app.icon.clone()
+                icon: app.icon.clone(),
             });
         }
     }
-    filtered_apps.sort_by(|l, r| {
-       l.total_score.partial_cmp(&r.total_score).unwrap()
-    });
-
+    filtered_apps.sort_by(|l, r| l.total_score.partial_cmp(&r.total_score).unwrap());
 
     for app in filtered_apps {
         add_scored_app_to_listbox(&list_box, &app);

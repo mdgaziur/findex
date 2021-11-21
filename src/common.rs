@@ -1,14 +1,14 @@
-use gtk::prelude::*;
-use gtk::{Image, Label, ListBox, BoxBuilder, Orientation, ListBoxRow, IconTheme, IconLookupFlags};
 use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
 use gtk::pango::EllipsizeMode;
+use gtk::prelude::*;
+use gtk::{BoxBuilder, IconLookupFlags, IconTheme, Image, Label, ListBox, ListBoxRow, Orientation};
 
 #[derive(Debug, Clone)]
 pub struct ScoredApp {
     pub total_score: f64,
     pub name: String,
     pub exec: String,
-    pub icon: String
+    pub icon: String,
 }
 
 #[derive(Debug, Clone)]
@@ -19,12 +19,15 @@ pub struct AppInfo {
 }
 
 pub fn add_app_to_listbox(list_box: &ListBox, app: &AppInfo) {
-    add_scored_app_to_listbox(list_box, &ScoredApp {
-        total_score: 0 as f64,
-        icon: app.icon.clone(),
-        name: app.name.clone(),
-        exec: app.exec.clone(),
-    });
+    add_scored_app_to_listbox(
+        list_box,
+        &ScoredApp {
+            total_score: 0 as f64,
+            icon: app.icon.clone(),
+            name: app.name.clone(),
+            exec: app.exec.clone(),
+        },
+    );
 }
 
 pub fn add_scored_app_to_listbox(list_box: &ListBox, app: &ScoredApp) {
@@ -64,7 +67,7 @@ pub fn get_entries(dir: &str) -> Vec<AppInfo> {
         Ok(path) => path,
         Err(e) => {
             println!("Could not access: {}, reason: {}", dir, e.to_string());
-            return vec![]
+            return vec![];
         }
     };
     let mut apps = Vec::new();
@@ -96,15 +99,17 @@ pub fn get_entries(dir: &str) -> Vec<AppInfo> {
         let name = match section.attr("Name") {
             Some(n) => n,
             None => {
-                eprintln!("Error occurred while parsing {}: {}", app_path.display(), "cannot find 'Name' field");
+                eprintln!(
+                    "Error occurred while parsing {}: {}",
+                    app_path.display(),
+                    "cannot find 'Name' field"
+                );
                 continue;
             }
         };
         let icon = section.attr("Icon").unwrap_or("applications-other");
         let exec = match section.attr("Exec") {
-            Some(e) => {
-                parameter_regex.replace_all(e, "")
-            },
+            Some(e) => parameter_regex.replace_all(e, ""),
             None => continue,
         };
 
@@ -117,8 +122,6 @@ pub fn get_entries(dir: &str) -> Vec<AppInfo> {
 
     apps
 }
-
-
 
 fn get_icon(icon_name: &str) -> Pixbuf {
     let icon;
@@ -139,7 +142,7 @@ fn get_icon(icon_name: &str) -> Pixbuf {
                 32,
                 IconLookupFlags::FORCE_SIZE | IconLookupFlags::USE_BUILTIN,
             )
-            .or::<Result<Pixbuf,()>>(Ok(Pixbuf::new(Colorspace::Rgb, true, 8, 32, 32)))
+            .or::<Result<Pixbuf, ()>>(Ok(Pixbuf::new(Colorspace::Rgb, true, 8, 32, 32)))
             .unwrap()
             .unwrap();
     }
