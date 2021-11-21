@@ -15,5 +15,3 @@ Findex can be customized by applying properties to certain css classes. Below is
 | findex-result-command  | The command that'll be used to launch the app                     |
 
 To customize Findex, edit the style.css file in `~/.config/findex`. If there is no such file, run Findex to generate it.
-
-If Findex isn't being executed after modifying `~/.config/findex`, run `findex` in terminal to see what went wrong in the stylesheet.

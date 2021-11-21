@@ -1,10 +1,13 @@
+use crate::common::{add_app_to_listbox, get_entries};
 use crate::css::load_css;
 use crate::query::init_query;
 use crate::search_result::init_search_result;
 use gtk::gdk::{EventMask, Screen};
 use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, BoxBuilder, Orientation, ScrolledWindow, WindowPosition};
-use crate::common::{add_app_to_listbox, get_entries};
+use gtk::{
+    Application, ApplicationWindow, BoxBuilder, ButtonsType, CssProvider, DialogFlags,
+    MessageDialog, MessageType, Orientation, ScrolledWindow, WindowPosition,
+};
 
 pub fn init_window(app: &Application) {
     let win = ApplicationWindow::builder()
@@ -47,6 +50,40 @@ pub fn init_window(app: &Application) {
         Inhibit(false)
     });
 
+    // add css provider
+    let css_provider = load_css();
+    if let Err(e) = css_provider {
+        show_dialog(&win, &e.to_string(), MessageType::Warning, "Warning");
+
+        // try to load css from /opt/findex/style.css
+        let file = "/opt/findex/style.css";
+        let file_path = std::path::Path::new(file);
+
+        if file_path.exists() {
+            let cssprovider = CssProvider::default().unwrap();
+            if let Err(e) = cssprovider.load_from_path(file) {
+                show_dialog(
+                    &win,
+                    &(String::from("Failed to load fallback stylesheet: ") + &e.to_string()),
+                    MessageType::Error,
+                    "Error",
+                );
+            } else {
+                gtk::StyleContext::add_provider_for_screen(
+                    &win.screen().unwrap(),
+                    &cssprovider,
+                    gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+                );
+            }
+        }
+    } else if let Ok(provider) = css_provider {
+        gtk::StyleContext::add_provider_for_screen(
+            &win.screen().unwrap(),
+            &provider,
+            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+        );
+    }
+
     let container = BoxBuilder::new()
         .orientation(Orientation::Vertical)
         .parent(&win)
@@ -72,16 +109,27 @@ pub fn init_window(app: &Application) {
     container.add(&search_box);
     container.add(&scw);
 
-    // add css provider
-    gtk::StyleContext::add_provider_for_screen(
-        &win.screen().unwrap(),
-        &load_css(),
-        gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-    );
-
     win.show_all();
 
     for app in &desktop_entries {
         add_app_to_listbox(&list_box, &app);
     }
+    if desktop_entries.len() > 0 {
+        let first_row = list_box.row_at_index(0).unwrap();
+        list_box.select_row(Some(&first_row));
+    }
+}
+
+fn show_dialog(window: &ApplicationWindow, message: &str, message_type: MessageType, title: &str) {
+    let dialog = MessageDialog::new(
+        Some(window),
+        DialogFlags::empty(),
+        message_type,
+        ButtonsType::Ok,
+        message,
+    );
+
+    dialog.set_title(title);
+    dialog.run();
+    unsafe { dialog.destroy(); }
 }

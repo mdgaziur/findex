@@ -2,18 +2,18 @@ use gtk::prelude::*;
 use gtk::CssProvider;
 
 #[cfg(debug_assertions)]
-pub fn load_css() -> CssProvider {
+pub fn load_css() -> Result<CssProvider, gtk::glib::Error> {
     #[cfg(debug_assertions)]
     let css_path = "./css/style.css";
 
     let css = CssProvider::default().unwrap();
-    css.load_from_path(css_path).unwrap();
+    css.load_from_path(css_path)?;
 
-    css
+    Ok(css)
 }
 
 #[cfg(not(debug_assertions))]
-pub fn load_css() -> CssProvider {
+pub fn load_css() -> Result<CssProvider, gtk::glib::Error> {
     let css_path_0 = shellexpand::tilde("~/.config/findex/style.css");
     let css_path_1 = "/opt/findex/style.css";
     let css = CssProvider::default().unwrap();
@@ -35,10 +35,11 @@ pub fn load_css() -> CssProvider {
             std::fs::copy(css_path_1, css_path_0.as_ref()).unwrap();
         } else {
             eprintln!("Error: Couldn't find any stylesheet");
-            return css;
+            return Ok(css);
         }
     }
 
-    css.load_from_path(css_path_0.as_ref()).unwrap();
-    css
+    css.load_from_path(css_path_0.as_ref())?;
+
+    Ok(css)
 }
