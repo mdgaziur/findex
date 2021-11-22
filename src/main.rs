@@ -1,4 +1,5 @@
 mod common;
+mod config;
 mod css;
 mod query;
 mod search_result;

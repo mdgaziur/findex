@@ -1,4 +1,5 @@
 use crate::common::{add_app_to_listbox, get_entries};
+use crate::config::FINDEX_CONFIG;
 use crate::css::load_css;
 use crate::query::init_query;
 use crate::search_result::init_search_result;
@@ -14,7 +15,7 @@ pub fn init_window(app: &Application) {
         .application(app)
         .window_position(WindowPosition::CenterAlways)
         .resizable(false)
-        .default_width(600)
+        .default_width(FINDEX_CONFIG.default_window_width)
         .skip_pager_hint(true)
         .skip_taskbar_hint(true)
         .decorated(false)
@@ -22,6 +23,16 @@ pub fn init_window(app: &Application) {
         .build();
 
     win.style_context().add_class("findex-window");
+
+    // check if any error occurred while parsing settings.toml
+    if !FINDEX_CONFIG.error.is_empty() {
+        show_dialog(
+            &win,
+            &(String::from("settings.toml: ") + &FINDEX_CONFIG.error),
+            MessageType::Error,
+            "Error",
+        );
+    }
 
     let screen = Screen::default().unwrap();
     let visual = screen.rgba_visual();
@@ -99,8 +110,8 @@ pub fn init_window(app: &Application) {
     let list_box = init_search_result();
 
     let scw = ScrolledWindow::builder()
-        .min_content_height(400)
-        .max_content_height(400)
+        .min_content_width(FINDEX_CONFIG.min_content_height)
+        .max_content_height(FINDEX_CONFIG.max_content_height)
         .propagate_natural_height(true)
         .build();
     scw.add(&list_box);
@@ -131,5 +142,7 @@ fn show_dialog(window: &ApplicationWindow, message: &str, message_type: MessageT
 
     dialog.set_title(title);
     dialog.run();
-    unsafe { dialog.destroy(); }
+    unsafe {
+        dialog.destroy();
+    }
 }

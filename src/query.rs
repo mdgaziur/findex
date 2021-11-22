@@ -4,6 +4,7 @@ use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{Entry, ListBox, ScrolledWindow, Viewport};
 use std::process::exit;
+use crate::config::FINDEX_CONFIG;
 
 pub fn init_query(entries: &Vec<AppInfo>) -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
@@ -59,7 +60,7 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
 
     let mut filtered_apps = Vec::new();
     let mut fuse = Fuse::default();
-    fuse.distance = 80;
+    fuse.distance = FINDEX_CONFIG.max_fuzz_distance;
     for app in apps {
         let score_result_name = fuse.search_text_in_string(&text, &app.name);
         let score_result_exec = fuse.search_text_in_string(&text, &app.exec);
@@ -67,13 +68,13 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
         let mut total_score = 0f64;
 
         if let Some(result) = score_result_name {
-            if result.score <= 0.4 {
+            if result.score <= FINDEX_CONFIG.max_name_fuzz_result_score {
                 total_score += result.score;
                 do_not_push = false;
             }
         }
         if let Some(result) = score_result_exec {
-            if result.score <= 0.4 {
+            if result.score <= FINDEX_CONFIG.max_command_fuzz_result_score {
                 total_score += result.score;
                 do_not_push = false;
             }

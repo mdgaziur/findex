@@ -27,3 +27,4 @@ shellexpand = "2.1.0"
 fuse-rust = "0.3.0"
 toml = "0.5.8"
 lazy_static = "1.4.0"
+serde = { version = "1", features = ["derive"] }
