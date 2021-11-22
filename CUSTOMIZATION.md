@@ -28,3 +28,4 @@ Behaviour can be changed by modifying `~/.config/findex/settings.toml`. If there
 | max_fuzz_distance             | Maximum fuzzing distance                                 | Integer |
 | decorate_window               | Show toolbar of window                                   | Boolean |
 | query_placeholder             | Placeholder text to show in query input box              | String  |
+/ close_window_on_losing_focus  / Close window when it loses focus                         | Boolean |
