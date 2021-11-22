@@ -9,6 +9,7 @@ pub struct FindexConfig {
     pub max_name_fuzz_result_score: f64,
     pub max_command_fuzz_result_score: f64,
     pub max_fuzz_distance: i32,
+    pub decorate_window: bool,
     #[serde(skip)]
     pub error: String, // a nasty hack to check if there's an error while parsing settings.toml
 }
@@ -22,6 +23,7 @@ impl FindexConfig {
             max_fuzz_distance: 80,
             max_name_fuzz_result_score: 0.4,
             max_command_fuzz_result_score: 0.4,
+            decorate_window: false,
             error: String::new(),
         }
     }

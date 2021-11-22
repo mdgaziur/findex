@@ -18,7 +18,7 @@ pub fn init_window(app: &Application) {
         .default_width(FINDEX_CONFIG.default_window_width)
         .skip_pager_hint(true)
         .skip_taskbar_hint(true)
-        .decorated(false)
+        .decorated(FINDEX_CONFIG.decorate_window)
         .events(EventMask::FOCUS_CHANGE_MASK)
         .build();
 
