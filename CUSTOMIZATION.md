@@ -27,3 +27,4 @@ Behaviour can be changed by modifying `~/.config/findex/settings.toml`. If there
 | max_command_fuzz_result_score | Maximum score for fuzzing result of application commands | Float   |
 | max_fuzz_distance             | Maximum fuzzing distance                                 | Integer |
 | decorate_window               | Show toolbar of window                                   | Boolean |
+| query_placeholder             | Placeholder text to show in query input box              | String  |
