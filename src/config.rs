@@ -10,6 +10,7 @@ pub struct FindexConfig {
     pub max_command_fuzz_result_score: f64,
     pub max_fuzz_distance: i32,
     pub decorate_window: bool,
+    pub close_window_on_losing_focus: bool,
     #[serde(default = "default_placeholder")]
     pub query_placeholder: String,
     #[serde(skip)]
@@ -31,6 +32,7 @@ impl FindexConfig {
             max_command_fuzz_result_score: 0.4,
             decorate_window: false,
             query_placeholder: default_placeholder(),
+            close_window_on_losing_focus: true,
             error: String::new(),
         }
     }

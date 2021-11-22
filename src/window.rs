@@ -11,16 +11,21 @@ use gtk::{
 };
 
 pub fn init_window(app: &Application) {
-    let win = ApplicationWindow::builder()
+    let mut win = ApplicationWindow::builder()
         .application(app)
         .window_position(WindowPosition::CenterAlways)
         .resizable(false)
         .default_width(FINDEX_CONFIG.default_window_width)
-        .skip_pager_hint(true)
-        .skip_taskbar_hint(true)
         .decorated(FINDEX_CONFIG.decorate_window)
-        .events(EventMask::FOCUS_CHANGE_MASK)
-        .build();
+        .events(EventMask::FOCUS_CHANGE_MASK);
+
+    if FINDEX_CONFIG.close_window_on_losing_focus {
+        win = win.events(EventMask::FOCUS_CHANGE_MASK)
+            .skip_pager_hint(true)
+            .skip_taskbar_hint(true);
+    }
+
+    let win = win.build();
 
     win.style_context().add_class("findex-window");
 
@@ -43,10 +48,12 @@ pub fn init_window(app: &Application) {
         }
     }
 
-    win.connect_focus_out_event(|win, _event| {
-        win.close();
-        Inhibit(true)
-    });
+    if FINDEX_CONFIG.close_window_on_losing_focus {
+        win.connect_focus_out_event(|win, _event| {
+            win.close();
+            Inhibit(true)
+        });
+    }
     win.connect_key_press_event(|win, ev| {
         let key_name = match ev.keyval().name() {
             Some(name) => name,
