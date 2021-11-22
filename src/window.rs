@@ -110,7 +110,7 @@ pub fn init_window(app: &Application) {
     let list_box = init_search_result();
 
     let scw = ScrolledWindow::builder()
-        .min_content_width(FINDEX_CONFIG.min_content_height)
+        .min_content_height(FINDEX_CONFIG.min_content_height)
         .max_content_height(FINDEX_CONFIG.max_content_height)
         .propagate_natural_height(true)
         .build();
