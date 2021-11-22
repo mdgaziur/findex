@@ -10,8 +10,14 @@ pub struct FindexConfig {
     pub max_command_fuzz_result_score: f64,
     pub max_fuzz_distance: i32,
     pub decorate_window: bool,
+    #[serde(default = "default_placeholder")]
+    pub query_placeholder: String,
     #[serde(skip)]
     pub error: String, // a nasty hack to check if there's an error while parsing settings.toml
+}
+
+fn default_placeholder() -> String {
+    String::from("Search for applications")
 }
 
 impl FindexConfig {
@@ -24,6 +30,7 @@ impl FindexConfig {
             max_name_fuzz_result_score: 0.4,
             max_command_fuzz_result_score: 0.4,
             decorate_window: false,
+            query_placeholder: default_placeholder(),
             error: String::new(),
         }
     }

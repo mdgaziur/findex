@@ -8,6 +8,7 @@ use crate::config::FINDEX_CONFIG;
 
 pub fn init_query(entries: &Vec<AppInfo>) -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
+    query_box.set_placeholder_text(Some(&FINDEX_CONFIG.query_placeholder));
     query_box.style_context().add_class("findex-query");
     query_box.connect_changed({
         let de = entries.clone();
