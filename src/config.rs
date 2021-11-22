@@ -2,6 +2,7 @@ use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+#[serde(default)]
 pub struct FindexConfig {
     pub default_window_width: i32,
     pub min_content_height: i32,
@@ -11,7 +12,6 @@ pub struct FindexConfig {
     pub max_fuzz_distance: i32,
     pub decorate_window: bool,
     pub close_window_on_losing_focus: bool,
-    #[serde(default = "default_placeholder")]
     pub query_placeholder: String,
     #[serde(skip)]
     pub error: String, // a nasty hack to check if there's an error while parsing settings.toml
@@ -21,8 +21,8 @@ fn default_placeholder() -> String {
     String::from("Search for applications")
 }
 
-impl FindexConfig {
-    pub fn default() -> Self {
+impl Default for FindexConfig {
+    fn default() -> Self {
         FindexConfig {
             min_content_height: 400,
             max_content_height: 400,
@@ -61,6 +61,7 @@ fn load_settings() -> Result<FindexConfig, String> {
         let settings = std::fs::read_to_string(&*settings_path).unwrap();
 
         let config = toml::from_str(&settings).map_err(|e| e.to_string())?;
+
         Ok(config)
     }
 }
