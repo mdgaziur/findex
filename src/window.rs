@@ -14,6 +14,7 @@ pub fn init_window(app: &Application) {
     let mut win = ApplicationWindow::builder()
         .application(app)
         .window_position(WindowPosition::CenterAlways)
+        .title("Findex")
         .resizable(false)
         .default_width(FINDEX_CONFIG.default_window_width)
         .decorated(FINDEX_CONFIG.decorate_window)
