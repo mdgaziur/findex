@@ -17,8 +17,7 @@ pub fn init_window(app: &Application) {
         .title("Findex")
         .resizable(false)
         .default_width(FINDEX_CONFIG.default_window_width)
-        .decorated(FINDEX_CONFIG.decorate_window)
-        .events(EventMask::FOCUS_CHANGE_MASK);
+        .decorated(FINDEX_CONFIG.decorate_window);
 
     if FINDEX_CONFIG.close_window_on_losing_focus {
         win = win.events(EventMask::FOCUS_CHANGE_MASK)
