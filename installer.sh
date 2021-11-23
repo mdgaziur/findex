@@ -1,20 +1,26 @@
 #!/bin/bash
 
 do_installation() {
-  echo Installing Findex
-	cargo build --release
-	echo Copying files...
+  echo "Installing Findex..."
+	if cargo build --release; then
+    echo "Build complete"
+  else
+    echo "Building failed. Exiting"
+    exit -1
+  fi
+
+	echo "Copying files..."
 	sudo cp target/release/findex /usr/bin/findex
 	sudo mkdir -p /opt/findex
 	sudo cp css/style.css /opt/findex
-	echo Installation done!
+	echo "Installation done!"
 }
 
 do_removal() {
-  echo Removing files...
+  echo "Removing files..."
   sudo rm /usr/bin/findex
   sudo rm -r /opt/findex
-  echo Removal done!
+  echo "Removal done!"
 }
 
 prompt_for_installation() {

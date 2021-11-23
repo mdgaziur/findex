@@ -8,8 +8,15 @@
     margin: 10px;
 }
 
-.findex-result-app-name {
-    margin: 10px;
-    font-weight: bold;
-    font-size: 15px;
+.findex-result-app-name
+{
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.findex-result-command
+{
+    font-style: italic;
+    opacity: 0.7;
+    margin-left: 15px;
 }
