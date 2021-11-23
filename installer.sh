@@ -6,7 +6,7 @@ do_installation() {
     echo "Build complete"
   else
     echo "Building failed. Exiting"
-    exit -1
+    exit 1
   fi
 
 	echo "Copying files..."
