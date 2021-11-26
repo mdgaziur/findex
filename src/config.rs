@@ -45,10 +45,12 @@ fn load_settings() -> Result<FindexConfig, String> {
     #[cfg(not(debug_assertions))]
     let settings_path = shellexpand::tilde("~/.config/findex/settings.toml");
 
+    #[cfg(not(debug_assertions))]
     let settings_dir = shellexpand::tilde("~/.config/findex");
 
     let file = std::path::Path::new(&*settings_path);
     if !file.exists() {
+        #[cfg(not(debug_assertions))]
         if !std::path::Path::new(&*settings_dir).exists() {
             std::fs::create_dir(&*settings_dir).unwrap();
         }
