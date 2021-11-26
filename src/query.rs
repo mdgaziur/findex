@@ -1,10 +1,10 @@
 use crate::common::{add_scored_app_to_listbox, AppInfo, ScoredApp};
+use crate::config::FINDEX_CONFIG;
 use fuse_rust::Fuse;
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{Entry, ListBox, ScrolledWindow, Viewport};
 use std::process::exit;
-use crate::config::FINDEX_CONFIG;
 
 pub fn init_query(entries: &Vec<AppInfo>) -> Entry {
     let query_box = Entry::builder().name("findex-query").build();

@@ -20,7 +20,8 @@ pub fn init_window(app: &Application) {
         .decorated(FINDEX_CONFIG.decorate_window);
 
     if FINDEX_CONFIG.close_window_on_losing_focus {
-        win = win.events(EventMask::FOCUS_CHANGE_MASK)
+        win = win
+            .events(EventMask::FOCUS_CHANGE_MASK)
             .skip_pager_hint(true)
             .skip_taskbar_hint(true);
     }
