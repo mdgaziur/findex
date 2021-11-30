@@ -67,7 +67,7 @@ pub fn get_entries(dir: &str) -> Vec<AppInfo> {
     let apps_dir = match std::fs::read_dir(dir) {
         Ok(path) => path,
         Err(e) => {
-            println!("Could not access: {}, reason: {}", dir, e.to_string());
+            println!("Could not access: {}, reason: {}", dir, e);
             return vec![];
         }
     };
@@ -87,10 +87,7 @@ pub fn get_entries(dir: &str) -> Vec<AppInfo> {
         let desktop_entry = match freedesktop_entry_parser::parse_entry(&app_path) {
             Ok(entry) => entry,
             Err(e) => {
-                eprintln!(
-                    "Error occurred while parsing desktop entry: {}",
-                    e.to_string()
-                );
+                eprintln!("Error occurred while parsing desktop entry: {}", e);
                 continue;
             }
         };
@@ -101,9 +98,8 @@ pub fn get_entries(dir: &str) -> Vec<AppInfo> {
             Some(n) => n,
             None => {
                 eprintln!(
-                    "Error occurred while parsing {}: {}",
+                    "Error occurred while parsing {}: cannot find 'Name' field",
                     app_path.display(),
-                    "cannot find 'Name' field"
                 );
                 continue;
             }
@@ -138,22 +134,21 @@ fn get_icon(icon_name: &str) -> Pixbuf {
         IconLookupFlags::FORCE_SIZE | IconLookupFlags::USE_BUILTIN,
     ) {
         icon = i.unwrap();
+    } else if let Ok(i) = icon_theme.load_icon(
+        "applications-other",
+        FINDEX_CONFIG.icon_size,
+        IconLookupFlags::FORCE_SIZE | IconLookupFlags::USE_BUILTIN,
+    ) {
+        icon = i.unwrap();
     } else {
-        icon = icon_theme
-            .load_icon(
-                "applications-other",
-                FINDEX_CONFIG.icon_size,
-                IconLookupFlags::FORCE_SIZE | IconLookupFlags::USE_BUILTIN,
-            )
-            .or::<Result<Pixbuf, ()>>(Ok(Pixbuf::new(
-                Colorspace::Rgb,
-                true,
-                8,
-                FINDEX_CONFIG.icon_size,
-                FINDEX_CONFIG.icon_size,
-            )))
-            .unwrap()
-            .unwrap();
+        icon = Pixbuf::new(
+            Colorspace::Rgb,
+            true,
+            8,
+            FINDEX_CONFIG.icon_size,
+            FINDEX_CONFIG.icon_size,
+        )
+        .unwrap();
     }
 
     icon

@@ -131,9 +131,9 @@ pub fn init_window(app: &Application) {
     win.show_all();
 
     for app in &desktop_entries {
-        add_app_to_listbox(&list_box, &app);
+        add_app_to_listbox(&list_box, app);
     }
-    if desktop_entries.len() > 0 {
+    if !desktop_entries.is_empty() {
         let first_row = list_box.row_at_index(0).unwrap();
         list_box.select_row(Some(&first_row));
     }

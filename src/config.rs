@@ -74,10 +74,10 @@ lazy_static! {
     pub static ref FINDEX_CONFIG: FindexConfig = {
         let settings = load_settings();
         if let Err(e) = settings {
-            let mut default_settings = FindexConfig::default();
-            default_settings.error = e.to_string();
-
-            default_settings
+            FindexConfig {
+                error: e,
+                ..Default::default()
+            }
         } else {
             settings.unwrap()
         }

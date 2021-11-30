@@ -6,12 +6,12 @@ use gtk::prelude::*;
 use gtk::{Entry, ListBox, ScrolledWindow, Viewport};
 use std::process::exit;
 
-pub fn init_query(entries: &Vec<AppInfo>) -> Entry {
+pub fn init_query(entries: &[AppInfo]) -> Entry {
     let query_box = Entry::builder().name("findex-query").build();
     query_box.set_placeholder_text(Some(&FINDEX_CONFIG.query_placeholder));
     query_box.style_context().add_class("findex-query");
     query_box.connect_changed({
-        let de = entries.clone();
+        let de = entries.to_owned();
         move |qb| on_text_changed(qb, &de)
     });
     query_box.connect_key_press_event(on_key_press);
@@ -60,8 +60,10 @@ fn on_text_changed(qb: &Entry, apps: &[AppInfo]) {
     clear_listbox(&list_box);
 
     let mut filtered_apps = Vec::new();
-    let mut fuse = Fuse::default();
-    fuse.distance = FINDEX_CONFIG.max_fuzz_distance;
+    let fuse = Fuse {
+        distance: FINDEX_CONFIG.max_fuzz_distance,
+        ..Default::default()
+    };
     for app in apps {
         let score_result_name = fuse.search_text_in_string(&text, &app.name);
         let score_result_exec = fuse.search_text_in_string(&text, &app.exec);
