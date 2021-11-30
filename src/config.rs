@@ -13,8 +13,9 @@ pub struct FindexConfig {
     pub decorate_window: bool,
     pub close_window_on_losing_focus: bool,
     pub query_placeholder: String,
+    pub icon_size: i32,
     #[serde(skip)]
-    pub error: String, // a nasty hack to check if there's an error while parsing settings.toml
+    pub error: String,
 }
 
 fn default_placeholder() -> String {
@@ -33,6 +34,7 @@ impl Default for FindexConfig {
             decorate_window: false,
             query_placeholder: default_placeholder(),
             close_window_on_losing_focus: true,
+            icon_size: 32,
             error: String::new(),
         }
     }
