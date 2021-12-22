@@ -1,6 +1,8 @@
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
+use dbus::arg::{Append, Arg, ArgType, IterAppend};
+use dbus::Signature;
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(default)]
@@ -17,6 +19,30 @@ pub struct FindexConfig {
     pub icon_size: i32,
     #[serde(skip)]
     pub error: String,
+}
+
+impl Arg for FindexConfig {
+    const ARG_TYPE: ArgType = ArgType::Struct;
+
+    fn signature() -> Signature<'static> {
+        Signature::new("(iiiddibbsis)").unwrap()
+    }
+}
+
+impl Append for FindexConfig {
+    fn append_by_ref(&self, ia: &mut IterAppend) {
+        self.default_window_width.append(ia);
+        self.min_content_height.append(ia);
+        self.max_content_height.append(ia);
+        self.max_name_fuzz_result_score.append(ia);
+        self.max_command_fuzz_result_score.append(ia);
+        self.max_fuzz_distance.append(ia);
+        self.decorate_window.append(ia);
+        self.close_window_on_losing_focus.append(ia);
+        self.query_placeholder.as_str().append(ia);
+        self.icon_size.append(ia);
+        self.error.as_str().append(ia);
+    }
 }
 
 fn default_placeholder() -> String {

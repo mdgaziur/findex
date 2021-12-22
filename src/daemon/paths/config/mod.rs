@@ -1,6 +1,6 @@
+use std::ops::Deref;
 use crate::daemon::config::FINDEX_CONFIG;
 use dbus_crossroads::{Crossroads, IfaceToken};
-use serde_json::to_string;
 
 pub fn get_config(crossroads: &mut Crossroads) -> IfaceToken<()> {
     crossroads.register("org.findex.daemon.config", |builder| {
@@ -9,9 +9,8 @@ pub fn get_config(crossroads: &mut Crossroads) -> IfaceToken<()> {
             (),
             ("config",),
             move |_, (), ()| {
-                let cfg = FINDEX_CONFIG.lock().unwrap().clone();
-
-                Ok((to_string(&cfg).unwrap(),))
+                let cfg = FINDEX_CONFIG.lock().unwrap().deref().clone();
+                Ok((cfg,))
             },
         );
     })
