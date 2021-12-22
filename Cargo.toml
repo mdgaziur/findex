@@ -11,3 +11,16 @@ license = "GPL3"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+gtk = "0.14"
+dbus = "0.9.5"
+dbus-crossroads = "0.5.0"
+daemonize = "0.4.1"
+lazy_static = "1.4.0"
+serde = { version = "1.0.132", features = ["derive"] }
+toml = "0.5.8"
+shellexpand = "2.1.0"
+serde_json = "1.0.73"
+
+[dependencies.rustbreak]
+version = "2"
+features = ["bin_enc"]
