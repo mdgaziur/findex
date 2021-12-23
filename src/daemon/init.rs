@@ -1,15 +1,19 @@
-use std::process::exit;
-use dbus::{arg, Message};
 use crate::daemon::paths::config::get_config;
 use dbus::blocking::Connection;
 use dbus::message::MatchRule;
+use dbus::{arg, Message};
 use dbus_crossroads::Crossroads;
+use std::process::exit;
 
 pub fn init_daemon() {
     let con = Connection::new_session().expect("[Error] Failed to create new D-Bus session");
     con.request_name("org.findex.daemon", true, true, false)
         .expect("[Error] Failed to request name on D-Bus");
-    let proxy = con.with_proxy("org.freedesktop.DBus", "/", std::time::Duration::from_millis(1000));
+    let proxy = con.with_proxy(
+        "org.freedesktop.DBus",
+        "/",
+        std::time::Duration::from_millis(1000),
+    );
 
     let mut crossroads = Crossroads::new();
 
@@ -28,7 +32,13 @@ pub fn init_daemon() {
     );
 
     loop {
-        let r: (String, ) = proxy.method_call("org.freedesktop.DBus", "GetNameOwner", ("org.findex.daemon",)).unwrap();
+        let r: (String,) = proxy
+            .method_call(
+                "org.freedesktop.DBus",
+                "GetNameOwner",
+                ("org.findex.daemon",),
+            )
+            .unwrap();
         if con.unique_name().to_string() != r.0 {
             println!("[Info] Daemon replaced with owner: {}", r.0);
             break;

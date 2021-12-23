@@ -1,8 +1,8 @@
+use dbus::arg::{Append, Arg, ArgType, IterAppend};
+use dbus::Signature;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-use dbus::arg::{Append, Arg, ArgType, IterAppend};
-use dbus::Signature;
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(default)]
