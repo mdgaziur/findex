@@ -101,6 +101,17 @@ lazy_static! {
     pub static ref FINDEX_CONFIG: Mutex<FindexConfig> = Mutex::new({
         let settings = load_settings();
         if let Err(e) = settings {
+            let err_msg =
+                format!("Error in settings.toml: \"{}\"\nFalling back to default settings", e);
+
+            native_dialog::MessageDialog::new()
+                .set_title("Findex Error")
+                .set_text(&err_msg)
+                .set_type(native_dialog::MessageType::Error)
+                .show_alert()
+                .unwrap();
+            println!("Configuration error: {}", e);
+
             FindexConfig {
                 error: e,
                 ..Default::default()

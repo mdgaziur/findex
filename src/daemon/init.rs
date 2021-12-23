@@ -4,8 +4,12 @@ use dbus::message::MatchRule;
 use dbus::{arg, Message};
 use dbus_crossroads::Crossroads;
 use std::process::exit;
+use crate::daemon::config::FINDEX_CONFIG;
 
 pub fn init_daemon() {
+    // lock FINDEX_CONFIG to load configs and then drop it
+    std::mem::drop(FINDEX_CONFIG.lock().unwrap());
+
     let con = Connection::new_session().expect("[Error] Failed to create new D-Bus session");
     con.request_name("org.findex.daemon", true, true, false)
         .expect("[Error] Failed to request name on D-Bus");
