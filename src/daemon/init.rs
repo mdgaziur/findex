@@ -1,9 +1,6 @@
 use crate::daemon::paths::config::get_config;
 use dbus::blocking::Connection;
-use dbus::message::MatchRule;
-use dbus::{arg, Message};
 use dbus_crossroads::Crossroads;
-use std::process::exit;
 use crate::daemon::config::FINDEX_CONFIG;
 
 pub fn init_daemon() {
