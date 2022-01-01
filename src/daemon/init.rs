@@ -1,3 +1,4 @@
+use std::sync::Mutex;
 use crate::daemon::paths::config::get_config;
 use dbus::blocking::Connection;
 use dbus_crossroads::Crossroads;
@@ -5,7 +6,7 @@ use crate::daemon::config::FINDEX_CONFIG;
 
 pub fn init_daemon() {
     // lock FINDEX_CONFIG to load configs and then drop it
-    std::mem::drop(FINDEX_CONFIG.lock().unwrap());
+    Mutex::unlock(FINDEX_CONFIG.lock().unwrap());
 
     let con = Connection::new_session().expect("[Error] Failed to create new D-Bus session");
     con.request_name("org.findex.daemon", true, true, false)

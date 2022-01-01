@@ -1,3 +1,5 @@
+#![feature(mutex_unlock)]
+
 mod daemon;
 
 use std::env;
