@@ -1,3 +1,4 @@
+mod backend;
 mod config;
 mod db;
 mod init;

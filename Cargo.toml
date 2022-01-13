@@ -20,6 +20,7 @@ serde = { version = "1.0.132", features = ["derive"] }
 toml = "0.5.8"
 shellexpand = "2.1.0"
 native-dialog = "0.6.1"
+libloading = "0.7"
 
 [dependencies.rustbreak]
 version = "2"

@@ -17,6 +17,7 @@ pub struct FindexConfig {
     pub close_window_on_losing_focus: bool,
     pub query_placeholder: String,
     pub icon_size: i32,
+    pub custom_backend_loader_path: String,
     #[serde(skip)]
     pub error: String,
 }
@@ -25,23 +26,27 @@ impl Arg for FindexConfig {
     const ARG_TYPE: ArgType = ArgType::Struct;
 
     fn signature() -> Signature<'static> {
-        Signature::new("(iiiddibbsis)").unwrap()
+        Signature::new("(iiiddibbsiss)").unwrap()
     }
 }
 
 impl Append for FindexConfig {
     fn append_by_ref(&self, ia: &mut IterAppend) {
-        self.default_window_width.append(ia);
-        self.min_content_height.append(ia);
-        self.max_content_height.append(ia);
-        self.max_name_fuzz_result_score.append(ia);
-        self.max_command_fuzz_result_score.append(ia);
-        self.max_fuzz_distance.append(ia);
-        self.decorate_window.append(ia);
-        self.close_window_on_losing_focus.append(ia);
-        self.query_placeholder.as_str().append(ia);
-        self.icon_size.append(ia);
-        self.error.as_str().append(ia);
+        (
+            self.default_window_width,
+            self.min_content_height,
+            self.max_content_height,
+            self.max_name_fuzz_result_score,
+            self.max_command_fuzz_result_score,
+            self.max_fuzz_distance,
+            self.decorate_window,
+            self.close_window_on_losing_focus,
+            &self.query_placeholder,
+            self.icon_size,
+            &self.custom_backend_loader_path,
+            &self.error,
+        )
+            .append(ia);
     }
 }
 
@@ -62,6 +67,7 @@ impl Default for FindexConfig {
             query_placeholder: default_placeholder(),
             close_window_on_losing_focus: true,
             icon_size: 32,
+            custom_backend_loader_path: String::new(),
             error: String::new(),
         }
     }
@@ -101,8 +107,10 @@ lazy_static! {
     pub static ref FINDEX_CONFIG: Mutex<FindexConfig> = Mutex::new({
         let settings = load_settings();
         if let Err(e) = settings {
-            let err_msg =
-                format!("Error in settings.toml: \"{}\"\nFalling back to default settings", e);
+            let err_msg = format!(
+                "Error in settings.toml: \"{}\"\nFalling back to default settings",
+                e
+            );
 
             native_dialog::MessageDialog::new()
                 .set_title("Findex Error")
@@ -117,7 +125,23 @@ lazy_static! {
                 ..Default::default()
             }
         } else {
-            settings.unwrap()
+            let mut settings = settings.unwrap();
+            let custom_backend_loader = std::path::Path::new(&settings.custom_backend_loader_path);
+            if !settings.custom_backend_loader_path.is_empty() && !custom_backend_loader.is_file() {
+                let err_msg =
+                    format!("Error in settings.toml: custom_backend_loader_path is invalid(does not exist or is not a file).\nFalling back to default search backend");
+
+                native_dialog::MessageDialog::new()
+                    .set_title("Findex Error")
+                    .set_text(&err_msg)
+                    .set_type(native_dialog::MessageType::Error)
+                    .show_alert()
+                    .unwrap();
+                println!("{}", err_msg);
+                settings.custom_backend_loader_path = String::new();
+            }
+
+            settings
         }
     });
 }

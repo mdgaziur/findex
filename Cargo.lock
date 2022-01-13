@@ -264,6 +264,7 @@ dependencies = [
  "dbus-crossroads",
  "gtk",
  "lazy_static",
+ "libloading",
  "native-dialog",
  "rustbreak",
  "serde",
@@ -584,6 +585,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c185b5b7ad900923ef3a8ff594083d4d9b5aea80bb4f32b8342363138c0d456b"
 dependencies = [
  "pkg-config",
+]
+
+[[package]]
+name = "libloading"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "afe203d669ec979b7128619bae5a63b7b42e9203c1b29146079ee05e2f604b52"
+dependencies = [
+ "cfg-if",
+ "winapi",
 ]
 
 [[package]]
