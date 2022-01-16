@@ -55,6 +55,8 @@ impl Append for AppInfo {
 }
 
 trait Backend {
-    fn new(lib_path: Option<&str>) -> Result<Self, String> where Self: Sized + Send;
+    fn new(lib_path: Option<&str>) -> Result<Self, String>
+    where
+        Self: Sized + Send;
     fn process_result(&mut self, query: &str) -> Vec<AppInfo>;
 }
