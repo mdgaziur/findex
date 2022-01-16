@@ -14,16 +14,14 @@ unsafe impl Send for FindexBackend {}
 
 impl FindexBackend {
     pub fn new() -> Result<Self, String> {
-        let cfg = FINDEX_CONFIG.lock().unwrap();
-
-        if cfg.custom_backend_loader_path.is_empty() {
+        if FINDEX_CONFIG.custom_backend_loader_path.is_empty() {
             Ok(Self {
                 backend: Box::new(default_backend::DefaultBackend::new(None)?),
             })
         } else {
             Ok(Self {
                 backend: Box::new(custom_backend::CustomBackend::new(Some(
-                    &cfg.custom_backend_loader_path,
+                    &FINDEX_CONFIG.custom_backend_loader_path,
                 ))?),
             })
         }

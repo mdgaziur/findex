@@ -2,7 +2,6 @@ use dbus::arg::{Append, Arg, ArgType, IterAppend};
 use dbus::Signature;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(default)]
@@ -104,7 +103,7 @@ fn load_settings() -> Result<FindexConfig, String> {
 }
 
 lazy_static! {
-    pub static ref FINDEX_CONFIG: Mutex<FindexConfig> = Mutex::new({
+    pub static ref FINDEX_CONFIG: FindexConfig = {
         let settings = load_settings();
         if let Err(e) = settings {
             let err_msg = format!(
@@ -143,5 +142,5 @@ lazy_static! {
 
             settings
         }
-    });
+    };
 }
