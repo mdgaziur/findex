@@ -154,7 +154,7 @@ fn update_entry(file_name: &str) {
     while idx < db.len() {
         let app = &db[idx];
         if app.name == entry.name {
-            db.insert(idx, entry.clone());
+            let _ = std::mem::replace(&mut db[idx], entry.clone());
             push = false;
             break;
         }
@@ -169,23 +169,6 @@ fn update_entry(file_name: &str) {
 }
 
 fn remove_entry(file_name: &str) {
-    // TODO: Make sure deleted files are correctly removed from DB
-    let entry = match parse_entry(file_name) {
-        Ok(entry) => {
-            match crate::daemon::db::AppInfo::from_freedesktop_entry(&entry) {
-                Ok(info) => info,
-                Err(e) => {
-                    eprintln!("[Warning] Error while parsing \"{}\": {}", file_name, e);
-                    return;
-                }
-            }
-        },
-        Err(e) => {
-            eprintln!("{}", e);
-            return;
-        }
-    };
-
     let mut db = match DB.get_data(true) {
         Ok(db) => db,
         Err(_) => Vec::new(),
@@ -195,7 +178,8 @@ fn remove_entry(file_name: &str) {
     let mut idx = 0;
     while idx < db.len() {
         let app = &db[idx];
-        if app.name == entry.name {
+        if app.desktop_file == file_name {
+            println!("[Info] Removed \"{file_name}\" from db.");
             db.remove(idx);
             break;
         }
