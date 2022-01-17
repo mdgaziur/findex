@@ -2,7 +2,7 @@ use crate::daemon::backend::{AppInfo, Backend};
 use libloading::{Library, Symbol};
 
 pub struct CustomBackend {
-    result_func: Symbol<'static, fn(&str) -> Vec<AppInfo>>,
+    result_func: Symbol<'static, unsafe extern "Rust" fn(&str) -> Vec<AppInfo>>,
 }
 
 impl Backend for CustomBackend {
@@ -11,25 +11,31 @@ impl Backend for CustomBackend {
             Library::new(lib_path.unwrap()).map_err(|e| e.to_string())?
         }));
 
-        get_backend_init_func(lib)?()?;
+        // User must ensure that the custom backend's init function is valid
+        unsafe {
+            get_backend_init_func(lib)?()?;
+        }
         Ok(CustomBackend {
             result_func: get_backend_process_result_func(lib)?,
         })
     }
 
     fn process_result(&mut self, query: &str) -> Vec<AppInfo> {
-        (self.result_func)(query)
+        // User must ensure that the custom backend's query function is valid
+        unsafe {
+            (self.result_func)(query)
+        }
     }
 }
 
 pub fn get_backend_process_result_func(
     lib: &'static Library,
-) -> Result<libloading::Symbol<'static, fn(&str) -> Vec<AppInfo>>, String> {
+) -> Result<libloading::Symbol<'static, unsafe extern "Rust" fn(&str) -> Vec<AppInfo>>, String> {
     unsafe { lib.get(b"process_result").map_err(|e| e.to_string()) }
 }
 
 pub fn get_backend_init_func(
     lib: &'static Library,
-) -> Result<libloading::Symbol<'static, fn() -> Result<(), String>>, String> {
+) -> Result<libloading::Symbol<'static, unsafe extern "Rust" fn() -> Result<(), String>>, String> {
     unsafe { lib.get(b"init").map_err(|e| e.to_string()) }
 }
