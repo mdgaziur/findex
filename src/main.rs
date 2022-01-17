@@ -1,6 +1,7 @@
 #![feature(mutex_unlock)]
 
 mod daemon;
+mod gui;
 
 use std::env;
 
@@ -19,6 +20,6 @@ fn main() {
             eprintln!("[Error] Unknown flag: {}", flag);
         }
     } else {
-        // launch gui
+        gui::init();
     }
 }
