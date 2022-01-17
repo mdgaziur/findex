@@ -47,7 +47,7 @@ impl Backend for DefaultBackend {
             }
 
             if !do_not_push {
-                filtered_apps.push(super::AppInfo {
+                filtered_apps.push(AppInfo {
                     name: app.name,
                     exec: app.exec,
                     icon: app.icon,
@@ -130,7 +130,7 @@ fn update_entry(file_name: &str) {
 
     let entry = match parse_entry(file_name) {
         Ok(entry) => {
-            match crate::daemon::db::AppInfo::from_freedesktop_entry(&entry) {
+            match crate::daemon::db::DBAppInfo::from_freedesktop_entry(&entry, file_name) {
                 Ok(info) => info,
                 Err(e) => {
                     eprintln!("[Warning] Error while parsing \"{}\": {}", file_name, e);
