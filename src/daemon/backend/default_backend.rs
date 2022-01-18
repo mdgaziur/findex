@@ -47,17 +47,19 @@ impl Backend for DefaultBackend {
             }
 
             if !do_not_push {
-                filtered_apps.push(AppInfo {
-                    name: app.name,
-                    exec: app.exec,
-                    icon: app.icon,
-                    total_score,
-                });
+                filtered_apps.push(app.to_appinfo(total_score));
             }
         }
         filtered_apps.sort_by(|l, r| l.total_score.partial_cmp(&r.total_score).unwrap());
 
         filtered_apps
+    }
+
+    fn get_all(&mut self) -> Vec<AppInfo> {
+        match DB.get_data(true) {
+            Ok(list) => list.iter().map(|a| a.to_appinfo(0.0)).collect(),
+            Err(_) => Vec::new()
+        }
     }
 }
 

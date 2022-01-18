@@ -1,11 +1,12 @@
 use crate::daemon::backend::FindexBackend;
 use crate::daemon::paths::config::get_config;
-use crate::daemon::paths::query::get_result;
+use crate::daemon::paths::query::{get_all, get_result};
 use dbus::blocking::Connection;
 use dbus_crossroads::Crossroads;
+use crate::daemon::config::FINDEX_CONFIG;
 
 pub fn init_daemon() {
-    let backend = match FindexBackend::new() {
+    let backend = match FindexBackend::new(&FINDEX_CONFIG.custom_backend_loader_path) {
         Ok(b) => b,
         Err(e) => {
             if let Err(_) = native_dialog::MessageDialog::new()
@@ -19,7 +20,7 @@ pub fn init_daemon() {
                 println!("{}", e);
             }
 
-            FindexBackend::new().unwrap() // initializing default backend should never panic
+            FindexBackend::new("").unwrap() // initializing default backend should never panic
         }
     };
 

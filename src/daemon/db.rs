@@ -2,6 +2,7 @@ use freedesktop_entry_parser::Entry;
 use lazy_static::lazy_static;
 use rustbreak::{deser::Bincode, MemoryDatabase};
 use serde::{Deserialize, Serialize};
+use findex::AppInfo;
 
 lazy_static! {
     pub static ref DB: MemoryDatabase<Vec<DBAppInfo>, Bincode> =
@@ -38,5 +39,14 @@ impl DBAppInfo {
             icon,
             desktop_file: path.to_string()
         })
+    }
+
+    pub(crate) fn to_appinfo(&self, total_score: f64) -> AppInfo {
+        AppInfo {
+            name: self.name.clone(),
+            exec: self.exec.clone(),
+            icon: self.icon.clone(),
+            total_score,
+        }
     }
 }
