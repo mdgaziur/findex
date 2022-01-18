@@ -1,4 +1,4 @@
-use dbus::arg::{Append, Arg, ArgType, IterAppend};
+use dbus::arg::{Append, Arg, ArgType, Get, Iter, IterAppend};
 use dbus::Signature;
 
 #[derive(Debug, Clone)]
@@ -14,6 +14,19 @@ impl Arg for AppInfo {
 
     fn signature() -> Signature<'static> {
         Signature::new("(dsss)").unwrap()
+    }
+}
+
+impl<'a> Get<'a> for AppInfo {
+    fn get(i: &mut Iter<'a>) -> Option<Self> {
+        let tuple: (f64, String, String, String) = i.read().ok()?;
+
+        Some(Self {
+            total_score: tuple.0,
+            name: tuple.1,
+            exec: tuple.2,
+            icon: tuple.3
+        })
     }
 }
 
