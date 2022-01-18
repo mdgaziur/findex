@@ -28,6 +28,7 @@ fuse-rust = "0.3.0"
 inotify = "0.10.0"
 freedesktop_entry_parser = "1.2.0"
 regex = "1.5.4"
+dyn-clone = "1.0.4"
 
 [dependencies.rustbreak]
 git = "https://github.com/mdgaziur/rustbreak"

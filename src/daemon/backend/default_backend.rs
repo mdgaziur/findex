@@ -5,6 +5,7 @@ use crate::daemon::db::DB;
 use fuse_rust::Fuse;
 use inotify::{EventMask, Inotify, WatchDescriptor, WatchMask};
 
+#[derive(Clone)]
 pub struct DefaultBackend {}
 
 impl Backend for DefaultBackend {

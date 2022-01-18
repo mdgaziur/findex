@@ -36,9 +36,11 @@ pub fn init_daemon() {
     let mut crossroads = Crossroads::new();
 
     let get_config_method = get_config(&mut crossroads);
-    let get_result_method = get_result(&mut crossroads, backend);
+    let get_result_method = get_result(&mut crossroads, backend.clone());
+    let get_all_method = get_all(&mut crossroads, backend.clone());
     crossroads.insert("/get_config", &[get_config_method], ());
     crossroads.insert("/get_result", &[get_result_method], ());
+    crossroads.insert("/get_all", &[get_all_method], ());
 
     println!("[Info] Serving clients...");
 

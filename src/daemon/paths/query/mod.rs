@@ -6,9 +6,24 @@ pub fn get_result(crossroads: &mut Crossroads, mut backend: FindexBackend) -> If
         builder.method(
             "get_result",
             ("query",),
-            ("config",),
+            ("result",),
             move |_, _, (query,): (String,)| {
                 let result = backend.process_query(&query);
+
+                Ok((result,))
+            },
+        );
+    })
+}
+
+pub fn get_all(crossroads: &mut Crossroads, mut backend: FindexBackend) -> IfaceToken<()> {
+    crossroads.register("org.findex.daemon.query", |builder| {
+        builder.method(
+            "get_all",
+            (),
+            ("result",),
+            move |_, _, ()| {
+                let result = backend.get_all();
 
                 Ok((result,))
             },
