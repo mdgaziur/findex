@@ -14,7 +14,7 @@ license = "GPL3"
 debug = true
 
 [dependencies]
-gtk = "0.14"
+gtk = { version = "0.15.1", features = ["v3_22"] }
 dbus = "0.9.5"
 dbus-crossroads = "0.5.0"
 daemonize = "0.4.1"
@@ -29,6 +29,8 @@ inotify = "0.10.0"
 freedesktop_entry_parser = "1.2.0"
 regex = "1.5.4"
 dyn-clone = "1.0.4"
+nix = "0.23.1"
+shlex = "1.1.0"
 
 [dependencies.rustbreak]
 git = "https://github.com/mdgaziur/rustbreak"

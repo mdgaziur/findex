@@ -20,6 +20,6 @@ fn main() {
             eprintln!("[Error] Unknown flag: {}", flag);
         }
     } else {
-        gui::init();
+        gui::FindexGUI::init().run();
     }
 }
