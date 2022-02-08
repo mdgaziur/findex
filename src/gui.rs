@@ -1,6 +1,6 @@
 use std::ops::Deref;
 use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, Box, CssProvider, MessageType, Orientation, ScrolledWindow, WindowPosition};
+use gtk::{Application, ApplicationWindow, Box, CssProvider, glib, MessageType, Orientation, ScrolledWindow, WindowPosition};
 use gtk::gdk::{EventMask, Screen};
 use crate::gui::common::{add_app_to_listbox, show_dialog};
 use crate::gui::config::FINDEX_CONFIG;
@@ -8,6 +8,7 @@ use crate::gui::css::load_css;
 use crate::gui::dbus::get_all;
 use crate::gui::query::init_query;
 use crate::gui::search_result::init_search_result;
+use crate::SHOW_GUI;
 
 mod dbus;
 mod config;
@@ -53,11 +54,12 @@ impl FindexGUI {
         }
 
         let window = window.build();
+        window.set_keep_above(true);
         window.style_context().add_class("findex-window");
 
         if FINDEX_CONFIG.close_window_on_losing_focus {
             window.connect_focus_out_event(|win, _event| {
-                win.close();
+                win.hide();
                 Inhibit(true)
             });
         }
@@ -68,7 +70,8 @@ impl FindexGUI {
             };
 
             if key_name == "Escape" {
-                win.close();
+                *SHOW_GUI.lock().unwrap() = false;
+                win.hide();
                 return Inhibit(true);
             }
 
@@ -151,8 +154,6 @@ impl FindexGUI {
         container.add(&search_box);
         container.add(&scw);
 
-        window.show_all();
-
         for app in &apps {
             add_app_to_listbox(&list_box, app);
         }
@@ -160,6 +161,22 @@ impl FindexGUI {
             let first_row = list_box.row_at_index(0).unwrap();
             list_box.select_row(Some(&first_row));
         }
+
+        glib::idle_add({
+            let window = fragile::Fragile::new(window.clone());
+            move || {
+                let show_gui = SHOW_GUI.lock().unwrap();
+
+                if *show_gui {
+                    window.get().show();
+                }
+
+                Continue(true)
+            }
+        });
+
+        window.show_all();
+        window.hide();
     }
 
     pub fn run(&self) {

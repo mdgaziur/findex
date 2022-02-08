@@ -31,6 +31,8 @@ regex = "1.5.4"
 dyn-clone = "1.0.4"
 nix = "0.23.1"
 shlex = "1.1.0"
+fragile = "1.1.0"
+fork = "0.1.18"
 
 [dependencies.rustbreak]
 git = "https://github.com/mdgaziur/rustbreak"

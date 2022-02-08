@@ -1,25 +1,13 @@
-#![feature(mutex_unlock)]
-
 mod daemon;
 mod gui;
 
-use std::env;
+use std::sync::Mutex;
+use lazy_static::lazy_static;
+
+lazy_static! {
+    static ref SHOW_GUI: Mutex<bool> = Mutex::new(false);
+}
 
 fn main() {
-    let mut args = env::args();
-    if args.len() > 2 {
-        eprintln!("[Error] Too many args!");
-        return;
-    }
-    args.next();
-
-    if let Some(flag) = args.next() {
-        if flag == "--daemon" {
-            daemon::launch_daemon();
-        } else {
-            eprintln!("[Error] Unknown flag: {}", flag);
-        }
-    } else {
-        gui::FindexGUI::init().run();
-    }
+    daemon::launch_daemon();
 }

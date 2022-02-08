@@ -2,6 +2,7 @@ use gtk::prelude::*;
 use gtk::{Entry, Label, ListBox, ScrolledWindow, Viewport};
 use nix::unistd::execvp;
 use std::ffi::CString;
+use fork::Fork;
 
 pub fn init_search_result() -> ListBox {
     let list_box = ListBox::builder().name("findex-results").build();
@@ -47,12 +48,24 @@ pub fn init_search_result() -> ListBox {
 }
 
 pub fn spawn_process(cmd: &[String]) {
-    let p_name = CString::new(cmd[0].as_bytes()).unwrap();
-    execvp(
-        &p_name,
-        &cmd.iter()
-            .map(|s| CString::new(s.as_bytes()).unwrap())
-            .collect::<Vec<CString>>(),
-    )
-        .unwrap();
+    match fork::fork() {
+        Ok(f) => {
+            match f {
+                Fork::Parent(_) => {
+                    // TODO: hide window
+                }
+                Fork::Child => {
+                    let p_name = CString::new(cmd[0].as_bytes()).unwrap();
+                    execvp(
+                        &p_name,
+                        &cmd.iter()
+                            .map(|s| CString::new(s.as_bytes()).unwrap())
+                            .collect::<Vec<CString>>(),
+                    )
+                        .unwrap();
+                }
+            }
+        }
+        Err(_) => eprintln!("[Error] Failed to execute application: fork() failed",)
+    }
 }

@@ -1,9 +1,12 @@
+use std::thread;
 use crate::daemon::backend::FindexBackend;
 use crate::daemon::paths::config::get_config;
 use crate::daemon::paths::query::{get_all, get_result};
 use dbus::blocking::Connection;
 use dbus_crossroads::Crossroads;
 use crate::daemon::config::FINDEX_CONFIG;
+use crate::daemon::paths::gui::show_gui;
+use crate::gui::FindexGUI;
 
 pub fn init_daemon() {
     let backend = match FindexBackend::new(&FINDEX_CONFIG.custom_backend_loader_path) {
@@ -38,9 +41,15 @@ pub fn init_daemon() {
     let get_config_method = get_config(&mut crossroads);
     let get_result_method = get_result(&mut crossroads, backend.clone());
     let get_all_method = get_all(&mut crossroads, backend.clone());
+    let toggle_gui_method = show_gui(&mut crossroads);
     crossroads.insert("/get_config", &[get_config_method], ());
     crossroads.insert("/get_result", &[get_result_method], ());
     crossroads.insert("/get_all", &[get_all_method], ());
+    crossroads.insert("/show_gui", &[toggle_gui_method], ());
+
+    thread::spawn(|| {
+        FindexGUI::init().run();
+    });
 
     println!("[Info] Serving clients...");
 

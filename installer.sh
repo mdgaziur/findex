@@ -11,6 +11,7 @@ do_installation() {
 
 	echo "Copying files..."
 	sudo cp target/release/findex /usr/bin/findex
+	sudo echo ""
 	sudo mkdir -p /opt/findex
 	sudo cp css/style.css /opt/findex
 	echo "Installation done!"
