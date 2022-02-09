@@ -3,7 +3,7 @@ use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{Entry, ListBox, MessageType, ScrolledWindow, Viewport, Window};
 use std::process::exit;
-use crate::gui::common::{add_app_to_listbox, show_dialog};
+use crate::gui::common::{add_app_to_listbox, show_dialog, clear_listbox};
 use crate::gui::dbus::get_result;
 
 pub fn init_query() -> Entry {
@@ -75,12 +75,6 @@ fn on_text_changed(qb: &Entry) {
 
     if let Some(first_row) = list_box.row_at_index(0) {
         list_box.select_row(Some(&first_row));
-    }
-}
-
-fn clear_listbox(list_box: &ListBox) {
-    for child in &list_box.children() {
-        list_box.remove(child);
     }
 }
 

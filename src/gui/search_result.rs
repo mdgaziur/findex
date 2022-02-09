@@ -3,6 +3,7 @@ use gtk::{Entry, Label, ListBox, ScrolledWindow, Viewport};
 use nix::unistd::execvp;
 use std::ffi::CString;
 use fork::Fork;
+use crate::SHOW_GUI;
 
 pub fn init_search_result() -> ListBox {
     let list_box = ListBox::builder().name("findex-results").build();
@@ -52,7 +53,7 @@ pub fn spawn_process(cmd: &[String]) {
         Ok(f) => {
             match f {
                 Fork::Parent(_) => {
-                    // TODO: hide window
+                    *SHOW_GUI.lock().unwrap() = false;
                 }
                 Fork::Child => {
                     let p_name = CString::new(cmd[0].as_bytes()).unwrap();

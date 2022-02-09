@@ -86,3 +86,9 @@ pub fn show_dialog<T: IsA<Window>>(window: &T, message: &str, message_type: Mess
         dialog.destroy();
     }
 }
+
+pub fn clear_listbox(list_box: &ListBox) {
+    for child in &list_box.children() {
+        list_box.remove(child);
+    }
+}

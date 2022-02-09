@@ -2,20 +2,20 @@ use std::ops::Deref;
 use gtk::prelude::*;
 use gtk::{Application, ApplicationWindow, Box, CssProvider, glib, MessageType, Orientation, ScrolledWindow, WindowPosition};
 use gtk::gdk::{EventMask, Screen};
-use crate::gui::common::{add_app_to_listbox, show_dialog};
+use crate::gui::common::{add_app_to_listbox, clear_listbox, show_dialog};
 use crate::gui::config::FINDEX_CONFIG;
 use crate::gui::css::load_css;
-use crate::gui::dbus::get_all;
 use crate::gui::query::init_query;
+use crate::gui::dbus::get_all;
 use crate::gui::search_result::init_search_result;
-use crate::SHOW_GUI;
+use crate::{IS_SHOWN, SHOW_GUI};
 
-mod dbus;
 mod config;
 mod css;
 mod query;
 mod common;
 mod search_result;
+mod dbus;
 
 pub struct FindexGUI {
     app: Application,
@@ -59,6 +59,8 @@ impl FindexGUI {
 
         if FINDEX_CONFIG.close_window_on_losing_focus {
             window.connect_focus_out_event(|win, _event| {
+                *SHOW_GUI.lock().unwrap() = false;
+                *IS_SHOWN.lock().unwrap() = false;
                 win.hide();
                 Inhibit(true)
             });
@@ -71,6 +73,7 @@ impl FindexGUI {
 
             if key_name == "Escape" {
                 *SHOW_GUI.lock().unwrap() = false;
+                *IS_SHOWN.lock().unwrap() = false;
                 win.hide();
                 return Inhibit(true);
             }
@@ -154,21 +157,31 @@ impl FindexGUI {
         container.add(&search_box);
         container.add(&scw);
 
-        for app in &apps {
-            add_app_to_listbox(&list_box, app);
-        }
-        if !apps.is_empty() {
-            let first_row = list_box.row_at_index(0).unwrap();
-            list_box.select_row(Some(&first_row));
-        }
-
         glib::idle_add({
             let window = fragile::Fragile::new(window.clone());
+            let search_box = fragile::Fragile::new(search_box.clone());
+            let list_box = fragile::Fragile::new(list_box.clone());
+            let apps = apps.clone();
             move || {
-                let show_gui = SHOW_GUI.lock().unwrap();
+                let mut show_gui = SHOW_GUI.lock().unwrap();
+                if *show_gui && !*IS_SHOWN.lock().unwrap() {
+                    window.get().present();
+                    search_box.get().set_text("");
+                    clear_listbox(list_box.get());
 
-                if *show_gui {
-                    window.get().show();
+                    for app in &apps {
+                        add_app_to_listbox(list_box.get(), app);
+                    }
+                    if !apps.is_empty() {
+                        let first_row = list_box.get().row_at_index(0).unwrap();
+                        list_box.get().select_row(Some(&first_row));
+                    }
+
+                    *IS_SHOWN.lock().unwrap() = true;
+                } else if !*show_gui && *IS_SHOWN.lock().unwrap() {
+                    window.get().hide();
+                    *show_gui = false;
+                    *IS_SHOWN.lock().unwrap() = false;
                 }
 
                 Continue(true)

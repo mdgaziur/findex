@@ -6,6 +6,7 @@ use lazy_static::lazy_static;
 
 lazy_static! {
     static ref SHOW_GUI: Mutex<bool> = Mutex::new(false);
+    static ref IS_SHOWN: Mutex<bool> = Mutex::new(false);
 }
 
 fn main() {
