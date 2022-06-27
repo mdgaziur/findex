@@ -12,29 +12,12 @@ license = "GPL3"
 
 [profile.release]
 debug = true
+lto = true
 
 [dependencies]
-gtk = { version = "0.15.1", features = ["v3_22"] }
-dbus = "0.9.5"
-dbus-crossroads = "0.5.0"
-daemonize = "0.4.1"
-lazy_static = "1.4.0"
-serde = { version = "1.0.132", features = ["derive"] }
-toml = "0.5.8"
-shellexpand = "2.1.0"
-native-dialog = "0.6.1"
-libloading = "0.7"
-fuse-rust = "0.3.0"
-inotify = "0.10.0"
-freedesktop_entry_parser = "1.2.0"
-regex = "1.5.4"
-dyn-clone = "1.0.4"
-nix = "0.23.1"
-shlex = "1.1.0"
-fragile = "1.1.0"
-fork = "0.1.18"
-
-[dependencies.rustbreak]
-git = "https://github.com/mdgaziur/rustbreak"
-version = "2"
-features = ["bin_enc"]
+gtk = { version = "0.15.1", features = ["v3_20"] }
+serde = { version = "1", features = ["derive"] }
+lazy_static = "1"
+toml = "0.5"
+libc = "0.2"
+keybinder = "0.1.0"

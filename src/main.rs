@@ -1,14 +1,18 @@
-mod daemon;
+use crate::gui::GUI;
+use std::sync::Mutex;
+
+mod config;
 mod gui;
 
-use std::sync::Mutex;
-use lazy_static::lazy_static;
-
-lazy_static! {
-    static ref SHOW_GUI: Mutex<bool> = Mutex::new(false);
-    static ref IS_SHOWN: Mutex<bool> = Mutex::new(false);
-}
+static SHOW_WINDOW: Mutex<bool> = Mutex::new(false);
 
 fn main() {
-    daemon::launch_daemon();
+    println!("[INFO] Starting Findex...");
+    gtk::init().expect("Failed to init GTK");
+
+    let mut gui = GUI::new();
+    gui.listen_for_hotkey();
+    println!("[INFO] listening for hotkey...");
+
+    gtk::main();
 }
