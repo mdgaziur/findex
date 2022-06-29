@@ -20,7 +20,7 @@ lto = true
 [dependencies]
 gtk = { version = "0.14.3", features=["v3_22"] }
 freedesktop_entry_parser = "1.2.0"
-regex = "1"
+regex = "1.5.6"
 shlex = "1.1.0"
 nix = "0.23"
 shellexpand = "2.1.0"
