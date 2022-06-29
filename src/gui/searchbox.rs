@@ -18,7 +18,7 @@ impl SearchBox {
             .sensitive(true)
             .build();
 
-        entry.style_context().add_class("findex-container");
+        entry.style_context().add_class("findex-query");
 
         Self { entry }
     }

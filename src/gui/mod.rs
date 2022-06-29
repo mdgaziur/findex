@@ -1,14 +1,18 @@
+mod css;
+pub mod dialog;
 mod result_list;
 mod searchbox;
 
 use crate::config::FINDEX_CONFIG;
-use keybinder::KeyBinder;
-use crate::gui::result_list::ResultList;
+use crate::gui::css::load_css;
+use crate::gui::result_list::{get_row, is_row_selected, ResultList};
 use crate::gui::searchbox::SearchBox;
-use crate::SHOW_WINDOW;
+use crate::{show_dialog, SHOW_WINDOW};
 use gtk::builders::BoxBuilder;
+use gtk::gdk::EventKey;
 use gtk::prelude::*;
-use gtk::{Orientation, Window, WindowPosition, WindowType};
+use gtk::{Entry, ListBox, MessageType, Orientation, Window, WindowPosition, WindowType};
+use keybinder::KeyBinder;
 
 pub struct GUI {
     pub window: Window,
@@ -33,13 +37,19 @@ impl GUI {
             .build();
         window.set_keep_above(true);
 
-        window.connect_key_press_event(|window, ev| {
-            if ev.keyval().name().unwrap() == "Escape" {
-                Self::hide_window(window);
-            }
+        match load_css() {
+            Ok(provider) => gtk::StyleContext::add_provider_for_screen(
+                &window.screen().unwrap(),
+                &provider,
+                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION
+            ),
+            Err(e) => show_dialog(
+                "Warning",
+                &format!("Failed to load css: {}", e),
+                MessageType::Warning,
+            ),
+        }
 
-            Inhibit(false)
-        });
         window.connect_focus_out_event(|window, _| {
             Self::hide_window(window);
 

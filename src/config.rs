@@ -80,7 +80,8 @@ fn load_settings() -> Result<FindexConfig, String> {
     } else {
         let settings = std::fs::read_to_string(&*settings_path).unwrap();
 
-        let config = toml::from_str(&settings).map_err(|e| e.to_string())?;
+        let config = toml::from_str(&settings)
+            .map_err(|e| format!("Error while parsing settings: {}", e))?;
 
         Ok(config)
     }
