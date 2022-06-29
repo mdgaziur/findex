@@ -62,9 +62,20 @@ impl GUI {
             .build();
         let search_box = SearchBox::new(&container);
         let result_list = ResultList::new(&container);
-
         container.show_all();
 
+        window.connect_key_press_event({
+            let entry = search_box.entry.clone();
+            let list_box = result_list.list_box.clone();
+
+            move |window, event| {
+                // TODO(mdgaziur): fix this hack
+                let entry = entry.clone();
+                let list_box = list_box.clone();
+
+                keypress_handler(window, entry, list_box, event)
+            }
+        });
         Self {
             window,
             search_box,
@@ -90,5 +101,38 @@ impl GUI {
     fn hide_window(window: &Window) {
         window.hide();
         *SHOW_WINDOW.lock().unwrap() = false;
+    }
+}
+
+fn keypress_handler(window: &Window, entry: Entry, list_box: ListBox, event: &EventKey) -> Inhibit {
+    let key_name = event.keyval().name().unwrap();
+
+    if key_name == "Escape" {
+        GUI::hide_window(window);
+        Inhibit(true)
+    } else if key_name == "Down" {
+        let first_row = get_row(
+            &list_box,
+            (list_box.selected_row().map(|r| r.index()).unwrap_or(-1) + 1) as usize,
+        );
+        if let Some(row) = first_row {
+            list_box.select_row(Some(&row));
+        }
+
+        Inhibit(true)
+    } else if key_name == "Up" {
+        let first_row = get_row(
+            &list_box,
+            (list_box.selected_row().map(|r| r.index()).unwrap_or(0) as usize)
+                .checked_sub(1)
+                .unwrap_or(0),
+        );
+        if let Some(row) = first_row {
+            list_box.select_row(Some(&row));
+        }
+
+        Inhibit(true)
+    } else {
+        Inhibit(false)
     }
 }
