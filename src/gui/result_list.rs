@@ -1,52 +1,64 @@
+use crate::gui::result_list_row::result_list_row;
+use gtk::gio::AppInfo;
+use gtk::glib::GString;
 use gtk::prelude::*;
-use gtk::{Container, Label, ListBox, ListBoxRow};
+use gtk::{ListBox, ScrolledWindow};
 
-pub struct ResultList {
-    pub list_box: ListBox,
-}
+pub fn result_list_new(parent: &ScrolledWindow) -> ListBox {
+    let list_box = ListBox::builder().parent(parent).can_focus(true).build();
 
-impl ResultList {
-    pub fn new(parent: &impl IsA<Container>) -> Self {
-        let list_box = ListBox::builder().parent(parent).can_focus(false).build();
+    list_box.style_context().add_class("findex-results");
+    list_box.connect_hierarchy_changed({
+        let parent = parent.clone();
 
-        list_box.style_context().add_class("findex-results");
-
-        for _ in 0..10 {
-            let _ = ListBoxRow::builder()
-                .parent(&list_box)
-                .child(&Label::new(Some("Text")))
-                .build();
-        }
-
-        Self { list_box }
-    }
-}
-
-pub fn is_row_selected(list_box: &ListBox, idx: usize) -> bool {
-    let children = list_box.children();
-
-    // TODO(mdgaziur): make it less weird
-    if let Some(child) = children.get(idx) {
-        if let Some(row) = child.downcast_ref::<ListBoxRow>() {
-            if row.is_selected() {
-                true
+        move |list_box, _| {
+            if list_box.children().len() == 0 {
+                parent.hide();
             } else {
-                false
+                parent.show();
             }
-        } else {
-            false
         }
-    } else {
-        false
+    });
+
+    list_box
+}
+
+pub fn result_list_clear(list_box: &ListBox) {
+    for child in list_box.children() {
+        list_box.remove(&child);
     }
 }
 
-pub fn get_row(list_box: &ListBox, idx: usize) -> Option<ListBoxRow> {
-    let children = list_box.children();
-
-    if let Some(child) = children.get(idx) {
-        child.downcast_ref::<ListBoxRow>().map(|r| r.clone())
+pub fn result_list_load_and_sort_apps(list_box: &ListBox) {
+    let mut apps = AppInfo::all();
+    apps.sort_by_key(|app| app.name());
+    if !apps.is_empty() {
+        list_box.parent().unwrap().parent().unwrap().show_all();
     } else {
-        None
+        list_box.parent().unwrap().parent().unwrap().hide();
     }
+
+    for app in apps {
+        let app_cmd = match app.commandline() {
+            Some(p) => p.display().to_string(),
+            None => String::from(""),
+        };
+        let icon = match app.icon() {
+            Some(icon) => IconExt::to_string(&icon).unwrap(),
+            None => GString::from("application-other"),
+        };
+
+        result_list_row(
+            list_box,
+            &icon,
+            &app.name(),
+            app.description(),
+            &app_cmd,
+            app.commandline().is_some(),
+            0,
+            1,
+        );
+    }
+
+    list_box.show_all();
 }

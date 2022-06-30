@@ -15,7 +15,7 @@ debug = true
 lto = true
 
 [dependencies]
-gtk = { version = "0.15.1", features = ["v3_20"] }
+gtk = { version = "0.15.1", features = ["v3_22"] }
 serde = { version = "1", features = ["derive"] }
 lazy_static = "1"
 toml = "0.5"
