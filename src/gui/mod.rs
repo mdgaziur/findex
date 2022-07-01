@@ -6,7 +6,8 @@ mod searchbox;
 
 use crate::config::FINDEX_CONFIG;
 use crate::gui::css::load_css;
-use crate::gui::result_list::{result_list_clear, result_list_load_and_sort_apps, result_list_new};
+use crate::gui::result_list::{result_list_clear, result_list_new};
+use crate::gui::result_list_row::handle_click_or_enter;
 use crate::gui::searchbox::searchbox_new;
 use crate::{show_dialog, SHOW_WINDOW};
 use gtk::builders::BoxBuilder;
@@ -66,11 +67,9 @@ impl GUI {
             .build();
         container.style_context().add_class("findex-container");
 
-        let search_box = searchbox_new(&container);
         let scrolled_container = ScrolledWindow::builder()
             .max_content_height(FINDEX_CONFIG.max_content_height)
             .propagate_natural_height(true)
-            .parent(&container)
             .build();
         container.style_context().add_class("findex-results-scroll");
 
@@ -79,6 +78,9 @@ impl GUI {
             scrolled_container.set_propagate_natural_height(false);
         }
         let result_list = result_list_new(&scrolled_container);
+        let search_box = searchbox_new(&container, result_list.clone());
+
+        container.add(&scrolled_container);
         container.show_all();
         scrolled_container.hide();
 
@@ -117,7 +119,6 @@ impl GUI {
                     .present_with_time(keybinder::get_current_event_time());
                 payload.search_box.set_text("");
                 result_list_clear(&payload.result_list);
-                result_list_load_and_sort_apps(&payload.result_list);
                 Self::position_window(&payload.window);
             },
             KeypressHandlerPayload {
@@ -193,6 +194,12 @@ fn keypress_handler(
         }
 
         Inhibit(false)
+    } else if key_name == "Return" {
+        if let Some(row) = list_box.selected_row() {
+            handle_click_or_enter(&row);
+        }
+
+        Inhibit(true)
     } else {
         if !entry.has_focus() {
             entry.grab_focus();
