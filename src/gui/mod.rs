@@ -108,7 +108,7 @@ impl GUI {
         self.keybinder.bind(
             &FINDEX_CONFIG.toggle_key,
             |_, payload| {
-                let mut show_window = SHOW_WINDOW.lock().unwrap();
+                let mut show_window = SHOW_WINDOW.lock();
 
                 *show_window = true;
                 payload.window.present();
@@ -143,7 +143,7 @@ impl GUI {
 
     fn hide_window(window: &Window) {
         window.hide();
-        *SHOW_WINDOW.lock().unwrap() = false;
+        *SHOW_WINDOW.lock() = false;
     }
 }
 
