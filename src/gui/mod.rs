@@ -11,7 +11,7 @@ use crate::gui::result_list_row::handle_click_or_enter;
 use crate::gui::searchbox::searchbox_new;
 use crate::{show_dialog, SHOW_WINDOW};
 use gtk::builders::BoxBuilder;
-use gtk::gdk::EventKey;
+use gtk::gdk::{EventKey, Screen};
 use gtk::prelude::*;
 use gtk::{
     gdk, Adjustment, Entry, ListBox, MessageType, Orientation, ScrolledWindow, Window, WindowType,
