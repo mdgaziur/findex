@@ -80,7 +80,7 @@ impl GUI {
             .max_content_height(FINDEX_CONFIG.max_content_height)
             .propagate_natural_height(true)
             .build();
-        container.style_context().add_class("findex-results-scroll");
+        scrolled_container.style_context().add_class("findex-results-scroll");
 
         if FINDEX_CONFIG.min_content_height > 0 {
             scrolled_container.set_min_content_height(FINDEX_CONFIG.min_content_height);
