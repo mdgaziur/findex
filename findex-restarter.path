@@ -3,4 +3,4 @@ PathModified=%h/.config/findex/style.css
 PathModified=%h/.config/findex/settings.toml
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical-session.target

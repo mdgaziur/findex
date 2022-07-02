@@ -1,13 +1,14 @@
-use crate::{FINDEX_CONFIG};
+use crate::FINDEX_CONFIG;
 use gtk::builders::BoxBuilder;
 use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
 
-use gtk::gio::{DesktopAppInfo};
+use gtk::gdk::AppLaunchContext;
+use gtk::gio::DesktopAppInfo;
 use gtk::pango::EllipsizeMode;
 use gtk::prelude::*;
-use gtk::{IconLookupFlags, IconTheme, Image, Justification, Label, ListBox, ListBoxRow, Orientation};
-use gtk::gdk::AppLaunchContext;
-
+use gtk::{
+    IconLookupFlags, IconTheme, Image, Justification, Label, ListBox, ListBoxRow, Orientation,
+};
 
 pub fn result_list_row(
     listbox: &ListBox,

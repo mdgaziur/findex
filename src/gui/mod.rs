@@ -12,6 +12,7 @@ use crate::gui::searchbox::searchbox_new;
 use crate::{show_dialog, SHOW_WINDOW};
 use gtk::builders::BoxBuilder;
 use gtk::gdk::{EventKey, Screen};
+
 use gtk::prelude::*;
 use gtk::{
     gdk, Adjustment, Entry, ListBox, MessageType, Orientation, ScrolledWindow, Window, WindowType,
@@ -22,7 +23,7 @@ pub struct GUI {
     pub window: Window,
     search_box: Entry,
     result_list: ListBox,
-    keybinder: KeyBinder<KeypressHandlerPayload>,
+    keybinder: Option<KeyBinder<KeypressHandlerPayload>>,
 }
 
 impl GUI {
@@ -80,7 +81,9 @@ impl GUI {
             .max_content_height(FINDEX_CONFIG.max_content_height)
             .propagate_natural_height(true)
             .build();
-        scrolled_container.style_context().add_class("findex-results-scroll");
+        scrolled_container
+            .style_context()
+            .add_class("findex-results-scroll");
 
         if FINDEX_CONFIG.min_content_height > 0 {
             scrolled_container.set_min_content_height(FINDEX_CONFIG.min_content_height);
@@ -107,35 +110,47 @@ impl GUI {
                 keypress_handler(window, entry, scrolled_container, list_box, event)
             }
         });
+
+        let keybinder_instance = match KeyBinder::new(true) {
+            Ok(instance) => Some(instance),
+            Err(_e) => {
+                eprintln!("Keybinder is not supported");
+                None
+            }
+        };
         Self {
             window,
             search_box,
             result_list,
-            keybinder: KeyBinder::new(true).expect("Keybinder is not supported"),
+            keybinder: keybinder_instance,
         }
     }
 
     pub fn listen_for_hotkey(&mut self) {
-        self.keybinder.bind(
-            &FINDEX_CONFIG.toggle_key,
-            |_, payload| {
-                let mut show_window = SHOW_WINDOW.lock();
+        if let Some(ref mut keybinder) = self.keybinder {
+            keybinder.bind(
+                &FINDEX_CONFIG.toggle_key,
+                |_, payload| {
+                    let mut show_window = SHOW_WINDOW.lock();
 
-                *show_window = true;
-                payload.window.present();
-                payload
-                    .window
-                    .present_with_time(keybinder::get_current_event_time());
-                payload.search_box.set_text("");
-                result_list_clear(&payload.result_list);
-                Self::position_window(&payload.window);
-            },
-            KeypressHandlerPayload {
-                window: self.window.clone(),
-                result_list: self.result_list.clone(),
-                search_box: self.search_box.clone(),
-            },
-        );
+                    *show_window = true;
+                    payload.window.present();
+                    payload
+                        .window
+                        .present_with_time(keybinder::get_current_event_time());
+                    payload.search_box.set_text("");
+                    result_list_clear(&payload.result_list);
+                    Self::position_window(&payload.window);
+                },
+                KeypressHandlerPayload {
+                    window: self.window.clone(),
+                    result_list: self.result_list.clone(),
+                    search_box: self.search_box.clone(),
+                },
+            );
+        } else {
+            todo!("DBus server");
+        }
     }
 
     fn position_window(window: &Window) {

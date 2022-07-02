@@ -1,4 +1,4 @@
-use gtk::gio::{AppInfo as GIOAppInfo};
+use gtk::gio::AppInfo as GIOAppInfo;
 
 use gtk::prelude::*;
 

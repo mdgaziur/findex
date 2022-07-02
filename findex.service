@@ -7,4 +7,4 @@ RestartSec=3
 Restart=on-failure
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical-session.target
