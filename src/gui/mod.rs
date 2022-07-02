@@ -40,6 +40,15 @@ impl GUI {
             .build();
         window.set_keep_above(true);
 
+        let screen = Screen::default().unwrap();
+        let visual = screen.rgba_visual();
+
+        if screen.is_composited() {
+            if let Some(visual) = visual {
+                window.set_visual(Some(&visual));
+            }
+        }
+
         match load_css() {
             Ok(provider) => gtk::StyleContext::add_provider_for_screen(
                 &window.screen().unwrap(),
