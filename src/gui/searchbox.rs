@@ -84,4 +84,6 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
     result_list.show_all();
     result_list.row_at_index(0).map(|row| row.grab_focus());
     result_list.select_row(result_list.row_at_index(0).as_ref());
+    entry.grab_focus();
+    entry.select_region(-1, -1);
 }
