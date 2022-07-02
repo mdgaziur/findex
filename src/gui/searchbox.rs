@@ -54,7 +54,7 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
             }
         }
     }
-    matches_.sort_by_key(|app| app.score);
+    matches_.sort_by(|l, r| r.score.cmp(&l.score));
 
     let count = if matches_.len() > 10 {
         10
