@@ -40,6 +40,7 @@ impl GUI {
             .can_focus(true)
             .build();
         window.set_keep_above(true);
+        window.style_context().add_class("findex-window");
 
         let screen = Screen::default().unwrap();
         let visual = screen.rgba_visual();
