@@ -1,0 +1,10 @@
+[Unit]
+Description=Findex
+
+[Service]
+ExecStart=/usr/bin/findex
+RestartSec=3
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
