@@ -81,15 +81,15 @@ pub fn result_list_row(
 
     // We know the type
     unsafe {
-        row.set_data("needs-terminal", app_id.to_string());
+        row.set_data("app-id", app_id.to_string());
     }
 
     row
 }
 
 pub fn handle_click_or_enter(row: &ListBoxRow) {
-    // It is stored as bool and we aren't doing anything that can invalidate it
-    let id = unsafe { row.data::<String>("needs-terminal").unwrap().as_mut() };
+    // It is stored as String and we aren't doing anything that can invalidate it
+    let id = unsafe { row.data::<String>("app-id").unwrap().as_mut() };
 
     DesktopAppInfo::new(id)
         .unwrap()
