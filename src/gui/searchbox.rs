@@ -37,7 +37,7 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
 
     for app in &mut *apps {
         if let Some(match_) = best_match(&text, &app.name) {
-            if match_.score() > 5 {
+            if match_.score() > FINDEX_CONFIG.min_score {
                 let formatted_name = format_simple(
                     &match_,
                     &app.name,
@@ -56,8 +56,8 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
     }
     matches_.sort_by(|l, r| r.score.cmp(&l.score));
 
-    let count = if matches_.len() > 10 {
-        10
+    let count = if matches_.len() > FINDEX_CONFIG.result_size {
+        FINDEX_CONFIG.result_size
     } else {
         matches_.len()
     };

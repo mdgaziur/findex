@@ -27,6 +27,8 @@ pub struct FindexConfig {
     pub query_placeholder: String,
     pub icon_size: i32,
     pub toggle_key: String,
+    pub min_score: isize,
+    pub result_size: usize,
     #[serde(skip)]
     pub error: String,
 }
@@ -46,6 +48,8 @@ impl Default for FindexConfig {
             query_placeholder: default_placeholder(),
             close_window_on_losing_focus: true,
             icon_size: 32,
+            min_score: 5,
+            result_size: 10,
             toggle_key: String::from("<Ctrl>space"),
             error: String::new(),
         }
