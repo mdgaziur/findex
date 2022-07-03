@@ -1,0 +1,6 @@
+[Unit]
+Description=Restarts Findex when configurations are changed
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user restart findex.service

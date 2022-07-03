@@ -1,18 +1,25 @@
-mod common;
-mod config;
-mod css;
-mod query;
-mod search_result;
-mod window;
+use crate::config::FINDEX_CONFIG;
+use crate::gui::dialog::show_dialog;
+use crate::gui::GUI;
+use gtk::MessageType;
+use parking_lot::Mutex;
 
-use crate::window::init_window;
-use gtk::prelude::*;
-use gtk::Application;
+mod app_list;
+mod config;
+mod gui;
+
+static SHOW_WINDOW: Mutex<bool> = Mutex::new(false);
 
 fn main() {
-    let app = Application::builder().application_id("org.findex").build();
+    println!("[INFO] Starting Findex...");
+    gtk::init().expect("Failed to init GTK");
+    if !FINDEX_CONFIG.error.is_empty() {
+        show_dialog("Warning", &FINDEX_CONFIG.error, MessageType::Warning);
+    }
 
-    app.connect_activate(init_window);
+    let mut gui = GUI::new();
+    gui.listen_for_hotkey();
+    println!("[INFO] listening for hotkey...");
 
-    app.run();
+    gtk::main();
 }

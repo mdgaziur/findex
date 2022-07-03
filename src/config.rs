@@ -1,19 +1,34 @@
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
+lazy_static! {
+    pub static ref FINDEX_CONFIG: FindexConfig = {
+        let settings = load_settings();
+        if let Err(e) = settings {
+            FindexConfig {
+                error: e,
+                ..Default::default()
+            }
+        } else {
+            settings.unwrap()
+        }
+    };
+}
+
 #[derive(Serialize, Deserialize)]
 #[serde(default)]
 pub struct FindexConfig {
     pub default_window_width: i32,
     pub min_content_height: i32,
     pub max_content_height: i32,
-    pub max_name_fuzz_result_score: f64,
-    pub max_command_fuzz_result_score: f64,
-    pub max_fuzz_distance: i32,
+    pub name_match_highlight_color: String,
     pub decorate_window: bool,
     pub close_window_on_losing_focus: bool,
     pub query_placeholder: String,
     pub icon_size: i32,
+    pub toggle_key: String,
+    pub min_score: isize,
+    pub result_size: usize,
     #[serde(skip)]
     pub error: String,
 }
@@ -28,13 +43,14 @@ impl Default for FindexConfig {
             min_content_height: 400,
             max_content_height: 400,
             default_window_width: 600,
-            max_fuzz_distance: 80,
-            max_name_fuzz_result_score: 0.4,
-            max_command_fuzz_result_score: 0.4,
+            name_match_highlight_color: String::from("orange"),
             decorate_window: false,
             query_placeholder: default_placeholder(),
             close_window_on_losing_focus: true,
             icon_size: 32,
+            min_score: 5,
+            result_size: 10,
+            toggle_key: String::from("<Ctrl>space"),
             error: String::new(),
         }
     }
@@ -64,22 +80,9 @@ fn load_settings() -> Result<FindexConfig, String> {
     } else {
         let settings = std::fs::read_to_string(&*settings_path).unwrap();
 
-        let config = toml::from_str(&settings).map_err(|e| e.to_string())?;
+        let config = toml::from_str(&settings)
+            .map_err(|e| format!("Error while parsing settings: {}", e))?;
 
         Ok(config)
     }
-}
-
-lazy_static! {
-    pub static ref FINDEX_CONFIG: FindexConfig = {
-        let settings = load_settings();
-        if let Err(e) = settings {
-            FindexConfig {
-                error: e,
-                ..Default::default()
-            }
-        } else {
-            settings.unwrap()
-        }
-    };
 }
