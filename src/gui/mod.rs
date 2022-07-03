@@ -7,15 +7,16 @@ mod searchbox;
 use crate::config::FINDEX_CONFIG;
 use crate::gui::css::load_css;
 use crate::gui::result_list::{result_list_clear, result_list_new};
-use crate::gui::result_list_row::handle_click_or_enter;
+use crate::gui::result_list_row::handle_enter;
 use crate::gui::searchbox::searchbox_new;
 use crate::{show_dialog, SHOW_WINDOW};
 use gtk::builders::BoxBuilder;
-use gtk::gdk::{EventKey, Screen};
+use gtk::gdk::{EventKey, EventMask, Screen};
 
 use gtk::prelude::*;
 use gtk::{
-    gdk, Adjustment, Entry, ListBox, MessageType, Orientation, ScrolledWindow, Window, WindowType,
+    gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window,
+    WindowType,
 };
 use keybinder::KeyBinder;
 
@@ -37,6 +38,7 @@ impl GUI {
             .skip_pager_hint(true)
             .deletable(false)
             .type_(WindowType::Toplevel)
+            .events(EventMask::BUTTON_PRESS_MASK)
             .can_focus(true)
             .build();
         window.set_keep_above(true);
@@ -199,11 +201,18 @@ fn keypress_handler(
             Inhibit(true)
         } else if list_box.selected_row().unwrap().index()
             == list_box.children().len().checked_sub(1).unwrap_or(0) as i32
+            && list_box.selected_row().unwrap().index() != 0
         {
             list_box.unselect_row(&list_box.selected_row().unwrap());
+            list_box.select_row(list_box.row_at_index(0).as_ref());
             scrolled_container.set_vadjustment(Some(&Adjustment::builder().value(0f64).build()));
             entry.grab_focus();
             entry.select_region(-1, -1);
+
+            Inhibit(true)
+        } else if list_box.selected_row().unwrap().index() == 0 && list_box.children().len() > 1 {
+            list_box.select_row(list_box.row_at_index(1).as_ref());
+            list_box.row_at_index(1).map(|row| row.grab_focus());
 
             Inhibit(true)
         } else {
@@ -212,16 +221,24 @@ fn keypress_handler(
     } else if key_name == "Up" {
         if let Some(row) = list_box.row_at_index(0) {
             if row.is_selected() {
-                list_box.unselect_row(&row);
-                entry.grab_focus();
-                entry.select_region(-1, -1);
+                let last_row_widget = list_box.children().last().unwrap().clone();
+                let last_row = last_row_widget.downcast_ref::<ListBoxRow>().unwrap();
+                list_box.select_row(Some(last_row));
+                last_row.grab_focus();
+
+                let adjustment = Adjustment::from(scrolled_container.vadjustment());
+                adjustment.set_value(scrolled_container.vadjustment().upper());
+                scrolled_container.set_vadjustment(Some(&adjustment));
+
+                // "Up" button will select the row before last row if not inhibited
+                return Inhibit(true);
             }
         }
 
         Inhibit(false)
     } else if key_name == "Return" {
         if let Some(row) = list_box.selected_row() {
-            handle_click_or_enter(&row);
+            handle_enter(&row);
         }
 
         Inhibit(true)

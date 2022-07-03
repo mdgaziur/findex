@@ -78,7 +78,6 @@ pub fn result_list_row(
 
     let row = ListBoxRow::builder().parent(listbox).child(&box1).build();
     row.style_context().add_class("findex-result-row");
-    row.connect_activate(handle_click_or_enter);
 
     // We know the type
     unsafe {
@@ -88,7 +87,11 @@ pub fn result_list_row(
     row
 }
 
-pub fn handle_click_or_enter(row: &ListBoxRow) {
+pub fn handle_enter(row: &ListBoxRow) {
+    handle_interaction(row);
+}
+
+pub fn handle_interaction(row: &ListBoxRow) {
     // It is stored as String and we aren't doing anything that can invalidate it
     let id = unsafe { row.data::<String>("app-id").unwrap().as_mut() };
 
