@@ -18,15 +18,16 @@ To customize Findex, edit the style.css file in `~/.config/findex`. If there is 
 
 Behaviour can be changed by modifying `~/.config/findex/settings.toml`. If there is no such file, run Findex to generate it.
 
-| Name                          | Description                                              | Type    |
-|-------------------------------|----------------------------------------------------------|---------|
-| default_window_width          | Set default width of the window                          | Integer |
-| min_content_height            | Minimum content height of result                         | Integer |
-| max_content_height            | Maximum content height of result                         | Integer |
-| max_name_fuzz_result_score    | Maximum score for fuzzing result of application names    | Float   |
-| max_command_fuzz_result_score | Maximum score for fuzzing result of application commands | Float   |
-| max_fuzz_distance             | Maximum fuzzing distance                                 | Integer |
-| decorate_window               | Show toolbar of window                                   | Boolean |
-| query_placeholder             | Placeholder text to show in query input box              | String  |
-| close_window_on_losing_focus  | Close window when it loses focus                         | Boolean |
-| icon_size                     | Icon width and height will be set from this value        | Integer |
+| Name                         | Description                                       | Type    |
+|------------------------------|---------------------------------------------------|---------|
+| default_window_width         | Set default width of the window                   | Integer |
+| min_content_height           | Minimum content height of result                  | Integer |
+| max_content_height           | Maximum content height of result                  | Integer |
+| name_match_highlight_color   | Color of matches highlighted in app name          | String  |
+| min_score                    | Minimum Score of app name match                   | Integer |
+| result_size                  | Maximum amount of apps to show as result          | Integer |
+| toggle_key                   | Key to toggle Findex(eg. `<Alt>space`)            | String  |
+| decorate_window              | Show toolbar of window                            | Boolean |
+| query_placeholder            | Placeholder text to show in query input box       | String  |
+| close_window_on_losing_focus | Close window when it loses focus                  | Boolean |
+| icon_size                    | Icon width and height will be set from this value | Integer |
