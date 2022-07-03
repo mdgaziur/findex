@@ -399,9 +399,9 @@ checksum = "2540771e65fc8cb83cd6e8a237f70c319bd5c29f78ed1084ba5d50eeac86f7f9"
 
 [[package]]
 name = "keybinder"
-version = "0.2.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6ce556b821aff8136d4f76651911b8cc49c8a89f5d4d7358d06182f414edd67"
+checksum = "787040321da6401e04b66795db9fa54015385628c6cc7708dafdec766c8268c2"
 dependencies = [
  "libc",
 ]

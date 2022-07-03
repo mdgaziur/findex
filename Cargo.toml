@@ -20,7 +20,7 @@ serde = { version = "1", features = ["derive"] }
 lazy_static = "1"
 toml = "0.5"
 libc = "0.2"
-keybinder = "0.2.0"
+keybinder = "0.4.0"
 shellexpand = "2.1.0"
 parking_lot = "0.12.1"
 sublime_fuzzy = "0.7.0"
