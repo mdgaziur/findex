@@ -9,7 +9,7 @@ use crate::gui::css::load_css;
 use crate::gui::result_list::{result_list_clear, result_list_new};
 use crate::gui::result_list_row::handle_enter;
 use crate::gui::searchbox::searchbox_new;
-use crate::{show_dialog, SHOW_WINDOW};
+use crate::show_dialog;
 use gtk::builders::BoxBuilder;
 use gtk::gdk::{EventKey, EventMask, Screen};
 
@@ -134,9 +134,6 @@ impl GUI {
             keybinder.bind(
                 &FINDEX_CONFIG.toggle_key,
                 |_, payload| {
-                    let mut show_window = SHOW_WINDOW.lock();
-
-                    *show_window = true;
                     payload.window.present();
                     payload
                         .window
@@ -171,7 +168,6 @@ impl GUI {
 
     fn hide_window(window: &Window) {
         window.hide();
-        *SHOW_WINDOW.lock() = false;
     }
 }
 

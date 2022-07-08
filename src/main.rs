@@ -8,8 +8,6 @@ mod app_list;
 mod config;
 mod gui;
 
-static SHOW_WINDOW: Mutex<bool> = Mutex::new(false);
-
 fn main() {
     println!("[INFO] Starting Findex...");
     gtk::init().expect("Failed to init GTK");
