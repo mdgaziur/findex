@@ -131,7 +131,7 @@ impl GUI {
 
     pub fn listen_for_hotkey(&mut self) {
         if let Some(ref mut keybinder) = self.keybinder {
-            keybinder.bind(
+            assert!(keybinder.bind(
                 &FINDEX_CONFIG.toggle_key,
                 |_, payload| {
                     payload.window.present();
@@ -147,9 +147,7 @@ impl GUI {
                     result_list: self.result_list.clone(),
                     search_box: self.search_box.clone(),
                 },
-            );
-        } else {
-            todo!("DBus server");
+            ), "Failed to bind key");
         }
     }
 
