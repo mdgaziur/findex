@@ -1,2 +1,0 @@
-#! /bin/bash
-dbus-send --print-reply --dest=org.findex.daemon "/show_gui" "org.findex.daemon.gui.show_gui"
