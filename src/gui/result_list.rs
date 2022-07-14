@@ -1,6 +1,6 @@
+use crate::gui::result_list_row::handle_interaction;
 use gtk::prelude::*;
 use gtk::{ListBox, ListBoxRow, ScrolledWindow};
-use crate::gui::result_list_row::handle_interaction;
 
 pub fn result_list_new(parent: &ScrolledWindow) -> ListBox {
     let list_box = ListBox::builder().parent(parent).can_focus(true).build();
