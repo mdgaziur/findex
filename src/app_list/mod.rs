@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use gtk::gio::AppInfo as GIOAppInfo;
 use parking_lot::Mutex;
 
@@ -41,8 +42,11 @@ pub fn update_apps_list() {
     let list = GIOAppInfo::all()
         .into_iter()
         .filter(|appinfo| appinfo.commandline().is_some())
-        .map(|appinfo| AppInfo::from(&appinfo))
-        .collect::<Vec<AppInfo>>();
+        .map(|appinfo| (appinfo.name().to_string(), AppInfo::from(&appinfo)))
+        .collect::<HashMap<String, AppInfo>>()
+        .iter()
+        .map(|value| value.1.clone())
+        .collect();
 
     *APPS_LIST.lock() = list;
 }
