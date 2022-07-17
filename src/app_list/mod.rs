@@ -39,6 +39,9 @@ impl From<&GIOAppInfo> for AppInfo {
 }
 
 pub fn update_apps_list() {
+    let parameter_regex = regex::Regex::new("%.")
+        .unwrap();
+
     let list = GIOAppInfo::all()
         .into_iter()
         .filter(|appinfo| appinfo.commandline().is_some())
@@ -46,6 +49,11 @@ pub fn update_apps_list() {
         .collect::<HashMap<String, AppInfo>>()
         .iter()
         .map(|value| value.1.clone())
+        .map(|mut appinfo| {
+            appinfo.cmd = parameter_regex.replace(&appinfo.cmd, "").to_string();
+
+            appinfo
+        })
         .collect();
 
     *APPS_LIST.lock() = list;
