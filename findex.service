@@ -1,0 +1,11 @@
+[Unit]
+Description=Findex
+
+[Service]
+ExecStart=/usr/bin/findex
+KillMode=process
+RestartSec=3
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

@@ -21,7 +21,7 @@ pub fn load_css() -> Result<CssProvider, gtk::glib::Error> {
     let mut file = std::path::Path::new(css_path_0.as_ref());
     if !file.exists() {
         eprintln!(
-            "Stylesheet wasn't found in user's home directory. Falling backing to default one."
+            "[WARN] Stylesheet wasn't found in user's home directory. Falling backing to default one."
         );
 
         file = std::path::Path::new(css_path_1);
@@ -34,7 +34,7 @@ pub fn load_css() -> Result<CssProvider, gtk::glib::Error> {
 
             std::fs::copy(css_path_1, css_path_0.as_ref()).unwrap();
         } else {
-            eprintln!("Error: Couldn't find any stylesheet");
+            eprintln!("[WARN] Couldn't find any stylesheet");
             return Ok(css);
         }
     }

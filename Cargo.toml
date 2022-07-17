@@ -1,6 +1,6 @@
 [package]
 name = "findex"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 authors = ["MD Gaziur Rahman Noor <mdgaziurrahmannoor@gmail.com>"]
 description = "Highly customizable application finder with high performance. Written in Rust and uses GTK"
@@ -10,21 +10,20 @@ license = "GPL3"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[profile.dev]
-incremental = true
-
 [profile.release]
-incremental = true
+debug = true
 lto = true
 
 [dependencies]
-gtk = { version = "0.14.3", features=["v3_22"] }
-freedesktop_entry_parser = "1.2.0"
-regex = "1.5.6"
-shlex = "1.1.0"
-nix = "0.23"
-shellexpand = "2.1.0"
-fuse-rust = "0.3.0"
-toml = "0.5.8"
-lazy_static = "1.4.0"
+gtk = { version = "0.15.1", features = ["v3_22"] }
 serde = { version = "1", features = ["derive"] }
+lazy_static = "1"
+toml = "0.5"
+libc = "0.2"
+keybinder = "0.4.0"
+shellexpand = "2.1.0"
+sublime_fuzzy = "0.7.0"
+xdg = "2.4.1"
+inotify = "0.10.0"
+parking_lot = "0.12.1"
+regex = "1.6.0"
