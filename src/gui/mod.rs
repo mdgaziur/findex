@@ -24,7 +24,7 @@ pub struct GUI {
     pub window: Window,
     search_box: Entry,
     result_list: ListBox,
-    keybinder: Option<KeyBinder<KeypressHandlerPayload>>,
+    keybinder: KeyBinder<KeypressHandlerPayload>,
 }
 
 impl GUI {
@@ -114,44 +114,42 @@ impl GUI {
             }
         });
 
-        let keybinder_instance = match KeyBinder::new(true) {
-            Ok(instance) => Some(instance),
+        let keybinder = match KeyBinder::new(true) {
+            Ok(instance) => instance,
             Err(_e) => {
-                eprintln!("Keybinder is not supported");
-                None
+                eprintln!("[ERROR] Keybinder is not supported");
+                std::process::exit(1);
             }
         };
         Self {
             window,
             search_box,
             result_list,
-            keybinder: keybinder_instance,
+            keybinder,
         }
     }
 
     pub fn listen_for_hotkey(&mut self) {
-        if let Some(ref mut keybinder) = self.keybinder {
-            assert!(
-                keybinder.bind(
-                    &FINDEX_CONFIG.toggle_key,
-                    |_, payload| {
-                        payload.window.present();
-                        payload
-                            .window
-                            .present_with_time(keybinder::get_current_event_time());
-                        payload.search_box.set_text("");
-                        result_list_clear(&payload.result_list);
-                        Self::position_window(&payload.window);
-                    },
-                    KeypressHandlerPayload {
-                        window: self.window.clone(),
-                        result_list: self.result_list.clone(),
-                        search_box: self.search_box.clone(),
-                    },
-                ),
-                "Failed to bind key"
-            );
-        }
+        assert!(
+            self.keybinder.bind(
+                &FINDEX_CONFIG.toggle_key,
+                |_, payload| {
+                    payload.window.present();
+                    payload
+                        .window
+                        .present_with_time(keybinder::get_current_event_time());
+                    payload.search_box.set_text("");
+                    result_list_clear(&payload.result_list);
+                    Self::position_window(&payload.window);
+                },
+                KeypressHandlerPayload {
+                    window: self.window.clone(),
+                    result_list: self.result_list.clone(),
+                    search_box: self.search_box.clone(),
+                },
+            ),
+            "Failed to bind key"
+        );
     }
 
     fn position_window(window: &Window) {
