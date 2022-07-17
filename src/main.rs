@@ -25,20 +25,40 @@ fn main() {
     update_apps_list();
 
     let mut inotify = Inotify::init().expect("Failed to init inotify");
-    if let Err(e) = inotify.add_watch(
-        "/usr/share/applications",
-        WatchMask::CREATE | WatchMask::DELETE | WatchMask::MODIFY,
-    ) {
-        eprintln!("[WARN] Failed to watch `/usr/share/applications`: {}", e);
+    let watch_mask = WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
+    let base_directories = xdg::BaseDirectories::new()
+        .expect("Failed to get base directories");
+
+    for dir in base_directories.get_data_dirs() {
+        let watch_dir = dir.join("applications");
+
+        if !watch_dir.exists() {
+            continue;
+        }
+        if let Err(e) = inotify.add_watch(
+            &watch_dir,
+            watch_mask,
+        ) {
+            eprintln!(
+                "[WARN] Failed to watch `{}`: {}",
+                watch_dir.display(),
+                e
+            );
+        }
     }
-    if let Err(e) = inotify.add_watch(
-        shellexpand::tilde("~/.local/share/applications").as_ref(),
-        WatchMask::all(),
-    ) {
-        eprintln!(
-            "[WARN] Failed to watch `~/.local/share/applications`: {}",
-            e
-        );
+
+    let xdg_data_home = base_directories.get_data_home().join("applications");
+    if xdg_data_home.exists() {
+        if let Err(e) = inotify.add_watch(
+            &xdg_data_home,
+            watch_mask,
+        ) {
+            eprintln!(
+                "[WARN] Failed to watch `{}`: {}",
+                xdg_data_home.display(),
+                e
+            );
+        }
     }
 
     std::thread::spawn(move || {
