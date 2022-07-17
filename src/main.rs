@@ -12,7 +12,7 @@ mod gui;
 
 fn main() {
     if std::env::var("XDG_SESSION_TYPE") != Ok(String::from("x11")) {
-        eprintln!("[Error] Only X11 is supported");
+        eprintln!("[ERROR] Only X11 is supported");
         std::process::exit(1);
     }
 
@@ -69,7 +69,7 @@ fn main() {
                 // if we're here this means something changed inside any of the directories
                 for event in events {
                     println!(
-                        "[Info] File `{}` was changed",
+                        "[INFO] File `{}` was changed",
                         event
                             .name
                             .unwrap_or(OsStr::new("unavailable"))
