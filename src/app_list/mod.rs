@@ -1,7 +1,14 @@
 use gtk::gio::AppInfo as GIOAppInfo;
+use parking_lot::Mutex;
 
 use gtk::prelude::*;
+use lazy_static::lazy_static;
 
+lazy_static! {
+    pub static ref APPS_LIST: Mutex<Vec<AppInfo>> = Mutex::new(Vec::new());
+}
+
+#[derive(Clone)]
 pub struct AppInfo {
     pub name: String,
     pub desc: Option<String>,
@@ -28,4 +35,14 @@ impl From<&GIOAppInfo> for AppInfo {
             id: app_info.id().unwrap().to_string(),
         }
     }
+}
+
+pub fn update_apps_list() {
+    let list = GIOAppInfo::all()
+        .into_iter()
+        .filter(|appinfo| appinfo.commandline().is_some())
+        .map(|appinfo| AppInfo::from(&appinfo))
+        .collect::<Vec<AppInfo>>();
+
+    *APPS_LIST.lock() = list;
 }

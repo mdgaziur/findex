@@ -1,9 +1,8 @@
 use crate::config::FINDEX_CONFIG;
 use crate::gui::result_list_row::result_list_row;
 
-use crate::app_list::AppInfo;
+use crate::app_list::{AppInfo, APPS_LIST};
 use crate::gui::result_list::result_list_clear;
-use gtk::gio::AppInfo as GIOAppInfo;
 use gtk::prelude::*;
 use gtk::{Container, Entry, ListBox};
 use sublime_fuzzy::{best_match, format_simple};
@@ -27,16 +26,13 @@ pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entr
 
 fn on_text_changed(entry: &Entry, result_list: &ListBox) {
     let text = entry.text();
-    let mut apps = GIOAppInfo::all()
-        .iter()
-        .filter(|app| app.commandline().is_some())
-        .map(|app| AppInfo::from(app))
-        .collect::<Vec<AppInfo>>();
-    let mut matches_: Vec<&AppInfo> = Vec::new();
+    let apps = APPS_LIST.lock();
+    let mut matches_: Vec<AppInfo> = Vec::new();
     result_list_clear(result_list);
 
-    for app in &mut *apps {
+    for app in &*apps {
         if let Some(match_) = best_match(&text, &app.name) {
+            let mut app = app.clone();
             if match_.score() > FINDEX_CONFIG.min_score {
                 let formatted_name = format_simple(
                     &match_,

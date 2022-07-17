@@ -50,7 +50,7 @@ impl Default for FindexConfig {
             icon_size: 32,
             min_score: 5,
             result_size: 10,
-            toggle_key: String::from("<Ctrl>space"),
+            toggle_key: String::from("<Shift>space"),
             error: String::new(),
         }
     }
