@@ -131,23 +131,26 @@ impl GUI {
 
     pub fn listen_for_hotkey(&mut self) {
         if let Some(ref mut keybinder) = self.keybinder {
-            assert!(keybinder.bind(
-                &FINDEX_CONFIG.toggle_key,
-                |_, payload| {
-                    payload.window.present();
-                    payload
-                        .window
-                        .present_with_time(keybinder::get_current_event_time());
-                    payload.search_box.set_text("");
-                    result_list_clear(&payload.result_list);
-                    Self::position_window(&payload.window);
-                },
-                KeypressHandlerPayload {
-                    window: self.window.clone(),
-                    result_list: self.result_list.clone(),
-                    search_box: self.search_box.clone(),
-                },
-            ), "Failed to bind key");
+            assert!(
+                keybinder.bind(
+                    &FINDEX_CONFIG.toggle_key,
+                    |_, payload| {
+                        payload.window.present();
+                        payload
+                            .window
+                            .present_with_time(keybinder::get_current_event_time());
+                        payload.search_box.set_text("");
+                        result_list_clear(&payload.result_list);
+                        Self::position_window(&payload.window);
+                    },
+                    KeypressHandlerPayload {
+                        window: self.window.clone(),
+                        result_list: self.result_list.clone(),
+                        search_box: self.search_box.clone(),
+                    },
+                ),
+                "Failed to bind key"
+            );
         }
     }
 

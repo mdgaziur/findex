@@ -2,7 +2,6 @@ use crate::app_list::update_apps_list;
 use crate::config::FINDEX_CONFIG;
 use crate::gui::dialog::show_dialog;
 use crate::gui::GUI;
-use gtk::gio::{Cancellable, File, FileMonitorFlags};
 use gtk::MessageType;
 use inotify::{Inotify, WatchMask};
 use std::ffi::OsStr;
