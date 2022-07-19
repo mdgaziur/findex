@@ -26,7 +26,13 @@ do_installation() {
 	if cargo build --release; then
     echo "Build complete"
   else
-    echo "Building failed. Exiting"
+    while true; do
+      read -r -p "Cargo was not found! Want to install it? [Y/N] " yn
+      case $yn in
+        [Yy]* ) curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh; break;;
+        [Nn]* ) echo "Building failed. Exiting"; break;;
+      esac
+    done;
     exit 1
   fi
 
