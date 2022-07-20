@@ -29,7 +29,7 @@ do_installation() {
     while true; do
       read -r -p "Cargo was not found! Want to install it? [Y/N] " yn
       case $yn in
-        [Yy]* ) curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh; cargo build --release; break;;
+        [Yy]* ) curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh; echo "Restart your shell and run this installer again..."; break;;
         [Nn]* ) echo "Building failed. Exiting"; break;;
       esac
     done;
