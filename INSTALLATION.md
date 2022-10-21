@@ -5,6 +5,7 @@
 
 ## Requirements
 - Gtk3
+- libkeybinder3
 - Rust v1.56.1(building from source)
 
 ## Automated installation from source
