@@ -7,25 +7,34 @@ assignees: ''
 
 ---
 
-**Describe the bug**
+## Description
 A clear and concise description of what the bug is.
 
-**Do you already have Findex Installed(If yes, how did you install?)**
-Applicable if there's issues with installation
+## Do you already have Findex Installed? (If yes, how did you install?)
+Details about your installation process.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-- steps
+## To Reproduce
+Put steps to reproduce the behaviour here
 
-**Expected behavior**
+## Expected behavior
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+## Screenshots
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+## System information
  - Distro: 
- - Version: 
+ - Findex Version: 
 
-**Additional context**
+## Output of `rustc --version --verbose` (if you compiled findex on your machine):
+```
+<output>
+```
+
+## Log/Output (if applicable)
+```
+Put Findex log or installer output here
+```
+
+## Additional context
 Add any other context about the problem here.
