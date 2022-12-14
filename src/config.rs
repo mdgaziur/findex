@@ -40,7 +40,7 @@ fn default_placeholder() -> String {
 impl Default for FindexConfig {
     fn default() -> Self {
         FindexConfig {
-            min_content_height: 400,
+            min_content_height: 0,
             max_content_height: 400,
             default_window_width: 600,
             name_match_highlight_color: String::from("orange"),
