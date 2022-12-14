@@ -189,44 +189,67 @@ fn keypress_handler(
         GUI::hide_window(window);
         Inhibit(true)
     } else if key_name == "Down" {
-        if list_box.selected_row().is_none() {
+        if let Some(selected_row) = list_box.selected_row() {
+            let row_index = selected_row.index() as usize;
+
+            if row_index == list_box.children().len() - 1 {
+                list_box.select_row(list_box.row_at_index(0).as_ref());
+                scrolled_container
+                    .set_vadjustment(Some(&Adjustment::builder().value(0f64).build()));
+                entry.grab_focus();
+                entry.select_region(-1, -1);
+
+                Inhibit(true)
+            } else if row_index == 0 && list_box.children().len() > 1 {
+                list_box.select_row(list_box.row_at_index(1).as_ref());
+                list_box.row_at_index(1).map(|row| row.grab_focus());
+
+                Inhibit(true)
+            } else if row_index == 0 && list_box.children().len() == 1 {
+                entry.grab_focus();
+                entry.select_region(-1, -1);
+
+                Inhibit(true)
+            } else {
+                Inhibit(false)
+            }
+        } else {
             list_box.select_row(list_box.row_at_index(0).as_ref());
             list_box.row_at_index(0).map(|row| row.grab_focus());
 
             Inhibit(true)
-        } else if list_box.selected_row().unwrap().index()
-            == list_box.children().len().checked_sub(1).unwrap_or(0) as i32
-            && list_box.selected_row().unwrap().index() != 0
-        {
-            list_box.unselect_row(&list_box.selected_row().unwrap());
-            list_box.select_row(list_box.row_at_index(0).as_ref());
-            scrolled_container.set_vadjustment(Some(&Adjustment::builder().value(0f64).build()));
-            entry.grab_focus();
-            entry.select_region(-1, -1);
-
-            Inhibit(true)
-        } else if list_box.selected_row().unwrap().index() == 0 && list_box.children().len() > 1 {
-            list_box.select_row(list_box.row_at_index(1).as_ref());
-            list_box.row_at_index(1).map(|row| row.grab_focus());
-
-            Inhibit(true)
-        } else {
-            Inhibit(false)
         }
     } else if key_name == "Up" {
         if let Some(row) = list_box.row_at_index(0) {
             if row.is_selected() {
-                let last_row_widget = list_box.children().last().unwrap().clone();
-                let last_row = last_row_widget.downcast_ref::<ListBoxRow>().unwrap();
-                list_box.select_row(Some(last_row));
-                last_row.grab_focus();
+                return if list_box.children().len() == 1 {
+                    entry.grab_focus();
+                    entry.select_region(-1, -1);
 
-                let adjustment = Adjustment::from(scrolled_container.vadjustment());
-                adjustment.set_value(scrolled_container.vadjustment().upper());
-                scrolled_container.set_vadjustment(Some(&adjustment));
+                    Inhibit(true)
+                } else {
+                    let last_row_widget = list_box.children().last().unwrap().clone();
+                    let last_row = last_row_widget.downcast_ref::<ListBoxRow>().unwrap();
+                    list_box.select_row(Some(last_row));
+                    last_row.grab_focus();
 
-                // "Up" button will select the row before last row if not inhibited
-                return Inhibit(true);
+                    let adjustment = Adjustment::from(scrolled_container.vadjustment());
+                    adjustment.set_value(scrolled_container.vadjustment().upper());
+                    scrolled_container.set_vadjustment(Some(&adjustment));
+
+                    // "Up" button will select the row before last row if not inhibited
+                    Inhibit(true)
+                };
+            } else if let Some(row) = list_box.selected_row() {
+                if row.index() == 1 {
+                    list_box.unselect_row(&row);
+                    list_box.select_row(list_box.row_at_index(0).as_ref());
+                    scrolled_container
+                        .set_vadjustment(Some(&Adjustment::builder().value(0f64).build()));
+
+                    entry.grab_focus();
+                    entry.select_region(-1, -1);
+                }
             }
         }
 
