@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use gtk::gio::AppInfo as GIOAppInfo;
 use parking_lot::Mutex;
+use std::collections::HashMap;
 
 use gtk::prelude::*;
 use lazy_static::lazy_static;
@@ -39,8 +39,7 @@ impl From<&GIOAppInfo> for AppInfo {
 }
 
 pub fn update_apps_list() {
-    let parameter_regex = regex::Regex::new("%.")
-        .unwrap();
+    let parameter_regex = regex::Regex::new("%.").unwrap();
 
     let list = GIOAppInfo::all()
         .into_iter()

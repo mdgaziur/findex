@@ -26,8 +26,7 @@ fn main() {
 
     let mut inotify = Inotify::init().expect("Failed to init inotify");
     let watch_mask = WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
-    let base_directories = xdg::BaseDirectories::new()
-        .expect("Failed to get base directories");
+    let base_directories = xdg::BaseDirectories::new().expect("Failed to get base directories");
 
     for dir in base_directories.get_data_dirs() {
         let watch_dir = dir.join("applications");
@@ -35,24 +34,14 @@ fn main() {
         if !watch_dir.exists() {
             continue;
         }
-        if let Err(e) = inotify.add_watch(
-            &watch_dir,
-            watch_mask,
-        ) {
-            eprintln!(
-                "[WARN] Failed to watch `{}`: {}",
-                watch_dir.display(),
-                e
-            );
+        if let Err(e) = inotify.add_watch(&watch_dir, watch_mask) {
+            eprintln!("[WARN] Failed to watch `{}`: {}", watch_dir.display(), e);
         }
     }
 
     let xdg_data_home = base_directories.get_data_home().join("applications");
     if xdg_data_home.exists() {
-        if let Err(e) = inotify.add_watch(
-            &xdg_data_home,
-            watch_mask,
-        ) {
+        if let Err(e) = inotify.add_watch(&xdg_data_home, watch_mask) {
             eprintln!(
                 "[WARN] Failed to watch `{}`: {}",
                 xdg_data_home.display(),
@@ -64,8 +53,7 @@ fn main() {
     std::thread::spawn(move || {
         loop {
             let mut buffer = [0; 1024];
-            if let Ok(events) = inotify
-                .read_events_blocking(&mut buffer) {
+            if let Ok(events) = inotify.read_events_blocking(&mut buffer) {
                 // if we're here this means something changed inside any of the directories
                 for event in events {
                     println!(
