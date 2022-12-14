@@ -20,6 +20,7 @@ use gtk::{
 };
 use keybinder::KeyBinder;
 
+#[allow(clippy::upper_case_acronyms)]
 pub struct GUI {
     pub window: Window,
     search_box: Entry,
@@ -61,7 +62,7 @@ impl GUI {
             ),
             Err(e) => show_dialog(
                 "Warning",
-                &format!("Failed to load css: {}", e),
+                &format!("Failed to load css: {e}"),
                 MessageType::Warning,
             ),
         }
@@ -102,7 +103,7 @@ impl GUI {
         window.connect_key_press_event({
             let entry = search_box.clone();
             let list_box = result_list.clone();
-            let scrolled_container = scrolled_container.clone();
+            let scrolled_container = scrolled_container;
 
             move |window, event| {
                 // TODO(mdgaziur): fix this hack
@@ -202,7 +203,9 @@ fn keypress_handler(
                 Inhibit(true)
             } else if row_index == 0 && list_box.children().len() > 1 {
                 list_box.select_row(list_box.row_at_index(1).as_ref());
-                list_box.row_at_index(1).map(|row| row.grab_focus());
+                if let Some(row) = list_box.row_at_index(1) {
+                    row.grab_focus()
+                }
 
                 Inhibit(true)
             } else if row_index == 0 && list_box.children().len() == 1 {
@@ -215,7 +218,9 @@ fn keypress_handler(
             }
         } else {
             list_box.select_row(list_box.row_at_index(0).as_ref());
-            list_box.row_at_index(0).map(|row| row.grab_focus());
+            if let Some(row) = list_box.row_at_index(0) {
+                row.grab_focus()
+            }
 
             Inhibit(true)
         }
@@ -233,7 +238,7 @@ fn keypress_handler(
                     list_box.select_row(Some(last_row));
                     last_row.grab_focus();
 
-                    let adjustment = Adjustment::from(scrolled_container.vadjustment());
+                    let adjustment = scrolled_container.vadjustment();
                     adjustment.set_value(scrolled_container.vadjustment().upper());
                     scrolled_container.set_vadjustment(Some(&adjustment));
 

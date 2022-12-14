@@ -48,7 +48,7 @@ pub fn result_list_row(
 
     if let Some(app_desc) = app_desc {
         let app_desc_label = Label::builder()
-            .label(&app_desc)
+            .label(app_desc)
             .expand(true)
             .parent(&box2)
             .justify(Justification::Left)
@@ -63,7 +63,7 @@ pub fn result_list_row(
     }
 
     let app_cmd_label = Label::builder()
-        .label(&app_cmd)
+        .label(app_cmd)
         .expand(true)
         .parent(&box2)
         .justify(Justification::Left)
@@ -108,7 +108,7 @@ fn get_icon(icon_name: &str) -> Pixbuf {
     let icon_theme = IconTheme::default().unwrap();
 
     if let Ok(i) =
-        Pixbuf::from_file_at_size(&icon_name, FINDEX_CONFIG.icon_size, FINDEX_CONFIG.icon_size)
+        Pixbuf::from_file_at_size(icon_name, FINDEX_CONFIG.icon_size, FINDEX_CONFIG.icon_size)
     {
         icon = i;
     } else if let Ok(i) = icon_theme.load_icon(

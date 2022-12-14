@@ -58,30 +58,30 @@ impl Default for FindexConfig {
 
 fn load_settings() -> Result<FindexConfig, String> {
     #[cfg(debug_assertions)]
-    let settings_path = "settings.toml";
+    let settings_path = String::from("settings.toml");
 
     #[cfg(not(debug_assertions))]
-    let settings_path = shellexpand::tilde("~/.config/findex/settings.toml");
+    let settings_path = shellexpand::tilde("~/.config/findex/settings.toml").to_string();
 
     #[cfg(not(debug_assertions))]
-    let settings_dir = shellexpand::tilde("~/.config/findex");
+    let settings_dir = shellexpand::tilde("~/.config/findex").to_string();
 
-    let file = std::path::Path::new(&*settings_path);
+    let file = std::path::Path::new(&settings_path);
     if !file.exists() {
         #[cfg(not(debug_assertions))]
-        if !std::path::Path::new(&*settings_dir).exists() {
-            std::fs::create_dir(&*settings_dir).unwrap();
+        if !std::path::Path::new(&settings_dir).exists() {
+            std::fs::create_dir(&settings_dir).unwrap();
         }
 
         let settings = toml::to_string(&FindexConfig::default()).unwrap();
-        std::fs::write(&*settings_path, settings).unwrap();
+        std::fs::write(settings_path, settings).unwrap();
 
         Ok(FindexConfig::default())
     } else {
-        let settings = std::fs::read_to_string(&*settings_path).unwrap();
+        let settings = std::fs::read_to_string(settings_path).unwrap();
 
-        let config = toml::from_str(&settings)
-            .map_err(|e| format!("Error while parsing settings: {}", e))?;
+        let config =
+            toml::from_str(&settings).map_err(|e| format!("Error while parsing settings: {e}"))?;
 
         Ok(config)
     }
