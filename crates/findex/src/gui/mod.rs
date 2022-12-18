@@ -12,12 +12,12 @@ use crate::gui::searchbox::searchbox_new;
 use crate::show_dialog;
 use gtk::builders::BoxBuilder;
 use gtk::gdk::{EventKey, EventMask, Screen};
-
 use gtk::prelude::*;
 use gtk::{
     gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window,
     WindowType,
 };
+#[cfg(feature = "xorg")]
 use keybinder::KeyBinder;
 
 #[allow(clippy::upper_case_acronyms)]
@@ -25,6 +25,7 @@ pub struct GUI {
     pub window: Window,
     search_box: Entry,
     result_list: ListBox,
+    #[cfg(feature = "xorg")]
     keybinder: KeyBinder<KeypressHandlerPayload>,
 }
 
@@ -44,6 +45,9 @@ impl GUI {
             .build();
         window.set_keep_above(true);
         window.style_context().add_class("findex-window");
+        window.connect_destroy(|_| {
+            gtk::main_quit()
+        });
 
         let screen = Screen::default().unwrap();
         let visual = screen.rgba_visual();
@@ -110,6 +114,7 @@ impl GUI {
             }
         });
 
+        #[cfg(feature = "xorg")]
         let keybinder = match KeyBinder::new(true) {
             Ok(instance) => instance,
             Err(_e) => {
@@ -121,21 +126,18 @@ impl GUI {
             window,
             search_box,
             result_list,
+            #[cfg(feature = "xorg")]
             keybinder,
         }
     }
 
-    pub fn listen_for_hotkey(&mut self) {
+    pub fn wait_for_toggle(&mut self) {
+        #[cfg(feature = "xorg")]
         assert!(
             self.keybinder.bind(
                 &FINDEX_CONFIG.toggle_key,
                 |_, payload| {
-                    payload.window.present();
-                    payload
-                        .window
-                        .present_with_time(keybinder::get_current_event_time());
-                    payload.search_box.set_text("");
-                    result_list_clear(&payload.result_list);
+                    Self::show_window(&payload.window, &payload.search_box, &payload.result_list);
                     Self::position_window(&payload.window);
                 },
                 KeypressHandlerPayload {
@@ -146,11 +148,74 @@ impl GUI {
             ),
             "Failed to bind key"
         );
+
+        #[cfg(feature = "wayland")]
+        {
+            use std::fs::File;
+            use std::path::Path;
+            use gtk::glib::idle_add;
+            use gtk::glib::thread_guard::ThreadGuard;
+            use shellexpand::tilde;
+            use inotify::{Inotify, WatchMask};
+
+            let mut inotify = Inotify::init().expect("Failed to init inotify");
+            let watch_mask =
+                WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
+            let toggle_file = {
+                if !Path::new(&*tilde("~/.config/findex/toggle_file")).is_file() {
+                    File::create(&*tilde("~/.config/findex/toggle_file"))
+                        .expect("Failed to create file that toggles findex window");
+                }
+
+                &*tilde("~/.config/findex/toggle_file")
+            };
+            inotify
+                .add_watch(toggle_file, watch_mask)
+                .expect("Failed to add toggle file to inotify watch list");
+
+            idle_add({
+                let window = ThreadGuard::new(self.window.clone());
+                let search_box = ThreadGuard::new(self.search_box.clone());
+                let result_list = ThreadGuard::new(self.result_list.clone());
+
+                move || {
+                    let mut buf = [0; 1024];
+
+                    if let Ok(mut events) = inotify.read_events(&mut buf) {
+                        if events.next().is_some() {
+                            Self::show_window(
+                                window.get_ref(),
+                                search_box.get_ref(),
+                                result_list.get_ref(),
+                            )
+                        }
+                    }
+
+                    Continue(true)
+                }
+            });
+        }
+    }
+
+    fn show_window(window: &Window, search_box: &Entry, result_list: &ListBox) {
+        window.present();
+
+        #[cfg(feature = "xorg")]
+        {
+            window.present_with_time(keybinder::get_current_event_time());
+        }
+
+        search_box.set_text("");
+        result_list_clear(result_list);
+        Self::position_window(window);
     }
 
     fn position_window(window: &Window) {
         let display = gdk::Display::default().unwrap();
-        let monitor_geo = display.primary_monitor().unwrap().geometry();
+        let monitor_geo = display
+            .monitor_at_window(&window.window().unwrap())
+            .unwrap()
+            .geometry();
         let screen_height = monitor_geo.height() as f32;
         let screen_width = monitor_geo.width() as f32;
 
@@ -166,6 +231,7 @@ impl GUI {
     }
 }
 
+#[cfg(feature = "xorg")]
 struct KeypressHandlerPayload {
     window: Window,
     result_list: ListBox,

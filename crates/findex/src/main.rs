@@ -11,11 +11,6 @@ mod config;
 mod gui;
 
 fn main() {
-    if std::env::var("XDG_SESSION_TYPE") != Ok(String::from("x11")) {
-        eprintln!("[ERROR] Only X11 is supported");
-        std::process::exit(1);
-    }
-
     println!("[INFO] Starting Findex...");
     gtk::init().expect("Failed to init GTK");
     if !FINDEX_CONFIG.error.is_empty() {
@@ -71,7 +66,7 @@ fn main() {
     });
 
     let mut gui = GUI::new();
-    gui.listen_for_hotkey();
+    gui.wait_for_toggle();
     println!("[INFO] listening for hotkey...");
 
     gtk::main();
