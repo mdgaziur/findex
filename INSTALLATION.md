@@ -1,6 +1,6 @@
 # Installation
 If you are not using Findex directly from `development` branch and using latest release,
-check the `release` branch.
+check instructions from the `release` branch.
 
 ## Supported OS
 - Linux
@@ -15,7 +15,8 @@ check the `release` branch.
 
 ## Manual installation from source
 - Set Rust toolchain to stable using: `rustup default stable`
-- Do a release build using: `cargo build --release`
+- If you are using xorg, run `cargo build --release --features xorg`
+- If you are using wayland, run `cargo build --release --features wayland`
 - Make `/opt/findex` directory
 - Copy `css/style.css` to `/opt/findex`
 - Copy `target/release/findex` to `/usr/bin/findex`
