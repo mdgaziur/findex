@@ -1,6 +1,0 @@
-[Path]
-PathModified=%h/.config/findex/style.css
-PathModified=%h/.config/findex/settings.toml
-
-[Install]
-WantedBy=graphical-session.target

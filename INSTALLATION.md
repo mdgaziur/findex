@@ -1,4 +1,6 @@
 # Installation
+If you are not using Findex directly from `development` branch and using latest release,
+check the `release` branch.
 
 ## Supported OS
 - Linux
@@ -17,23 +19,11 @@
 - Make `/opt/findex` directory
 - Copy `css/style.css` to `/opt/findex`
 - Copy `target/release/findex` to `/usr/bin/findex`
-
-### If you have systemd
-- Copy `findex.service`, `findex-restarter.service` and `findex-restarter.path` to `/etc/systemd/user/`
-- Run `systemctl --user enable findex.service`
-- Run `systemctl --user enable findex-restarter.path`
-
-### If you don't have systemd
-- Add Findex to startup applications
-
-Unfortunately Findex can't restart automatically when configs are changed unless you are using systemd. That's a future plan. Till then,
-you'll have to restart it manually.
+- Add `findex-daemon` to autostart/startup applications
 
 ## Installation from AUR
 
 From repo: `findex-git`   
 Prebuilt: `findex-bin`
 
-If you are using systemd, run the following commands:
-- `systemctl --user enable findex.service`
-- `systemctl --user enable findex-restarter.path`
+After that, add `findex-daemon` to autostart/startup applications
