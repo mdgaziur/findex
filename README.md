@@ -10,6 +10,8 @@ Check [INSTALLATION.md](./INSTALLATION.md)
 ## Customization
 Check [CUSTOMIZATION.md](./CUSTOMIZATION.md)
 
+Check [PLUGINS.md](./PLUGINS.md) for information about using plugins.
+
 Example customization:
 
 ![Customized Screenshot](screenshot_customized.png)
