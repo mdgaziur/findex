@@ -11,7 +11,7 @@ Check [INSTALLATION.md](./INSTALLATION.md)
 Check [CUSTOMIZATION.md](./CUSTOMIZATION.md)
 
 ## Plugins
-Check [PLUGINS.md](./PLUGINS.md) for information about using plugins.
+Check [PLUGINS.md](./PLUGINS.md)
 
 Example customization:
 
