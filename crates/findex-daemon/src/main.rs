@@ -6,7 +6,6 @@ use shellexpand::tilde;
 use std::fs::{create_dir, File};
 use std::path::Path;
 use std::process::Command;
-use std::thread::sleep;
 use std::time::Duration;
 use subprocess::{ExitStatus, Popen, PopenConfig, Redirection};
 
@@ -35,14 +34,16 @@ fn getpid(name: &str) -> Option<pid_t> {
 
 fn findex_daemon(current_time: time_t) {
     fn spawn_findex(findex_output: File) -> Popen {
-        Popen::create(
+        let process = Popen::create(
             &["findex"],
             PopenConfig {
                 stdout: Redirection::File(findex_output),
                 ..Default::default()
             },
         )
-        .expect("Failed to spawn Findex")
+        .expect("Failed to spawn Findex");
+
+        process
     }
 
     let findex_output = File::create(&*tilde(&format!(

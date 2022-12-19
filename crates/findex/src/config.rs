@@ -5,8 +5,6 @@ use gtk::MessageType;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-#[cfg(not(debug_assertions))]
-use shellexpand::tilde;
 
 lazy_static! {
     pub static ref FINDEX_CONFIG: FindexConfig = {
@@ -53,9 +51,6 @@ pub struct Plugin {
 
 impl Default for FindexConfig {
     fn default() -> Self {
-        #[cfg(not(debug_assertions))]
-        let plugins_path = tilde("~/.config/findex/plugins").to_string();
-
         FindexConfig {
             min_content_height: 0,
             max_content_height: 400,
@@ -69,44 +64,7 @@ impl Default for FindexConfig {
             result_size: 10,
             toggle_key: RString::from("<Shift>space"),
             error: RString::new(),
-            #[cfg(not(debug_assertions))]
-            plugins: HashMap::from([
-                (
-                    RString::from("github-repo"),
-                    Plugin {
-                        prefix: None,
-                        path: RString::from(format!("{plugins_path}/github_repo.so")),
-                        config: RHashMap::new(),
-                    },
-                ),
-                (
-                    RString::from("urlopen"),
-                    Plugin {
-                        prefix: None,
-                        path: RString::from(format!("{plugins_path}/urlopen.so")),
-                        config: RHashMap::new(),
-                    },
-                ),
-            ]),
-            #[cfg(debug_assertions)]
-            plugins: HashMap::from([
-                (
-                    RString::from("github-repo"),
-                    Plugin {
-                        prefix: None,
-                        path: RString::from("plugins/github-repo/target/debug/libgithub_repo.so"),
-                        config: RHashMap::new(),
-                    },
-                ),
-                (
-                    RString::from("urlopen"),
-                    Plugin {
-                        prefix: None,
-                        path: RString::from("plugins/urlopen/target/debug/liburlopen.so"),
-                        config: RHashMap::new(),
-                    },
-                ),
-            ]),
+            plugins: HashMap::new(),
             plugin_definitions: HashMap::new(),
         }
     }
@@ -136,17 +94,12 @@ fn load_settings() -> Result<FindexConfig, String> {
     } else {
         let settings = std::fs::read_to_string(&settings_path).unwrap();
 
-        let config: FindexConfig =
-            toml::from_str(&settings).map_err(|e| format!("Error while parsing settings: {e}"))?;
-
-        std::fs::write(&settings_path, toml::to_string(&config).unwrap()).unwrap();
-
-        Ok(config)
+        toml::from_str(&settings).map_err(|e| format!("Error while parsing settings: {e}"))
     };
 
     if let Ok(ref mut config) = res {
         for (name, plugin) in &config.plugins {
-            let plugin_definition = match unsafe { load_plugin(&plugin.path) } {
+            let plugin_definition = match unsafe { load_plugin(&*shellexpand::tilde(&plugin.path)) } {
                 Ok(pd) => pd,
                 Err(e) => {
                     show_dialog(
