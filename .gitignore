@@ -1,3 +1,4 @@
 target
 .*
 vgcore*
+settings.toml
