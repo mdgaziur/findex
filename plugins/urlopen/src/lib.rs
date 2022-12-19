@@ -11,7 +11,7 @@ fn handle_query(query: RStr) -> RVec<FResult> {
     }
 
     RVec::from(vec![FResult {
-        cmd: RString::from(format!("xdg-open {query}")),
+        cmd: RString::from(format!("xdg-open \"{query}\"")),
         name: RString::from(format!("Open {query}")),
         desc: ROption::RNone,
         score: isize::MAX,
