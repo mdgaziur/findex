@@ -52,17 +52,12 @@ fn findex_daemon(current_time: time_t) {
     .expect("Failed to create file to store findex output");
 
     let mut findex_process = spawn_findex(findex_output.try_clone().unwrap());
-    // Findex writes to settings.toml after starting
-    sleep(Duration::from_secs(2));
 
     let mut inotify = Inotify::init().expect("Failed to init inotify");
     let watch_mask = WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
     inotify
-        .add_watch(&*tilde("~/.config/findex/settings.toml"), watch_mask)
-        .expect("Failed to watch `~/.config/findex/settings.toml`");
-    inotify
-        .add_watch(&*tilde("~/.config/findex/style.css"), watch_mask)
-        .expect("Failed to watch `~/.config/findex/style.css`");
+        .add_watch(&*tilde("~/.config/findex/"), watch_mask)
+        .expect("Failed to watch `~/.config/findex/`");
     loop {
         if let Ok(Some(exit_status)) = findex_process.wait_timeout(Duration::from_millis(500)) {
             eprint!("[WARN] Findex exited unexpectedly");
@@ -75,21 +70,20 @@ fn findex_daemon(current_time: time_t) {
             println!("[INFO] Respawning Findex");
 
             findex_process = spawn_findex(findex_output.try_clone().unwrap());
-            // Findex writes to settings.toml after starting
-            sleep(Duration::from_secs(2));
         }
 
         let mut buf = [0; 1024];
-        if let Ok(mut events) = inotify.read_events(&mut buf) {
-            if events.next().is_some() {
-                println!("[INFO] configs changed, restarting findex");
-                if findex_process.poll().is_none() {
-                    findex_process.kill().unwrap();
+        match inotify.read_events(&mut buf) {
+            Ok(mut events) => {
+                if events.next().is_some() {
+                    println!("[INFO] configs changed, restarting findex");
+                    if findex_process.poll().is_none() {
+                        findex_process.kill().unwrap();
+                    }
+                    findex_process = spawn_findex(findex_output.try_clone().unwrap());
                 }
-                findex_process = spawn_findex(findex_output.try_clone().unwrap());
-                // Findex writes to settings.toml after starting
-                sleep(Duration::from_secs(2));
             }
+            Err(e) => println!("[WARN] Inotify error: {e}"),
         }
     }
 }
