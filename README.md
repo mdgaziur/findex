@@ -11,7 +11,7 @@ Check [INSTALLATION.md](./INSTALLATION.md)
 Check [CUSTOMIZATION.md](./CUSTOMIZATION.md)
 
 ## Plugins
-Check [PLUGINS.md](./PLUGINS.md)
+Check [Plugins Guide](crates/findex-plugin/README.md)
 
 Example customization:
 
