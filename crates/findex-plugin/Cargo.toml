@@ -1,5 +1,10 @@
 [package]
 name = "findex-plugin"
+description = "Plugins library for Findex"
+license = "GPL3"
+homepage = "https://github.com/mdgaziur/findex"
+repository = "https://github.com/mdgaziur/findex"
+documentation = "https://github.com/mdgaziur/findex/blob/development/crates/findex-plugin/README.md"
 version = "0.1.0"
 edition = "2021"
 
