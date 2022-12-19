@@ -13,7 +13,7 @@ fn getpid(name: &str) -> Option<pid_t> {
     let output = match Command::new("pidof").arg(name).output() {
         Ok(o) => o,
         Err(e) => {
-            eprintln!("[ERROR] Failed to run `pidof findex findex-daemon`: {e}");
+            eprintln!("[ERROR] Failed to run `pidof findex {name}`: {e}");
             return None;
         }
     };
@@ -91,17 +91,9 @@ fn findex_daemon(current_time: time_t) {
 fn main() {
     if let Some(pid) = getpid("findex") {
         eprintln!("[ERROR] Findex is already running with pid: {pid}");
-        eprintln!("[ERROR] Help: You may want to kill with `killall findex`");
+        eprintln!("[ERROR] Help: You may want to kill with `killall findex findex-daemon`");
 
         return;
-    }
-    if let Some(pid) = getpid("findex-daemon") {
-        if pid != nix::unistd::getpid().as_raw() {
-            eprintln!("[ERROR] Findex daemon is already running with pid: {pid}");
-            eprintln!("[ERROR] Help: You may want to kill with `killall findex-daemon`");
-
-            return;
-        }
     }
 
     let current_time = nix::time::clock_gettime(ClockId::CLOCK_REALTIME)
