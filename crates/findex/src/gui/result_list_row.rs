@@ -1,9 +1,8 @@
+use crate::gui::dialog::show_dialog;
 use crate::FINDEX_CONFIG;
 use abi_stable::std_types::ROption;
 use gtk::builders::BoxBuilder;
 use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
-use std::process::Command;
-use crate::gui::dialog::show_dialog;
 use gtk::pango::EllipsizeMode;
 use gtk::prelude::*;
 use gtk::{
@@ -11,6 +10,7 @@ use gtk::{
     Orientation,
 };
 use shlex::split;
+use std::process::Command;
 
 pub fn result_list_row(
     listbox: &ListBox,

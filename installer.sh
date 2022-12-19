@@ -21,12 +21,34 @@ do_installation() {
         fi
     fi
 
+    echo "Compiling plugin \"urlopen\"..."
+    cd plugins/urlopen
+    cargo build --release
+    cd ../../
+
+    echo "Compiling plugin \"github-repo\""
+    cd plugins/github-repo
+    cargo build --release
+    cd ../../
+
     echo "Copying files..."
     sudo cp target/release/findex /usr/bin/findex
     sudo cp target/release/findex-daemon /usr/bin/findex-daemon
     sudo echo ""
     sudo mkdir -p /opt/findex
     sudo cp css/style.css /opt/findex
+    mkdir -p ~/.config/findex/plugins
+    cp plugins/urlopen/target/release/liburlopen.so ~/.config/findex/plugins/urlopen.so
+    cp plugins/github-repo/target/release/libgithub_repo.so ~/.config/findex/plugins/github_repo.so
+
+    if [[ ! -f ~/.config/findex/settings.toml ]]; then
+        touch ~/.config/findex/settings.toml
+    fi
+
+    if [[ ! -f ~/.config/findex/style.css ]]; then
+        cp css/style.css ~/.config/findex/style.css
+    fi
+
     echo "Installation done!"
     echo "Now add \"findex-daemon\" to autostart. You may follow your desktop environment's guide to do this."
     echo "I'm starting \"findex-daemon\" for now."

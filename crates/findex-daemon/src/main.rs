@@ -6,6 +6,7 @@ use shellexpand::tilde;
 use std::fs::{create_dir, File};
 use std::path::Path;
 use std::process::Command;
+use std::thread::sleep;
 use std::time::Duration;
 use subprocess::{ExitStatus, Popen, PopenConfig, Redirection};
 
@@ -44,6 +45,15 @@ fn findex_daemon(current_time: time_t) {
         .expect("Failed to spawn Findex")
     }
 
+    let findex_output = File::create(&*tilde(&format!(
+        "~/.findex-logs/findex-{current_time}.log"
+    )))
+    .expect("Failed to create file to store findex output");
+
+    let mut findex_process = spawn_findex(findex_output.try_clone().unwrap());
+    // Findex writes to settings.toml after starting
+    sleep(Duration::from_secs(2));
+
     let mut inotify = Inotify::init().expect("Failed to init inotify");
     let watch_mask = WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
     inotify
@@ -52,13 +62,6 @@ fn findex_daemon(current_time: time_t) {
     inotify
         .add_watch(&*tilde("~/.config/findex/style.css"), watch_mask)
         .expect("Failed to watch `~/.config/findex/style.css`");
-
-    let findex_output = File::create(&*tilde(&format!(
-        "~/.findex-logs/findex-{current_time}.log"
-    )))
-    .expect("Failed to create file to store findex output");
-
-    let mut findex_process = spawn_findex(findex_output.try_clone().unwrap());
     loop {
         if let Ok(Some(exit_status)) = findex_process.wait_timeout(Duration::from_millis(500)) {
             eprint!("[WARN] Findex exited unexpectedly");
@@ -71,6 +74,8 @@ fn findex_daemon(current_time: time_t) {
             println!("[INFO] Respawning Findex");
 
             findex_process = spawn_findex(findex_output.try_clone().unwrap());
+            // Findex writes to settings.toml after starting
+            sleep(Duration::from_secs(2));
         }
 
         let mut buf = [0; 1024];
@@ -81,6 +86,8 @@ fn findex_daemon(current_time: time_t) {
                     findex_process.kill().unwrap();
                 }
                 findex_process = spawn_findex(findex_output.try_clone().unwrap());
+                // Findex writes to settings.toml after starting
+                sleep(Duration::from_secs(2));
             }
         }
     }
