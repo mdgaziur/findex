@@ -55,7 +55,7 @@ fn main() {
                         "[INFO] File `{}` was changed",
                         event
                             .name
-                            .unwrap_or(OsStr::new("unavailable"))
+                            .unwrap_or_else(|| OsStr::new("unavailable"))
                             .to_str()
                             .unwrap_or("file name with invalid unicode chars")
                     );

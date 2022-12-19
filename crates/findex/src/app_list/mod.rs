@@ -1,40 +1,31 @@
+use abi_stable::std_types::{ROption, RString};
 use gtk::gio::AppInfo as GIOAppInfo;
 use parking_lot::Mutex;
 use std::collections::HashMap;
 
+use findex_plugin::FResult;
 use gtk::prelude::*;
 use lazy_static::lazy_static;
+
+pub type AppInfo = FResult;
 
 lazy_static! {
     pub static ref APPS_LIST: Mutex<Vec<AppInfo>> = Mutex::new(Vec::new());
 }
 
-#[derive(Clone)]
-pub struct AppInfo {
-    pub name: String,
-    pub desc: Option<String>,
-    pub cmd: String,
-    pub icon: String,
-    pub score: isize,
-    pub id: String,
-}
+fn appresult_from(app_info: &GIOAppInfo) -> AppInfo {
+    let cmd = app_info.commandline().unwrap();
+    let icon = match app_info.icon() {
+        Some(icon) => RString::from(IconExt::to_string(&icon).unwrap().to_string()),
+        None => RString::from("application-other"),
+    };
 
-impl From<&GIOAppInfo> for AppInfo {
-    fn from(app_info: &GIOAppInfo) -> Self {
-        let cmd = app_info.commandline().unwrap();
-        let icon = match app_info.icon() {
-            Some(icon) => IconExt::to_string(&icon).unwrap().to_string(),
-            None => String::from("application-other"),
-        };
-
-        Self {
-            name: app_info.name().to_string(),
-            desc: app_info.description().map(|d| d.to_string()),
-            cmd: cmd.to_str().unwrap().to_string(),
-            icon,
-            score: 0,
-            id: app_info.id().unwrap().to_string(),
-        }
+    AppInfo {
+        name: RString::from(app_info.name().to_string()),
+        desc: ROption::from(app_info.description().map(|d| RString::from(d.to_string()))),
+        cmd: RString::from(cmd.to_str().unwrap().to_string()),
+        icon,
+        score: 0,
     }
 }
 
@@ -44,12 +35,12 @@ pub fn update_apps_list() {
     let list = GIOAppInfo::all()
         .into_iter()
         .filter(|appinfo| appinfo.commandline().is_some())
-        .map(|appinfo| (appinfo.name().to_string(), AppInfo::from(&appinfo)))
+        .map(|appinfo| (appinfo.name().to_string(), appresult_from(&appinfo)))
         .collect::<HashMap<String, AppInfo>>()
         .iter()
         .map(|value| value.1.clone())
         .map(|mut appinfo| {
-            appinfo.cmd = parameter_regex.replace(&appinfo.cmd, "").to_string();
+            appinfo.cmd = RString::from(parameter_regex.replace(&appinfo.cmd, ""));
 
             appinfo
         })

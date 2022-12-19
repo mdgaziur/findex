@@ -1,22 +1,23 @@
 use crate::FINDEX_CONFIG;
+use abi_stable::std_types::ROption;
 use gtk::builders::BoxBuilder;
 use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
-
-use gtk::gdk::AppLaunchContext;
-use gtk::gio::DesktopAppInfo;
+use std::process::Command;
+use crate::gui::dialog::show_dialog;
 use gtk::pango::EllipsizeMode;
 use gtk::prelude::*;
 use gtk::{
-    IconLookupFlags, IconTheme, Image, Justification, Label, ListBox, ListBoxRow, Orientation,
+    IconLookupFlags, IconTheme, Image, Justification, Label, ListBox, ListBoxRow, MessageType,
+    Orientation,
 };
+use shlex::split;
 
 pub fn result_list_row(
     listbox: &ListBox,
     app_icon: &str,
     app_name: &str,
-    app_desc: Option<&str>,
+    app_desc: ROption<&str>,
     app_cmd: &str,
-    app_id: &str,
 ) -> ListBoxRow {
     let box1 = BoxBuilder::new()
         .orientation(Orientation::Horizontal)
@@ -46,7 +47,7 @@ pub fn result_list_row(
         .style_context()
         .add_class("findex-result-app-name");
 
-    if let Some(app_desc) = app_desc {
+    if let ROption::RSome(app_desc) = app_desc {
         let app_desc_label = Label::builder()
             .label(app_desc)
             .expand(true)
@@ -79,9 +80,8 @@ pub fn result_list_row(
     let row = ListBoxRow::builder().parent(listbox).child(&box1).build();
     row.style_context().add_class("findex-result-row");
 
-    // We know the type
     unsafe {
-        row.set_data("app-id", app_id.to_string());
+        row.set_data("app-cmd", app_cmd.to_string());
     }
 
     row
@@ -92,15 +92,21 @@ pub fn handle_enter(row: &ListBoxRow) {
 }
 
 pub fn handle_interaction(row: &ListBoxRow) {
-    // It is stored as String and we aren't doing anything that can invalidate it
-    let id = unsafe { row.data::<String>("app-id").unwrap().as_mut() };
-
-    DesktopAppInfo::new(id)
-        .unwrap()
-        .launch(&[], Option::<AppLaunchContext>::None.as_ref())
-        .unwrap();
-
+    let Some(cmd) = split(unsafe { row.data::<String>("app-cmd").unwrap().as_ref() }) else {
+        show_dialog("Error", "Failed to launch application", MessageType::Error);
+        return;
+    };
     row.toplevel().unwrap().hide();
+
+    let child = Command::new(&cmd[0]).args(&cmd[1..]).spawn();
+
+    if let Err(e) = child {
+        show_dialog(
+            "Error",
+            &format!("Failed to launch application: {e}"),
+            MessageType::Error,
+        );
+    }
 }
 
 fn get_icon(icon_name: &str) -> Pixbuf {

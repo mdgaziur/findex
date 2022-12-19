@@ -1,5 +1,6 @@
 [workspace]
-members = ["crates/findex", "crates/findex-daemon"]
+members = ["crates/findex", "crates/findex-daemon", "crates/findex-plugin"]
+exclude = ["plugins/urlopen"]
 
 [profile.release]
 debug = true

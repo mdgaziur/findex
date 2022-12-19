@@ -27,3 +27,6 @@ inotify = "0.10.0"
 parking_lot = "0.12.1"
 regex = "1.6.0"
 keybinder = { version = "0.4.0", optional = true }
+findex-plugin = { path = "../findex-plugin", features = ["findex_internals"] }
+abi_stable = "0.11.1"
+shlex = "1.1.0"

@@ -1,5 +1,6 @@
 use crate::config::FINDEX_CONFIG;
 use crate::gui::result_list_row::result_list_row;
+use abi_stable::std_types::{RStr, RString};
 use std::cmp::min;
 
 use crate::app_list::{AppInfo, APPS_LIST};
@@ -27,27 +28,40 @@ pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entr
 
 fn on_text_changed(entry: &Entry, result_list: &ListBox) {
     let text = entry.text();
-    let apps = APPS_LIST.lock();
     let mut matches: Vec<AppInfo> = Vec::new();
     result_list_clear(result_list);
 
-    for app in &*apps {
-        if let Some(match_) = best_match(&text, &app.name) {
-            let mut app = app.clone();
-            if match_.score() > FINDEX_CONFIG.min_score {
-                let formatted_name = format_simple(
-                    &match_,
-                    &app.name,
-                    &format!(
-                        "<span color=\"{}\">",
-                        FINDEX_CONFIG.name_match_highlight_color
-                    ),
-                    "</span>",
-                );
+    if let Some(plugin) = FINDEX_CONFIG
+        .plugin_definitions
+        .get(text.split_ascii_whitespace().next().unwrap_or(""))
+    {
+        matches = unsafe {
+            plugin.plugin_query_handler(RStr::from(
+                text.split_ascii_whitespace().nth(1).unwrap_or(""),
+            ))
+        }
+        .to_vec();
+    } else {
+        let apps = APPS_LIST.lock();
 
-                app.name = formatted_name;
-                app.score = match_.score();
-                matches.push(app);
+        for app in &*apps {
+            if let Some(match_) = best_match(&text, &app.name) {
+                let mut app = app.clone();
+                if match_.score() > FINDEX_CONFIG.min_score {
+                    let formatted_name = format_simple(
+                        &match_,
+                        &app.name,
+                        &format!(
+                            "<span color=\"{}\">",
+                            FINDEX_CONFIG.name_match_highlight_color
+                        ),
+                        "</span>",
+                    );
+
+                    app.name = RString::from(formatted_name);
+                    app.score = match_.score();
+                    matches.push(app);
+                }
             }
         }
     }
@@ -61,7 +75,6 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
             &app.name.replace('&', "&amp;"),
             app.desc.as_deref(),
             &app.cmd,
-            &app.id,
         );
     }
 

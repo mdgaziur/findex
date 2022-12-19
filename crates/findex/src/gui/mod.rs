@@ -45,9 +45,7 @@ impl GUI {
             .build();
         window.set_keep_above(true);
         window.style_context().add_class("findex-window");
-        window.connect_destroy(|_| {
-            gtk::main_quit()
-        });
+        window.connect_destroy(|_| gtk::main_quit());
 
         let screen = Screen::default().unwrap();
         let visual = screen.rgba_visual();
@@ -151,12 +149,12 @@ impl GUI {
 
         #[cfg(feature = "wayland")]
         {
-            use std::fs::File;
-            use std::path::Path;
             use gtk::glib::idle_add;
             use gtk::glib::thread_guard::ThreadGuard;
-            use shellexpand::tilde;
             use inotify::{Inotify, WatchMask};
+            use shellexpand::tilde;
+            use std::fs::File;
+            use std::path::Path;
 
             let mut inotify = Inotify::init().expect("Failed to init inotify");
             let watch_mask =
