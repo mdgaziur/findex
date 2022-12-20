@@ -19,11 +19,12 @@ Only Rust based plugins are supported.
 - Add `findex-plugin` and `abi_stable` as dependency
 - Add the following code into `src/lib.rs`
 ```rust
+use abi_stable::pmr::RResult;
 use findex_plugin::{define_plugin, FResult};
-use abi_stable::std_types::{RHashMap, ROption, RStr, RString, RVec};
+use abi_stable::std_types::{RHashMap, ROk, ROption, RStr, RString, RVec};
 
-fn init(_: &RHashMap<RString, RString>) -> bool {
-    true
+fn init(_: &RHashMap<RString, RString>) -> RResult<(), RString>  {
+    ROk(())
 }
 
 fn handle_query(query: RStr) -> RVec<FResult> {
@@ -32,7 +33,7 @@ fn handle_query(query: RStr) -> RVec<FResult> {
     }
 
     RVec::from(vec![FResult {
-        cmd: RString::from(format!("xdg-open {query}")),
+        cmd: RString::from(format!("xdg-open \"{query}\"")),
         name: RString::from(format!("Open {query}")),
         desc: ROption::RNone,
         score: isize::MAX,
