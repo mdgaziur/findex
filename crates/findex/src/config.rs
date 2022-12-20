@@ -1,5 +1,5 @@
 use crate::gui::dialog::show_dialog;
-use abi_stable::std_types::{RHashMap, RString};
+use abi_stable::std_types::{RErr, RHashMap, RString};
 use findex_plugin::findex_internal::{load_plugin, PluginDefinition};
 use gtk::MessageType;
 use lazy_static::lazy_static;
@@ -98,7 +98,7 @@ fn load_settings() -> Result<FindexConfig, String> {
     };
 
     if let Ok(ref mut config) = res {
-        for (name, plugin) in &config.plugins {
+        for (name, plugin) in &mut config.plugins {
             let plugin_definition = match unsafe { load_plugin(&*shellexpand::tilde(&plugin.path)) } {
                 Ok(pd) => pd,
                 Err(e) => {
@@ -111,12 +111,17 @@ fn load_settings() -> Result<FindexConfig, String> {
                 }
             };
 
-            if !unsafe { plugin_definition.plugin_init(&plugin.config) } {
+            if !plugin.config.contains_key("highlight_color") {
+                plugin.config.insert(RString::from("highlight_color"), config.name_match_highlight_color.clone());
+            }
+            let init_result = unsafe { plugin_definition.plugin_init(&plugin.config) };
+            if let RErr(e) = init_result {
                 show_dialog(
                     "Error",
-                    &format!("Plugin \"{name}\" failed to initialize"),
+                    &format!("Plugin \"{name}\" failed to initialize: {e}"),
                     MessageType::Error,
                 );
+                continue;
             }
 
             config.plugin_definitions.insert(

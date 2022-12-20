@@ -20,7 +20,7 @@ macro_rules! define_plugin {
         pub static FINDEX_PLUGIN_PREFIX: &'static str = $prefix;
 
         #[no_mangle]
-        extern "C" fn findex_plugin_init(config: &RHashMap<RString, RString>) -> bool {
+        extern "C" fn findex_plugin_init(config: &RHashMap<RString, RString>) -> RResult<(), RString> {
             $init_function(config)
         }
 

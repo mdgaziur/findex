@@ -1,5 +1,5 @@
 use crate::FResult;
-use abi_stable::std_types::{RHashMap, RStr, RString, RVec};
+use abi_stable::std_types::{RHashMap, RResult, RStr, RString, RVec};
 use libloading::{Error, Library, Symbol};
 
 pub struct PluginDefinition {
@@ -12,9 +12,9 @@ impl PluginDefinition {
     ///
     /// # Safety
     /// User must ensure that the plugin doesn't violate memory safety
-    pub unsafe fn plugin_init(&self, config: &RHashMap<RString, RString>) -> bool {
+    pub unsafe fn plugin_init(&self, config: &RHashMap<RString, RString>) -> RResult<(), RString> {
         self.plugin
-            .get::<Symbol<unsafe extern "C" fn(&RHashMap<RString, RString>) -> bool>>(
+            .get::<Symbol<unsafe extern "C" fn(&RHashMap<RString, RString>) -> RResult<(), RString>>>(
                 b"findex_plugin_init",
             )
             .unwrap()(config)
