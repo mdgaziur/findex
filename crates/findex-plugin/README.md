@@ -11,6 +11,8 @@ PLUGIN = { path = "PLUGIN PATH", prefix = "OPTIONAL USER DEFINED PREFIX", config
 ```
 - Refer to the plugin's usage instruction for info about how to use it.
 
+**NOTE**: always make sure that the plugins you are using are compatible with the version of Findex you are using.
+
 ## For developers
 
 Only Rust based plugins are supported.
