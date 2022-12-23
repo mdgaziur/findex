@@ -1,6 +1,6 @@
 use crate::gui::dialog::show_dialog;
 use crate::FINDEX_CONFIG;
-use abi_stable::std_types::ROption;
+use abi_stable::std_types::*;
 use gtk::builders::BoxBuilder;
 use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
 use gtk::pango::EllipsizeMode;

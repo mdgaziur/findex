@@ -1,5 +1,5 @@
 use crate::gui::dialog::show_dialog;
-use abi_stable::std_types::{RErr, RHashMap, RString};
+use abi_stable::std_types::*;
 use findex_plugin::findex_internal::{load_plugin, PluginDefinition};
 use gtk::MessageType;
 use lazy_static::lazy_static;

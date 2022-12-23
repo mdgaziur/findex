@@ -1,5 +1,5 @@
 use crate::FResult;
-use abi_stable::std_types::{RHashMap, RResult, RStr, RString, RVec};
+use abi_stable::std_types::*;
 use libloading::{Error, Library, Symbol};
 
 pub struct PluginDefinition {

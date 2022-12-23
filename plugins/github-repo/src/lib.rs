@@ -1,4 +1,4 @@
-use abi_stable::std_types::{RHashMap, RNone, RStr, RString, RVec, RResult, ROk};
+use abi_stable::std_types::*;
 use regex::Regex;
 use findex_plugin::{define_plugin, FResult};
 

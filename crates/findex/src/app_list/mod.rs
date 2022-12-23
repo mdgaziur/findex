@@ -1,4 +1,4 @@
-use abi_stable::std_types::{ROption, RString};
+use abi_stable::std_types::*;
 use gtk::gio::AppInfo as GIOAppInfo;
 use parking_lot::Mutex;
 use std::collections::HashMap;

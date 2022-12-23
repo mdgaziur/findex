@@ -1,6 +1,6 @@
 use crate::config::FINDEX_CONFIG;
 use crate::gui::result_list_row::result_list_row;
-use abi_stable::std_types::{RStr, RString};
+use abi_stable::std_types::*;
 use std::cmp::min;
 
 use crate::app_list::{AppInfo, APPS_LIST};

@@ -1,7 +1,7 @@
 #[cfg(feature = "findex_internals")]
 pub mod findex_internal;
 
-use abi_stable::std_types::{ROption, RString};
+use abi_stable::std_types::*;
 
 #[derive(Clone)]
 pub struct FResult {

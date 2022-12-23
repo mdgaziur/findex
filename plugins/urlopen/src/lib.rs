@@ -1,6 +1,5 @@
-use abi_stable::pmr::RResult;
 use findex_plugin::{define_plugin, FResult};
-use abi_stable::std_types::{RHashMap, ROk, ROption, RStr, RString, RVec};
+use abi_stable::std_types::*;
 
 fn init(_: &RHashMap<RString, RString>) -> RResult<(), RString>  {
     ROk(())
@@ -14,7 +13,7 @@ fn handle_query(query: RStr) -> RVec<FResult> {
     RVec::from(vec![FResult {
         cmd: RString::from(format!("xdg-open \"{query}\"")),
         name: RString::from(format!("Open {query}")),
-        desc: ROption::RNone,
+        desc: RNone,
         score: isize::MAX,
         icon: RString::from("browser"),
     }])
