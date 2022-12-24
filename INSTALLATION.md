@@ -8,7 +8,7 @@ check instructions from the `release` branch.
 ## Requirements
 - Gtk3
 - libkeybinder3
-- Rust v1.56.1(building from source)
+- Rust v1.66.0 (building from source)
 
 ## Automated installation from source
 - Run `./installer.sh`
