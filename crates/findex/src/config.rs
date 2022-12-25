@@ -99,7 +99,7 @@ fn load_settings() -> Result<FindexConfig, String> {
 
     if let Ok(ref mut config) = res {
         for (name, plugin) in &mut config.plugins {
-            let plugin_definition = match unsafe { load_plugin(&*shellexpand::tilde(&plugin.path)) }
+            let plugin_definition = match unsafe { load_plugin(&shellexpand::tilde(&plugin.path)) }
             {
                 Ok(pd) => pd,
                 Err(e) => {

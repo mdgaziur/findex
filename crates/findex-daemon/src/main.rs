@@ -34,16 +34,14 @@ fn getpid(name: &str) -> Option<pid_t> {
 
 fn findex_daemon(current_time: time_t) {
     fn spawn_findex(findex_output: File) -> Popen {
-        let process = Popen::create(
+        Popen::create(
             &["findex"],
             PopenConfig {
                 stdout: Redirection::File(findex_output),
                 ..Default::default()
             },
         )
-        .expect("Failed to spawn Findex");
-
-        process
+        .expect("Failed to spawn Findex")
     }
 
     let findex_output = File::create(&*tilde(&format!(

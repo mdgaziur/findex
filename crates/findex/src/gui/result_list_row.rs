@@ -70,7 +70,7 @@ pub fn result_list_row(
         .label(&match app_cmd {
             ApplicationCommand::Command(cmd) => cmd.to_string(),
             ApplicationCommand::Id(id) => strip_parameters(
-                &DesktopAppInfo::new(id)
+                DesktopAppInfo::new(id)
                     .unwrap()
                     .commandline()
                     .unwrap()
