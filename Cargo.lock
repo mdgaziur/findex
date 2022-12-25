@@ -246,7 +246,7 @@ dependencies = [
 
 [[package]]
 name = "findex"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "abi_stable",
  "findex-plugin",
@@ -267,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "findex-daemon"
-version = "0.1.0"
+version = "0.7.0"
 dependencies = [
  "daemonize",
  "inotify",
@@ -278,7 +278,7 @@ dependencies = [
 
 [[package]]
 name = "findex-plugin"
-version = "0.1.0"
+version = "0.7.0"
 dependencies = [
  "abi_stable",
  "libloading",
