@@ -15,11 +15,11 @@ check instructions from the `release` branch.
 
 ## Manual installation from source
 - Set Rust toolchain to stable using: `rustup default stable`
-- If you are using xorg, run `cargo build --release --features xorg`
-- If you are using wayland, run `cargo build --release --features wayland`
+- Compile it using `cargo build --release`
 - Make `/opt/findex` directory
 - Copy `css/style.css` to `/opt/findex`
-- Copy `target/release/findex` to `/usr/bin/findex`
+- Copy `target/release/findex` to `/usr/bin/`
+- Copy `targer/release/findex-daemon` to `/usr/bin/`
 - Add `findex-daemon` to autostart/startup applications
 
 ## Installation from AUR
