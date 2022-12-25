@@ -99,7 +99,8 @@ fn load_settings() -> Result<FindexConfig, String> {
 
     if let Ok(ref mut config) = res {
         for (name, plugin) in &mut config.plugins {
-            let plugin_definition = match unsafe { load_plugin(&*shellexpand::tilde(&plugin.path)) } {
+            let plugin_definition = match unsafe { load_plugin(&*shellexpand::tilde(&plugin.path)) }
+            {
                 Ok(pd) => pd,
                 Err(e) => {
                     show_dialog(
@@ -112,7 +113,10 @@ fn load_settings() -> Result<FindexConfig, String> {
             };
 
             if !plugin.config.contains_key("highlight_color") {
-                plugin.config.insert(RString::from("highlight_color"), config.name_match_highlight_color.clone());
+                plugin.config.insert(
+                    RString::from("highlight_color"),
+                    config.name_match_highlight_color.clone(),
+                );
             }
             let init_result = unsafe { plugin_definition.plugin_init(&plugin.config) };
             if let RErr(e) = init_result {

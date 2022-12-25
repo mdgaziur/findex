@@ -1,8 +1,11 @@
+use crate::app_list::strip_parameters;
 use crate::gui::dialog::show_dialog;
 use crate::FINDEX_CONFIG;
 use abi_stable::std_types::*;
+use findex_plugin::ApplicationCommand;
 use gtk::builders::BoxBuilder;
 use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
+use gtk::gio::{AppLaunchContext, DesktopAppInfo};
 use gtk::pango::EllipsizeMode;
 use gtk::prelude::*;
 use gtk::{
@@ -17,7 +20,7 @@ pub fn result_list_row(
     app_icon: &str,
     app_name: &str,
     app_desc: ROption<&str>,
-    app_cmd: &str,
+    app_cmd: &ApplicationCommand,
 ) -> ListBoxRow {
     let box1 = BoxBuilder::new()
         .orientation(Orientation::Horizontal)
@@ -47,7 +50,7 @@ pub fn result_list_row(
         .style_context()
         .add_class("findex-result-app-name");
 
-    if let ROption::RSome(app_desc) = app_desc {
+    if let RSome(app_desc) = app_desc {
         let app_desc_label = Label::builder()
             .label(app_desc)
             .expand(true)
@@ -64,7 +67,17 @@ pub fn result_list_row(
     }
 
     let app_cmd_label = Label::builder()
-        .label(app_cmd)
+        .label(&match app_cmd {
+            ApplicationCommand::Command(cmd) => cmd.to_string(),
+            ApplicationCommand::Id(id) => strip_parameters(
+                &DesktopAppInfo::new(id)
+                    .unwrap()
+                    .commandline()
+                    .unwrap()
+                    .to_str()
+                    .unwrap(),
+            ),
+        })
         .expand(true)
         .parent(&box2)
         .justify(Justification::Left)
@@ -81,7 +94,7 @@ pub fn result_list_row(
     row.style_context().add_class("findex-result-row");
 
     unsafe {
-        row.set_data("app-cmd", app_cmd.to_string());
+        row.set_data("app-cmd", app_cmd.clone());
     }
 
     row
@@ -92,20 +105,41 @@ pub fn handle_enter(row: &ListBoxRow) {
 }
 
 pub fn handle_interaction(row: &ListBoxRow) {
-    let Some(cmd) = split(unsafe { row.data::<String>("app-cmd").unwrap().as_ref() }) else {
-        show_dialog("Error", "Failed to launch application", MessageType::Error);
-        return;
-    };
-    row.toplevel().unwrap().hide();
+    let cmd = unsafe { row.data::<ApplicationCommand>("app-cmd").unwrap().as_ref() };
 
-    let child = Command::new(&cmd[0]).args(&cmd[1..]).spawn();
+    match cmd {
+        ApplicationCommand::Command(cmd) => {
+            row.toplevel().unwrap().hide();
+            let Some(cmd) = split(cmd) else {
+                show_dialog("Error", "Failed to launch application", MessageType::Error);
+                return;
+            };
 
-    if let Err(e) = child {
-        show_dialog(
-            "Error",
-            &format!("Failed to launch application: {e}"),
-            MessageType::Error,
-        );
+            let child = Command::new(&cmd[0]).args(&cmd[1..]).spawn();
+
+            if let Err(e) = child {
+                show_dialog(
+                    "Error",
+                    &format!("Failed to launch application: {e}"),
+                    MessageType::Error,
+                );
+            }
+        }
+        ApplicationCommand::Id(id) => {
+            row.toplevel().unwrap().hide();
+            let Some(desktop_appinfo) = DesktopAppInfo::new(id) else {
+                show_dialog("Error", "Failed to launch application", MessageType::Error);
+                return;
+            };
+
+            if let Err(e) = desktop_appinfo.launch(&[], None::<AppLaunchContext>.as_ref()) {
+                show_dialog(
+                    "Error",
+                    &format!("Failed to launch application: {e}"),
+                    MessageType::Error,
+                );
+            }
+        }
     }
 }
 

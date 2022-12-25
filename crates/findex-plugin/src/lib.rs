@@ -11,11 +11,19 @@ pub struct FResult {
     /// Optional description of the result
     pub desc: ROption<RString>,
     /// The command to execute when the user presses enter
-    pub cmd: RString,
+    pub cmd: ApplicationCommand,
     /// The icon of the result
     pub icon: RString,
     /// Score of the result. This will be used to sort multiple results
     pub score: isize,
+}
+
+#[derive(Clone)]
+pub enum ApplicationCommand {
+    /// Exact command to execute
+    Command(RString),
+    /// AppId of GIO AppInfo
+    Id(RString),
 }
 
 /// This macro is used to define a Findex plugin.
@@ -53,7 +61,9 @@ macro_rules! define_plugin {
         pub static FINDEX_PLUGIN_PREFIX: &'static str = $prefix;
 
         #[no_mangle]
-        extern "C" fn findex_plugin_init(config: &RHashMap<RString, RString>) -> RResult<(), RString> {
+        extern "C" fn findex_plugin_init(
+            config: &RHashMap<RString, RString>,
+        ) -> RResult<(), RString> {
             $init_function(config)
         }
 

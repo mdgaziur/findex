@@ -35,14 +35,8 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
         .plugin_definitions
         .get(text.split_ascii_whitespace().next().unwrap_or(""))
     {
-        let query = text
-            .split_ascii_whitespace()
-            .collect::<Vec<_>>()[1..]
-            .join(" ");
-        matches = unsafe {
-            plugin.plugin_query_handler(RStr::from(query.as_str()))
-        }
-        .to_vec();
+        let query = text.split_ascii_whitespace().collect::<Vec<_>>()[1..].join(" ");
+        matches = unsafe { plugin.plugin_query_handler(RStr::from(query.as_str())) }.to_vec();
     } else {
         let apps = APPS_LIST.lock();
 

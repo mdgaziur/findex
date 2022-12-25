@@ -1,6 +1,6 @@
 use abi_stable::std_types::*;
 use regex::Regex;
-use findex_plugin::{define_plugin, FResult};
+use findex_plugin::{ApplicationCommand, define_plugin, FResult};
 
 fn init(_: &RHashMap<RString, RString>) -> RResult<(), RString> {
     ROk(())
@@ -15,7 +15,7 @@ fn handle_query(query: RStr) -> RVec<FResult> {
     }
 
     RVec::from(vec![FResult {
-        cmd: RString::from(format!("xdg-open https://github.com/{query}")),
+        cmd: ApplicationCommand::Command(RString::from(format!("xdg-open https://github.com/{query}"))),
         icon: RString::from("github"),
         score: isize::MAX,
         name: RString::from("Open github repository"),

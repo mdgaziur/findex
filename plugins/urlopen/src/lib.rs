@@ -1,4 +1,4 @@
-use findex_plugin::{define_plugin, FResult};
+use findex_plugin::{ApplicationCommand, define_plugin, FResult};
 use abi_stable::std_types::*;
 
 fn init(_: &RHashMap<RString, RString>) -> RResult<(), RString>  {
@@ -11,7 +11,7 @@ fn handle_query(query: RStr) -> RVec<FResult> {
     }
 
     RVec::from(vec![FResult {
-        cmd: RString::from(format!("xdg-open \"{query}\"")),
+        cmd: ApplicationCommand::Command(RString::from(format!("xdg-open \"{query}\""))),
         name: RString::from(format!("Open {query}")),
         desc: RNone,
         score: isize::MAX,
