@@ -17,7 +17,6 @@ use gtk::{
     gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window,
     WindowType,
 };
-#[cfg(feature = "xorg")]
 use keybinder::KeyBinder;
 
 #[allow(clippy::upper_case_acronyms)]
@@ -25,7 +24,6 @@ pub struct GUI {
     pub window: Window,
     search_box: Entry,
     result_list: ListBox,
-    #[cfg(feature = "xorg")]
     keybinder: KeyBinder<KeypressHandlerPayload>,
 }
 
@@ -112,7 +110,6 @@ impl GUI {
             }
         });
 
-        #[cfg(feature = "xorg")]
         let keybinder = match KeyBinder::new(true) {
             Ok(instance) => instance,
             Err(_e) => {
@@ -124,31 +121,28 @@ impl GUI {
             window,
             search_box,
             result_list,
-            #[cfg(feature = "xorg")]
             keybinder,
         }
     }
 
     pub fn wait_for_toggle(&mut self) {
-        #[cfg(feature = "xorg")]
-        assert!(
-            self.keybinder.bind(
-                &FINDEX_CONFIG.toggle_key,
-                |_, payload| {
-                    Self::show_window(&payload.window, &payload.search_box, &payload.result_list);
-                    Self::position_window(&payload.window);
-                },
-                KeypressHandlerPayload {
-                    window: self.window.clone(),
-                    result_list: self.result_list.clone(),
-                    search_box: self.search_box.clone(),
-                },
-            ),
-            "Failed to bind key"
-        );
-
-        #[cfg(feature = "wayland")]
-        {
+        if std::env::var("WAYLAND_DISPLAY").is_err() {
+            assert!(
+                self.keybinder.bind(
+                    &FINDEX_CONFIG.toggle_key,
+                    |_, payload| {
+                        Self::show_window(&payload.window, &payload.search_box, &payload.result_list);
+                        Self::position_window(&payload.window);
+                    },
+                    KeypressHandlerPayload {
+                        window: self.window.clone(),
+                        result_list: self.result_list.clone(),
+                        search_box: self.search_box.clone(),
+                    },
+                ),
+                "Failed to bind key"
+            );
+        } else {
             use gtk::glib::idle_add;
             use gtk::glib::thread_guard::ThreadGuard;
             use inotify::{Inotify, WatchMask};
@@ -198,8 +192,7 @@ impl GUI {
     fn show_window(window: &Window, search_box: &Entry, result_list: &ListBox) {
         window.present();
 
-        #[cfg(feature = "xorg")]
-        {
+        if std::env::var("WAYLAND_DISPLAY").is_err() {
             window.present_with_time(keybinder::get_current_event_time());
         }
 
@@ -229,7 +222,6 @@ impl GUI {
     }
 }
 
-#[cfg(feature = "xorg")]
 struct KeypressHandlerPayload {
     window: Window,
     result_list: ListBox,

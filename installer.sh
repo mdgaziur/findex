@@ -3,23 +3,8 @@
 do_installation() {
     echo "Installing Findex..."
 
-    if [[ -z $WAYLAND_DISPLAY ]]; then
-        echo "Building for xorg..."
-        if cargo build --release --features xorg; then
-            echo "Build complete"
-        else
-            echo "Building failed. Exiting"
-            exit 1
-        fi
-    else
-        echo "Building for wayland..."
-        if cargo build --release --features wayland; then
-            echo "Build complete"
-        else
-            echo "Building failed. Exiting"
-            exit 1
-        fi
-    fi
+    echo "Building Findex..."
+    cargo build --release
 
     echo "Copying files..."
     sudo cp target/release/findex /usr/bin/findex
@@ -40,11 +25,9 @@ do_installation() {
     echo "Now add \"findex-daemon\" to autostart. You may follow your desktop environment's guide to do this."
     echo "I'm starting \"findex-daemon\" for now."
     findex-daemon
-    if [[ $WAYLAND_DISPLAY ]]; then
-        echo "Findex can't bind hotkey in wayland."
-        echo "To bind hotkey, bind the following command to your desired hotkey in the desktop environment you are using"
-        echo "echo 1 > ~/.config/findex/toggle_file"
-    fi
+    echo "Findex can't bind hotkey in wayland."
+    echo "To bind hotkey, bind the following command to your desired hotkey in the desktop environment you are using"
+    echo "echo 1 > ~/.config/findex/toggle_file"
     echo "If you had Findex 0.6.0 installed, you may want to remove findex services from systemd."
 }
 
