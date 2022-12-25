@@ -15,6 +15,7 @@ PLUGIN = { path = "PLUGIN PATH", prefix = "OPTIONAL USER DEFINED PREFIX", config
 | path     | Path to the plugin's `.so` file                                                                      |
 | prefix   | Optional user defined prefix that'll make findex use this instead of the one specified in the plugin |
 | config   | Plugin's configuration. Please refer to the plugin's documentation for more information.             |
+- For more information, please refer to the documentation of the plugin you are using.
 
 **NOTE**: always make sure that the plugins you are using are compatible with the version of Findex you are using.
 
