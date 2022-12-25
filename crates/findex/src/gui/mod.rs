@@ -24,7 +24,7 @@ pub struct GUI {
     pub window: Window,
     search_box: Entry,
     result_list: ListBox,
-    keybinder: KeyBinder<KeypressHandlerPayload>,
+    keybinder: Option<KeyBinder<KeypressHandlerPayload>>,
 }
 
 impl GUI {
@@ -110,25 +110,31 @@ impl GUI {
             }
         });
 
-        let keybinder = match KeyBinder::new(true) {
-            Ok(instance) => instance,
-            Err(_e) => {
-                eprintln!("[ERROR] Keybinder is not supported");
-                std::process::exit(1);
-            }
-        };
+        let keybinder;
+        if std::env::var("WAYLAND_DISPLAY").is_err() {
+            keybinder = match KeyBinder::new(true) {
+                Ok(instance) => Some(instance),
+                Err(_e) => {
+                    eprintln!("[ERROR] Keybinder is not supported");
+                    std::process::exit(1);
+                }
+            };
+        } else {
+            keybinder = None;
+        }
+
         Self {
-            window,
-            search_box,
-            result_list,
             keybinder,
+            window,
+            result_list,
+            search_box,
         }
     }
 
     pub fn wait_for_toggle(&mut self) {
         if std::env::var("WAYLAND_DISPLAY").is_err() {
             assert!(
-                self.keybinder.bind(
+                self.keybinder.as_mut().unwrap().bind(
                     &FINDEX_CONFIG.toggle_key,
                     |_, payload| {
                         Self::show_window(&payload.window, &payload.search_box, &payload.result_list);

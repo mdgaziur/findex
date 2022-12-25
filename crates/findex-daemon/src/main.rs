@@ -1,3 +1,4 @@
+use std::ffi::OsStr;
 use daemonize::Daemonize;
 use inotify::{Inotify, WatchMask};
 use nix::libc::{pid_t, time_t};
@@ -73,7 +74,11 @@ fn findex_daemon(current_time: time_t) {
         let mut buf = [0; 1024];
         match inotify.read_events(&mut buf) {
             Ok(mut events) => {
-                if events.next().is_some() {
+                if let Some(event) = events.next() {
+                    if event.name == Some(OsStr::new("toggle_file")) && events.next().is_none() {
+                        continue;
+                    }
+
                     println!("[INFO] configs changed, restarting findex");
                     if findex_process.poll().is_none() {
                         findex_process.kill().unwrap();
