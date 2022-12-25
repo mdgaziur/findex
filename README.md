@@ -7,11 +7,11 @@ Findex is a highly customizable application finder written in Rust and uses Gtk3
 ## Installation
 Check [INSTALLATION.md](./INSTALLATION.md)
 
-## Customization
-Check [CUSTOMIZATION.md](./CUSTOMIZATION.md)
-
 ## Plugins
 Check [Plugins Guide](crates/findex-plugin/README.md)
+
+## Customization
+Check [CUSTOMIZATION.md](./CUSTOMIZATION.md)
 
 Example customization:
 
