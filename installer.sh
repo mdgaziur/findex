@@ -57,7 +57,7 @@ prompt_for_installation() {
 main() {
     if test -f "/usr/bin/findex"; then
         while true; do
-            read -r -p "Already found existing installation. Do you want to remove findex? [Y/N] " yn
+            read -r -p "Found existing installation. Do you want to uninstall it? [Y/N] " yn
             case $yn in
             [Yy]*)
                 do_removal
