@@ -28,3 +28,7 @@ From repo: `findex-git`
 Prebuilt: `findex-bin`
 
 After that, add `findex-daemon` to autostart/startup applications
+
+## Notes
+- Findex can't bind hotkey in Wayland. Bind hotkey to `echo 1 > ~/.config/findex/toggle_file`
+- Window decoration settings may not work in Wayland
