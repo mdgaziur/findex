@@ -137,7 +137,11 @@ impl GUI {
                 self.keybinder.as_mut().unwrap().bind(
                     &FINDEX_CONFIG.toggle_key,
                     |_, payload| {
-                        Self::show_window(&payload.window, &payload.search_box, &payload.result_list);
+                        Self::show_window(
+                            &payload.window,
+                            &payload.search_box,
+                            &payload.result_list,
+                        );
                         Self::position_window(&payload.window);
                     },
                     KeypressHandlerPayload {
@@ -149,7 +153,6 @@ impl GUI {
                 "Failed to bind key"
             );
         } else {
-            use gtk::glib::idle_add;
             use gtk::glib::thread_guard::ThreadGuard;
             use inotify::{Inotify, WatchMask};
             use shellexpand::tilde;
@@ -170,25 +173,28 @@ impl GUI {
             inotify
                 .add_watch(toggle_file, watch_mask)
                 .expect("Failed to add toggle file to inotify watch list");
+            let (tx, rx) = gdk::glib::MainContext::channel::<()>(gdk::glib::PRIORITY_DEFAULT);
 
-            idle_add({
+            std::thread::spawn(move || loop {
+                let mut buf = [0; 1024];
+
+                if let Ok(mut events) = inotify.read_events_blocking(&mut buf) {
+                    if events.next().is_some() {
+                        tx.send(()).expect("Error when notifying event");
+                    }
+                }
+            });
+
+            rx.attach(None, {
                 let window = ThreadGuard::new(self.window.clone());
                 let search_box = ThreadGuard::new(self.search_box.clone());
                 let result_list = ThreadGuard::new(self.result_list.clone());
-
-                move || {
-                    let mut buf = [0; 1024];
-
-                    if let Ok(mut events) = inotify.read_events(&mut buf) {
-                        if events.next().is_some() {
-                            Self::show_window(
-                                window.get_ref(),
-                                search_box.get_ref(),
-                                result_list.get_ref(),
-                            )
-                        }
-                    }
-
+                move |()| {
+                    Self::show_window(
+                        window.get_ref(),
+                        search_box.get_ref(),
+                        result_list.get_ref(),
+                    );
                     Continue(true)
                 }
             });
