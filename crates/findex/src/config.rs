@@ -72,13 +72,19 @@ impl Default for FindexConfig {
 
 fn load_settings() -> Result<FindexConfig, String> {
     #[cfg(debug_assertions)]
-    let settings_path = String::from("settings.toml");
+    use std::path::PathBuf;
+
+    #[cfg(debug_assertions)]
+    let settings_path = PathBuf::from("settings.toml");
 
     #[cfg(not(debug_assertions))]
-    let settings_path = shellexpand::tilde("~/.config/findex/settings.toml").to_string();
+    let settings_dir = xdg::BaseDirectories::new()
+        .expect("Failed to get XDG base directories")
+        .create_config_directory("findex")
+        .expect("Failed to create config directory");
 
     #[cfg(not(debug_assertions))]
-    let settings_dir = shellexpand::tilde("~/.config/findex").to_string();
+    let settings_path = settings_dir.join("settings.toml");
 
     let file = std::path::Path::new(&settings_path);
     let mut res = if !file.exists() {
