@@ -33,7 +33,7 @@ If applicable, add screenshots to help explain your problem.
 
 ## Log/Output (if applicable)
 ```
-Put Findex log or installer output here
+Put Findex log or installer output here (You can find logs in ~/.findex-logs. Each file name has timestamp with it)
 ```
 
 ## Additional context
