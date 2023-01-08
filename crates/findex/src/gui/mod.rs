@@ -222,9 +222,8 @@ impl GUI {
         let screen_width = monitor_geo.width() as f32;
 
         window.move_(
-            (screen_width * 0.5 - (window.allocation().width() / 2) as f32) as i32
-                + monitor_geo.x(),
-            (screen_height * 0.3) as i32 + monitor_geo.y(),
+            (screen_width * 0.5 - (window.allocation().width() / 2) as f32) as i32,
+            (screen_height * 0.3) as i32,
         );
     }
 
