@@ -1,7 +1,9 @@
 [package]
 name = "findex-daemon"
-version = "0.7.0"
+version = "0.7.2"
 edition = "2021"
+authors = ["MD Gaziur Rahman Noor <mdgaziurrahmannoor@gmail.com>"]
+license = "GPL3"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

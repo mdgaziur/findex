@@ -5,8 +5,9 @@ license = "GPL-3.0"
 homepage = "https://github.com/mdgaziur/findex"
 repository = "https://github.com/mdgaziur/findex"
 documentation = "https://github.com/mdgaziur/findex/blob/development/crates/findex-plugin/README.md"
-version = "0.7.0"
+version = "0.7.2"
 edition = "2021"
+authors = ["MD Gaziur Rahman Noor <mdgaziurrahmannoor@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
