@@ -5,6 +5,7 @@ use abi_stable::std_types::*;
 
 /// This struct is used to represent results by plugins and internal code of Findex.
 #[derive(Clone)]
+#[repr(C)]
 pub struct FResult {
     /// Name of the result
     pub name: RString,
@@ -19,6 +20,7 @@ pub struct FResult {
 }
 
 #[derive(Clone)]
+#[repr(C)]
 pub enum ApplicationCommand {
     /// Exact command to execute
     Command(RString),
