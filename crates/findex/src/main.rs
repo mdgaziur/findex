@@ -10,7 +10,17 @@ mod app_list;
 mod config;
 mod gui;
 
+static FINDEX_VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
 fn main() {
+    if std::env::args().any(|arg| arg == "--about") {
+        println!("Findex v{FINDEX_VERSION}");
+        println!("Author: MD Gaziur Rahman Noor <mdgaziurrahmannoor@gmail.com>");
+        println!("License: GPL3");
+        println!("Report issues at: https://github.com/mdgaziur/findex/issues");
+        return;
+    }
+
     println!("[INFO] Starting Findex...");
     gtk::init().expect("Failed to init GTK");
     if !FINDEX_CONFIG.error.is_empty() {
