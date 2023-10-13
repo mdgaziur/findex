@@ -135,6 +135,10 @@ fn load_settings() -> Result<FindexConfig, String> {
                 continue;
             }
 
+            if let Some(prefix) = &plugin.prefix {
+                plugin_definition.prefix = prefix.clone();
+            }
+
             if plugin.keyboard_shortcut.is_some() {
                 plugin_definition.keyboard_shortcut = plugin.keyboard_shortcut;
             }
