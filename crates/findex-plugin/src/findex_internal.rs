@@ -8,8 +8,6 @@ use serde::de::{Deserialize, Deserializer, Error as SerdeError};
 use serde::ser::{Serialize, Serializer};
 use std::fmt::Formatter;
 
-
-
 pub struct PluginDefinition {
     pub plugin: Library,
     pub prefix: RString,

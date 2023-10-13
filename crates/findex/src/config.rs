@@ -3,9 +3,9 @@ use abi_stable::std_types::*;
 use findex_plugin::findex_internal::{load_plugin, KeyboardShortcut, PluginDefinition};
 use gtk::MessageType;
 use lazy_static::lazy_static;
-
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
 lazy_static! {
     pub static ref FINDEX_CONFIG: FindexConfig = {
         let settings = load_settings();

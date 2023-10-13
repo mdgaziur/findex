@@ -2,7 +2,6 @@ use crate::config::FINDEX_CONFIG;
 use crate::gui::result_list_row::result_list_row;
 use abi_stable::std_types::*;
 use std::cmp::min;
-
 use crate::app_list::{AppInfo, APPS_LIST};
 use crate::gui::result_list::result_list_clear;
 use findex_plugin::findex_internal::KeyboardShortcut;
