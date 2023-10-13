@@ -4,13 +4,23 @@ Findex is a highly customizable application launcher written in Rust and uses Gt
 
 ![Screenshot](screenshot.png)
 
+## Features
+
+- Customization using CSS
+- Plugin system
+- Custom shortcut for triggering plugins
+- Shortcut for executing each result(upto 10)
+
 ## Installation
+
 Check [INSTALLATION.md](./INSTALLATION.md)
 
 ## Plugins
+
 Check [Plugins Guide](crates/findex-plugin/README.md)
 
 ## Customization
+
 Check [CUSTOMIZATION.md](./CUSTOMIZATION.md)
 
 Example customization:
