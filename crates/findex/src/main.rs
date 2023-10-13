@@ -39,14 +39,14 @@ fn main() {
         if !watch_dir.exists() {
             continue;
         }
-        if let Err(e) = inotify.add_watch(&watch_dir, watch_mask) {
+        if let Err(e) = inotify.watches().add(&watch_dir, watch_mask) {
             eprintln!("[WARN] Failed to watch `{}`: {}", watch_dir.display(), e);
         }
     }
 
     let xdg_data_home = base_directories.get_data_home().join("applications");
     if xdg_data_home.exists() {
-        if let Err(e) = inotify.add_watch(&xdg_data_home, watch_mask) {
+        if let Err(e) = inotify.watches().add(&xdg_data_home, watch_mask) {
             eprintln!(
                 "[WARN] Failed to watch `{}`: {}",
                 xdg_data_home.display(),

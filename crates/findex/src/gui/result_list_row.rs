@@ -27,8 +27,7 @@ pub fn result_list_row(
         .orientation(Orientation::Horizontal)
         .expand(true)
         .build();
-    box1
-        .style_context()
+    box1.style_context()
         .add_class("findex-result-icon-container");
 
     let app_icon = Image::builder()
@@ -41,8 +40,7 @@ pub fn result_list_row(
         .orientation(Orientation::Vertical)
         .parent(&box1)
         .build();
-    box2
-        .style_context()
+    box2.style_context()
         .add_class("findex-result-info-container");
 
     if let Some(trigger_idx) = trigger_idx {

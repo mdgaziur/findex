@@ -1,10 +1,10 @@
 use abi_stable::std_types::*;
-use gtk::gio::AppInfo as GIOAppInfo;
-use parking_lot::Mutex;
-use std::collections::HashMap;
 use findex_plugin::{ApplicationCommand, FResult};
+use gtk::gio::AppInfo as GIOAppInfo;
 use gtk::prelude::*;
 use lazy_static::lazy_static;
+use parking_lot::Mutex;
+use std::collections::HashMap;
 
 pub type AppInfo = FResult;
 

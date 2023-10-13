@@ -55,7 +55,8 @@ fn findex_daemon(current_time: time_t) {
     let mut inotify = Inotify::init().expect("Failed to init inotify");
     let watch_mask = WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
     inotify
-        .add_watch(&*tilde("~/.config/findex/"), watch_mask)
+        .watches()
+        .add(&*tilde("~/.config/findex/"), watch_mask)
         .expect("Failed to watch `~/.config/findex/`");
     loop {
         if let Ok(Some(exit_status)) = findex_process.wait_timeout(Duration::from_millis(500)) {

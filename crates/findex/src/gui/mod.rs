@@ -170,7 +170,8 @@ impl GUI {
                 &*tilde("~/.config/findex/toggle_file")
             };
             inotify
-                .add_watch(toggle_file, watch_mask)
+                .watches()
+                .add(toggle_file, watch_mask)
                 .expect("Failed to add toggle file to inotify watch list");
             let (tx, rx) = gdk::glib::MainContext::channel::<()>(gdk::glib::PRIORITY_DEFAULT);
 

@@ -1,14 +1,14 @@
+use crate::app_list::{AppInfo, APPS_LIST};
 use crate::config::FINDEX_CONFIG;
+use crate::gui::result_list::result_list_clear;
 use crate::gui::result_list_row::result_list_row;
 use abi_stable::std_types::*;
-use std::cmp::min;
-use crate::app_list::{AppInfo, APPS_LIST};
-use crate::gui::result_list::result_list_clear;
 use findex_plugin::findex_internal::KeyboardShortcut;
+use gtk::builders::BoxBuilder;
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{Container, Entry, ListBox, Orientation};
-use gtk::builders::BoxBuilder;
+use std::cmp::min;
 use sublime_fuzzy::{best_match, format_simple};
 
 pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entry {
@@ -47,7 +47,7 @@ fn on_key_pressed(entry: &Entry, eventkey: &EventKey) -> Inhibit {
         if plugin.keyboard_shortcut.as_ref() == Some(&keyboard_shortcut) {
             entry.set_text(&format!("{} ", plugin.prefix.as_str()));
             entry.select_region(-1, -1);
-            return Inhibit(true)
+            return Inhibit(true);
         }
     }
 
@@ -99,15 +99,17 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
             &app.name.replace('&', "&amp;"),
             app.desc.as_deref(),
             &app.cmd,
-            if app_idx < 10 {
-                Some(app_idx)
-            } else {
-                None
-            }
+            if app_idx < 10 { Some(app_idx) } else { None },
         );
     }
 
-    let parent = result_list.parent().unwrap().parent().unwrap().parent().unwrap();
+    let parent = result_list
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap();
     if result_list.children().is_empty() {
         parent.hide();
     } else {

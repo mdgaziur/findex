@@ -54,9 +54,10 @@ pub unsafe fn load_plugin(plugin_path: &str) -> Result<PluginDefinition, String>
         .map(|accel| **accel)
         .ok();
     let keyboard_shortcut = if let Some(accel) = keyboard_shortcut_accel {
-        Some(KeyboardShortcut::from_accelerator(accel).ok_or(format!(
-            "plugin provides invalid accelerator: {accel}"
-        ))?)
+        Some(
+            KeyboardShortcut::from_accelerator(accel)
+                .ok_or(format!("plugin provides invalid accelerator: {accel}"))?,
+        )
     } else {
         None
     };
