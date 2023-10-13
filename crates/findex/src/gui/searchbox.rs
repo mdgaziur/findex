@@ -81,10 +81,6 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
         parent.show();
     }
     result_list.show_all();
-    if let Some(row) = result_list.row_at_index(0) {
-        row.grab_focus()
-    }
     result_list.select_row(result_list.row_at_index(0).as_ref());
-    entry.grab_focus();
-    entry.select_region(-1, -1);
+    entry.grab_focus_without_selecting();
 }
