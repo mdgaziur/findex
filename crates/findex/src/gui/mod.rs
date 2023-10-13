@@ -11,7 +11,7 @@ use crate::gui::result_list_row::handle_enter;
 use crate::gui::searchbox::searchbox_new;
 use crate::show_dialog;
 use gtk::builders::BoxBuilder;
-use gtk::gdk::{EventKey, EventMask, Screen};
+use gtk::gdk::{EventKey, EventMask, ModifierType, Screen};
 use gtk::prelude::*;
 use gtk::{
     gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window,
@@ -326,6 +326,18 @@ fn keypress_handler(
         }
 
         Inhibit(true)
+    } else if event.state() == ModifierType::CONTROL_MASK {
+        if let Ok(row_idx) = key_name.parse::<i32>() {
+            if let Some(row) = list_box.row_at_index(row_idx) {
+                handle_enter(&row);
+
+                Inhibit(true)
+            } else {
+                Inhibit(false)
+            }
+        } else {
+            Inhibit(false)
+        }
     } else {
         if !entry.has_focus() {
             entry.grab_focus();

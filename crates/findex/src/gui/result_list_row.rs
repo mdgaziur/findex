@@ -21,6 +21,7 @@ pub fn result_list_row(
     app_name: &str,
     app_desc: ROption<&str>,
     app_cmd: &ApplicationCommand,
+    trigger_idx: Option<usize>,
 ) -> ListBoxRow {
     let box1 = BoxBuilder::new()
         .orientation(Orientation::Horizontal)
@@ -37,6 +38,19 @@ pub fn result_list_row(
         .orientation(Orientation::Vertical)
         .parent(&box1)
         .build();
+
+    if let Some(trigger_idx) = trigger_idx {
+        let keyboard_shortcut_label = Label::builder()
+            .parent(&box1)
+            .use_markup(true)
+            .label(&format!("Ctrl+{trigger_idx}"))
+            .xalign(1f32)
+            .expand(true)
+            .build();
+        keyboard_shortcut_label
+            .style_context()
+            .add_class("findex-result-trigger-shortcut");
+    }
 
     let app_name_label = Label::builder()
         .parent(&box2)

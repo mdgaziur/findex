@@ -81,13 +81,18 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
     matches.sort_by(|l, r| r.score.cmp(&l.score));
 
     let result_count = min(FINDEX_CONFIG.result_size, matches.len());
-    for app in matches.iter().take(result_count) {
+    for (app_idx, app) in matches.iter().take(result_count).enumerate() {
         result_list_row(
             result_list,
             &app.icon,
             &app.name.replace('&', "&amp;"),
             app.desc.as_deref(),
             &app.cmd,
+            if app_idx < 10 {
+                Some(app_idx)
+            } else {
+                None
+            }
         );
     }
 
