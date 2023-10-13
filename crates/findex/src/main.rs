@@ -10,7 +10,7 @@ mod app_list;
 mod config;
 mod gui;
 
-static FINDEX_VERSION: &'static str = env!("CARGO_PKG_VERSION");
+static FINDEX_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() {
     if std::env::args().any(|arg| arg == "--about") {

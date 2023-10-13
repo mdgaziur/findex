@@ -52,6 +52,8 @@ pub enum ApplicationCommand {
 /// }
 ///
 /// define_plugin!("prefix!", init, handle_query);
+/// // or, add a shortcut key
+/// define_plugin!("prefix!", "<Ctrl><Shift>p", init, handle_query);
 /// ```
 ///
 /// Refer to the `README.md` of this crate for more detailed explanation
@@ -61,6 +63,28 @@ macro_rules! define_plugin {
         #[no_mangle]
         #[used]
         pub static FINDEX_PLUGIN_PREFIX: &'static str = $prefix;
+
+        #[no_mangle]
+        extern "C" fn findex_plugin_init(
+            config: &RHashMap<RString, RString>,
+        ) -> RResult<(), RString> {
+            $init_function(config)
+        }
+
+        #[no_mangle]
+        extern "C" fn findex_plugin_query_handler(query: RStr) -> RVec<FResult> {
+            $query_handler(query)
+        }
+    };
+
+    ($prefix:literal, $keyboard_shortcut:literal, $init_function:ident, $query_handler:ident) => {
+        #[no_mangle]
+        #[used]
+        pub static FINDEX_PLUGIN_PREFIX: &'static str = $prefix;
+
+        #[no_mangle]
+        #[used]
+        pub static FINDEX_PLUGIN_KEYBOARD_SHORTCUT: &'static str = $keyboard_shortcut;
 
         #[no_mangle]
         extern "C" fn findex_plugin_init(

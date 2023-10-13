@@ -1,11 +1,11 @@
 use crate::gui::dialog::show_dialog;
 use abi_stable::std_types::*;
-use findex_plugin::findex_internal::{load_plugin, PluginDefinition};
+use findex_plugin::findex_internal::{load_plugin, KeyboardShortcut, PluginDefinition};
 use gtk::MessageType;
 use lazy_static::lazy_static;
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
 lazy_static! {
     pub static ref FINDEX_CONFIG: FindexConfig = {
         let settings = load_settings();
@@ -45,6 +45,7 @@ pub struct FindexConfig {
 #[derive(Serialize, Deserialize)]
 pub struct Plugin {
     pub prefix: Option<RString>,
+    pub keyboard_shortcut: Option<KeyboardShortcut>,
     pub path: RString,
     pub config: RHashMap<RString, RString>,
 }
@@ -105,18 +106,18 @@ fn load_settings() -> Result<FindexConfig, String> {
 
     if let Ok(ref mut config) = res {
         for (name, plugin) in &mut config.plugins {
-            let plugin_definition = match unsafe { load_plugin(&shellexpand::tilde(&plugin.path)) }
-            {
-                Ok(pd) => pd,
-                Err(e) => {
-                    show_dialog(
-                        "Error",
-                        &format!("Failed to load plugin {name}: {e}"),
-                        MessageType::Error,
-                    );
-                    continue;
-                }
-            };
+            let mut plugin_definition =
+                match unsafe { load_plugin(&shellexpand::tilde(&plugin.path)) } {
+                    Ok(pd) => pd,
+                    Err(e) => {
+                        show_dialog(
+                            "Error",
+                            &format!("Failed to load plugin {name}: {e}"),
+                            MessageType::Error,
+                        );
+                        continue;
+                    }
+                };
 
             if !plugin.config.contains_key("highlight_color") {
                 plugin.config.insert(
@@ -132,6 +133,10 @@ fn load_settings() -> Result<FindexConfig, String> {
                     MessageType::Error,
                 );
                 continue;
+            }
+
+            if plugin.keyboard_shortcut.is_some() {
+                plugin_definition.keyboard_shortcut = plugin.keyboard_shortcut;
             }
 
             config.plugin_definitions.insert(

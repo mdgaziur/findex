@@ -281,7 +281,9 @@ name = "findex-plugin"
 version = "0.7.2"
 dependencies = [
  "abi_stable",
+ "gtk",
  "libloading",
+ "serde",
 ]
 
 [[package]]

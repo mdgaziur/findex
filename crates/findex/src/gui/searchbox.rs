@@ -5,6 +5,8 @@ use std::cmp::min;
 
 use crate::app_list::{AppInfo, APPS_LIST};
 use crate::gui::result_list::result_list_clear;
+use findex_plugin::findex_internal::KeyboardShortcut;
+use gtk::gdk::EventKey;
 use gtk::prelude::*;
 use gtk::{Container, Entry, ListBox};
 use sublime_fuzzy::{best_match, format_simple};
@@ -21,9 +23,25 @@ pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entr
         .build();
 
     entry.connect_changed(move |entry| on_text_changed(entry, &result_list));
+    entry.connect_key_press_event(on_key_pressed);
     entry.style_context().add_class("findex-query");
 
     entry
+}
+
+fn on_key_pressed(entry: &Entry, eventkey: &EventKey) -> Inhibit {
+    let keyboard_shortcut = KeyboardShortcut::from_eventkey(eventkey);
+
+    // Check if any plugin has registered keyboard shortcut
+    for plugin in FINDEX_CONFIG.plugin_definitions.values() {
+        if plugin.keyboard_shortcut.as_ref() == Some(&keyboard_shortcut) {
+            entry.set_text(&format!("{} ", plugin.prefix.as_str()));
+            entry.select_region(-1, -1);
+            return Inhibit(true)
+        }
+    }
+
+    Inhibit(false)
 }
 
 fn on_text_changed(entry: &Entry, result_list: &ListBox) {

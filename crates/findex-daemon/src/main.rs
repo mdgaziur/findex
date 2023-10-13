@@ -1,9 +1,9 @@
-use std::ffi::OsStr;
 use daemonize::Daemonize;
 use inotify::{Inotify, WatchMask};
 use nix::libc::{pid_t, time_t};
 use nix::time::ClockId;
 use shellexpand::tilde;
+use std::ffi::OsStr;
 use std::fs::{create_dir, File};
 use std::path::Path;
 use std::process::Command;

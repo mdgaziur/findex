@@ -12,8 +12,10 @@ authors = ["MD Gaziur Rahman Noor <mdgaziurrahmannoor@gmail.com>"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-findex_internals = ["dep:libloading"]
+findex_internals = ["dep:libloading", "dep:gtk", "dep:serde"]
 
 [dependencies]
 libloading = { version = "0.7.4", optional = true }
+gtk = { version = "0.15.1", features = ["v3_22"], optional = true }
+serde = { version = "1", features = ["derive"], optional = true }
 abi_stable = "0.11.1"

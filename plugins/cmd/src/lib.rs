@@ -19,4 +19,4 @@ fn handle_query(query: RStr) -> RVec<FResult> {
     }])
 }
 
-define_plugin!("cmd!", init, handle_query);
+define_plugin!("cmd!", "<Ctrl><Shift>c", init, handle_query);
