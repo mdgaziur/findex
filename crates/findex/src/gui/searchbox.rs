@@ -7,18 +7,29 @@ use crate::gui::result_list::result_list_clear;
 use findex_plugin::findex_internal::KeyboardShortcut;
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
-use gtk::{Container, Entry, ListBox};
+use gtk::{Container, Entry, ListBox, Orientation};
+use gtk::builders::BoxBuilder;
 use sublime_fuzzy::{best_match, format_simple};
 
 pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entry {
+    let container = BoxBuilder::new()
+        .orientation(Orientation::Horizontal)
+        .expand(true)
+        .parent(parent)
+        .build();
+    container
+        .style_context()
+        .add_class("findex-query-container");
+
     let entry = Entry::builder()
         .placeholder_text(&FINDEX_CONFIG.query_placeholder)
-        .parent(parent)
+        .parent(&container)
         .has_focus(true)
         .can_focus(true)
         .is_focus(true)
         .editable(true)
         .sensitive(true)
+        .expand(true)
         .build();
 
     entry.connect_changed(move |entry| on_text_changed(entry, &result_list));
@@ -96,7 +107,7 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
         );
     }
 
-    let parent = result_list.parent().unwrap().parent().unwrap();
+    let parent = result_list.parent().unwrap().parent().unwrap().parent().unwrap();
     if result_list.children().is_empty() {
         parent.hide();
     } else {

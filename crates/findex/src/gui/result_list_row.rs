@@ -27,6 +27,9 @@ pub fn result_list_row(
         .orientation(Orientation::Horizontal)
         .expand(true)
         .build();
+    box1
+        .style_context()
+        .add_class("findex-result-icon-container");
 
     let app_icon = Image::builder()
         .pixbuf(&get_icon(app_icon))
@@ -38,6 +41,9 @@ pub fn result_list_row(
         .orientation(Orientation::Vertical)
         .parent(&box1)
         .build();
+    box2
+        .style_context()
+        .add_class("findex-result-info-container");
 
     if let Some(trigger_idx) = trigger_idx {
         let keyboard_shortcut_label = Label::builder()
