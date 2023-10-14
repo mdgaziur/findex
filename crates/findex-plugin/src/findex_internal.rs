@@ -89,7 +89,7 @@ impl KeyboardShortcut {
     pub fn from_eventkey(eventkey: &EventKey) -> Self {
         Self {
             keyval: *eventkey.keyval().to_lower(),
-            modifier: eventkey.state(),
+            modifier: Self::clean_modifier_type(eventkey.state()),
         }
     }
 
@@ -103,6 +103,14 @@ impl KeyboardShortcut {
                 modifier,
             })
         }
+    }
+
+    pub fn clean_modifier_type(mut modifier_type: ModifierType) -> ModifierType {
+        modifier_type &= ModifierType::MODIFIER_MASK;
+        modifier_type.remove(ModifierType::MOD2_MASK);
+        modifier_type.remove(ModifierType::LOCK_MASK);
+
+        modifier_type
     }
 }
 

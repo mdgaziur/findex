@@ -13,11 +13,9 @@ use crate::show_dialog;
 use gtk::builders::BoxBuilder;
 use gtk::gdk::{EventKey, EventMask, ModifierType, Screen};
 use gtk::prelude::*;
-use gtk::{
-    gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window,
-    WindowType,
-};
+use gtk::{gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window, WindowType};
 use keybinder::KeyBinder;
+use findex_plugin::findex_internal::KeyboardShortcut;
 
 #[allow(clippy::upper_case_acronyms)]
 pub struct GUI {
@@ -244,9 +242,10 @@ fn keypress_handler(
     entry: Entry,
     scrolled_container: ScrolledWindow,
     list_box: ListBox,
-    event: &EventKey,
+    eventkey: &EventKey,
 ) -> Inhibit {
-    let key_name = event.keyval().name().unwrap();
+    let modifier_type = KeyboardShortcut::clean_modifier_type(eventkey.state());
+    let key_name = eventkey.keyval().name().unwrap();
 
     if key_name == "Escape" {
         GUI::hide_window(window);
@@ -327,7 +326,7 @@ fn keypress_handler(
         }
 
         Inhibit(true)
-    } else if event.state() == ModifierType::CONTROL_MASK {
+    } else if modifier_type == ModifierType::CONTROL_MASK {
         if let Ok(row_idx) = key_name.parse::<i32>() {
             if let Some(row) = list_box.row_at_index(row_idx) {
                 handle_enter(&row);
