@@ -1,6 +1,6 @@
 # Findex
 
-Findex is a highly customizable application launcher written in Rust and uses Gtk3.
+Findex is a highly customizable application launcher written in Rust and uses GTK3
 
 ![Screenshot](screenshot.png)
 
