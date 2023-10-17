@@ -15,7 +15,6 @@ Findex can be customized by applying properties to certain css classes. Below is
 | findex-result-app-description  | Description of the app                                            |
 | findex-result-app-command      | Command of the app                                                |
 | findex-result-trigger-shortcut | Shortcut for running the command in the result                    |
-| findex-results-list-container  | Container of the results list                                     |
 | findex-result-icon-container   | Container of the icon of each result                              |
 | findex-result-info-container   | Container of the info of each result                              |
 | findex-query-container         | Container of the search box                                       |

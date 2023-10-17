@@ -10,12 +10,15 @@ use crate::gui::result_list::{result_list_clear, result_list_new};
 use crate::gui::result_list_row::handle_enter;
 use crate::gui::searchbox::searchbox_new;
 use crate::show_dialog;
+use findex_plugin::findex_internal::KeyboardShortcut;
 use gtk::builders::BoxBuilder;
 use gtk::gdk::{EventKey, EventMask, ModifierType, Screen};
 use gtk::prelude::*;
-use gtk::{gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window, WindowType};
+use gtk::{
+    gdk, Adjustment, Entry, ListBox, ListBoxRow, MessageType, Orientation, ScrolledWindow, Window,
+    WindowType,
+};
 use keybinder::KeyBinder;
-use findex_plugin::findex_internal::KeyboardShortcut;
 
 #[allow(clippy::upper_case_acronyms)]
 pub struct GUI {

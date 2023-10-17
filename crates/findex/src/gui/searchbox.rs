@@ -103,13 +103,7 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
         );
     }
 
-    let parent = result_list
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap();
+    let parent = result_list.parent().unwrap().parent().unwrap();
     if result_list.children().is_empty() {
         parent.hide();
     } else {
