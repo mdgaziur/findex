@@ -109,6 +109,7 @@ impl KeyboardShortcut {
         modifier_type &= ModifierType::MODIFIER_MASK;
         modifier_type.remove(ModifierType::MOD2_MASK);
         modifier_type.remove(ModifierType::LOCK_MASK);
+        modifier_type.remove(ModifierType::MOD4_MASK);
 
         modifier_type
     }
