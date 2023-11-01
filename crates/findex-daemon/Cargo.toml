@@ -9,7 +9,8 @@ license = "GPL3"
 
 [dependencies]
 nix = { version = "0.26.1", features = ["time"] }
-daemonize = "0.4.1"
+daemonize = "0.5.0"
 shellexpand = "3.0.0"
 inotify = "0.10.0"
 subprocess = "0.2.9"
+sysinfo = "0.29.10"
