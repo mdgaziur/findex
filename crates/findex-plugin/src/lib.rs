@@ -19,13 +19,15 @@ pub struct FResult {
     pub score: isize,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 #[repr(C)]
 pub enum ApplicationCommand {
     /// Exact command to execute
     Command(RString),
     /// AppId of GIO AppInfo
     Id(RString),
+    /// Useful for results from plugins like calculator.
+    None,
 }
 
 /// This macro is used to define a Findex plugin.

@@ -84,29 +84,32 @@ pub fn result_list_row(
             .add_class("findex-result-app-description");
     }
 
-    let app_cmd_label = Label::builder()
-        .label(&match app_cmd {
-            ApplicationCommand::Command(cmd) => cmd.to_string(),
-            ApplicationCommand::Id(id) => strip_parameters(
-                DesktopAppInfo::new(id)
-                    .unwrap()
-                    .commandline()
-                    .unwrap()
-                    .to_str()
-                    .unwrap(),
-            ),
-        })
-        .expand(true)
-        .parent(&box2)
-        .justify(Justification::Left)
-        .xalign(0f32)
-        .max_width_chars(1)
-        .hexpand(true)
-        .ellipsize(EllipsizeMode::End)
-        .build();
-    app_cmd_label
-        .style_context()
-        .add_class("findex-result-app-command");
+    if *app_cmd != ApplicationCommand::None {
+        let app_cmd_label = Label::builder()
+            .label(&match app_cmd {
+                ApplicationCommand::Command(cmd) => cmd.to_string(),
+                ApplicationCommand::Id(id) => strip_parameters(
+                    DesktopAppInfo::new(id)
+                        .unwrap()
+                        .commandline()
+                        .unwrap()
+                        .to_str()
+                        .unwrap(),
+                ),
+                _ => unreachable!()
+            })
+            .expand(true)
+            .parent(&box2)
+            .justify(Justification::Left)
+            .xalign(0f32)
+            .max_width_chars(1)
+            .hexpand(true)
+            .ellipsize(EllipsizeMode::End)
+            .build();
+        app_cmd_label
+            .style_context()
+            .add_class("findex-result-app-command");
+    }
 
     let row = ListBoxRow::builder().parent(listbox).child(&box1).build();
     row.style_context().add_class("findex-result-row");
@@ -127,6 +130,12 @@ pub fn handle_interaction(row: &ListBoxRow) {
 
     match cmd {
         ApplicationCommand::Command(cmd) => {
+            // Ideally, plugins should provide a None variant for this, but rogue plugins
+            // can do anything :)
+            if cmd.is_empty() {
+                return;
+            }
+
             row.toplevel().unwrap().hide();
             let Some(cmd) = split(cmd) else {
                 show_dialog("Error", "Failed to launch application", MessageType::Error);
@@ -144,6 +153,12 @@ pub fn handle_interaction(row: &ListBoxRow) {
             }
         }
         ApplicationCommand::Id(id) => {
+            // Ideally, plugins should provide a None variant for this, but rogue plugins
+            // can do anything :)
+            if id.is_empty() {
+                return;
+            }
+
             row.toplevel().unwrap().hide();
             let Some(desktop_appinfo) = DesktopAppInfo::new(id) else {
                 show_dialog("Error", "Failed to launch application", MessageType::Error);
@@ -158,6 +173,7 @@ pub fn handle_interaction(row: &ListBoxRow) {
                 );
             }
         }
+        ApplicationCommand::None => {}
     }
 }
 
