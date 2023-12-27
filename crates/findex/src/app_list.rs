@@ -36,7 +36,7 @@ pub fn update_apps_list() {
     let list = GIOAppInfo::all()
         .into_iter()
         .filter(|appinfo| appinfo.commandline().is_some())
-        .map(|appinfo| (appinfo.name().to_string(), appresult_from(&appinfo)))
+        .map(|appinfo| (appinfo.commandline().unwrap().to_str().unwrap().to_string(), appresult_from(&appinfo)))
         .collect::<HashMap<String, AppInfo>>()
         .iter()
         .map(|value| value.1.clone())
