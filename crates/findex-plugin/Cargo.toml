@@ -5,7 +5,7 @@ license = "GPL-3.0"
 homepage = "https://github.com/mdgaziur/findex"
 repository = "https://github.com/mdgaziur/findex"
 documentation = "https://github.com/mdgaziur/findex/blob/development/crates/findex-plugin/README.md"
-version = "0.8.0"
+version = "0.8.1"
 edition = "2021"
 authors = ["MD Gaziur Rahman Noor <mdgaziurrahmannoor@gmail.com>"]
 
