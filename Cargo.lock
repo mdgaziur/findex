@@ -336,7 +336,7 @@ dependencies = [
 
 [[package]]
 name = "findex"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "abi_stable",
  "findex-plugin",
@@ -357,7 +357,7 @@ dependencies = [
 
 [[package]]
 name = "findex-daemon"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "daemonize",
  "inotify",
