@@ -5,6 +5,7 @@ use nix::time::ClockId;
 use shellexpand::tilde;
 use std::ffi::OsStr;
 use std::fs::{create_dir, File};
+use std::io::ErrorKind;
 use std::path::Path;
 use std::time::Duration;
 use subprocess::{ExitStatus, Popen, PopenConfig, Redirection};
@@ -64,6 +65,7 @@ fn findex_daemon(current_time: time_t) {
                     findex_process = spawn_findex(findex_output.try_clone().unwrap());
                 }
             }
+            Err(e) if e.kind() == ErrorKind::WouldBlock => continue,
             Err(e) => println!("[WARN] Inotify error: {e}"),
         }
     }
