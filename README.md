@@ -73,6 +73,10 @@ check instructions from the `release` branch.
 - Copy `target/release/findex` to `/usr/bin/`
 - Copy `targer/release/findex-daemon` to `/usr/bin/`
 - Add `findex-daemon` to autostart/startup applications
+  - If using SystemD, enable & start the `findex-daemon` user service
+
+        sudo systemctl enable --user findex-daemon.service
+        sudo systemctl start --user findex-daemon.service
 
 ### Installation from AUR
 
