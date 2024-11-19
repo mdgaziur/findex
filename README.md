@@ -80,7 +80,7 @@ check instructions from the `release` branch.
 
 ### Installation from AUR
 
-From repo: `findex-git`   
+From repo: `findex-git`
 Prebuilt: `findex-bin`
 
 After that, add `findex-daemon` to autostart/startup applications
@@ -141,6 +141,7 @@ Behaviour can be changed by modifying `~/.config/findex/settings.toml`. If there
 | close_window_on_losing_focus | Close window when it loses focus                                                                                         | Boolean |
 | icon_size                    | Icon width and height will be set from this value                                                                        | Integer |
 | entry_icon                   | Icon displayed beside the searchbar                                                                                      | String  |
+| on_monitor                   | The monitor that findex is opened on (zero indexed)                                                                      | Integer |
 
 
 ## Plugins
@@ -178,16 +179,16 @@ use abi_stable::std_types::*;
 fn init(config: &RHashMap<RString, RString>) -> RResult<(), RString>  {
     // Set up your plugin using the config if necessary
     // Return RErr if something went wrong
-    
+
     // Returning this indicates that the plugin initialization is successful
     ROk(())
 }
 
 fn handle_query(query: RStr) -> RVec<FResult> {
     let mut result = vec![];
-    
+
     /* Do stuff here */
-    
+
     RVec::from(result)
 }
 

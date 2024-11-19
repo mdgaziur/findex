@@ -41,6 +41,7 @@ pub struct FindexConfig {
     /// This should get filled after configuration gets initialized
     #[serde(skip)]
     pub plugin_definitions: HashMap<RString, PluginDefinition>,
+    pub on_monitor: ROption<i32>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -69,6 +70,7 @@ impl Default for FindexConfig {
             error: RString::new(),
             plugins: HashMap::new(),
             plugin_definitions: HashMap::new(),
+            on_monitor: RNone,
         }
     }
 }

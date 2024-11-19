@@ -10,6 +10,7 @@ use crate::gui::result_list::{result_list_clear, result_list_new};
 use crate::gui::result_list_row::handle_enter;
 use crate::gui::searchbox::searchbox_new;
 use crate::show_dialog;
+use abi_stable::std_types::*;
 use findex_plugin::findex_internal::KeyboardShortcut;
 use gtk::builders::BoxBuilder;
 use gtk::gdk::{EventKey, EventMask, ModifierType, Screen};
@@ -211,16 +212,24 @@ impl GUI {
 
     fn position_window(window: &Window) {
         let display = gdk::Display::default().unwrap();
-        let monitor_geo = display
-            .monitor_at_window(&window.window().unwrap())
-            .unwrap()
-            .geometry();
+
+        let monitor_geo = if let RSome(on_monitor) = FINDEX_CONFIG.on_monitor {
+            display
+                .monitor(on_monitor.abs() % display.n_monitors())
+                .unwrap()
+                .geometry()
+        } else {
+            display.primary_monitor().unwrap().geometry()
+        };
+
         let screen_height = monitor_geo.height() as f32;
         let screen_width = monitor_geo.width() as f32;
+        let screen_x = monitor_geo.x() as f32;
+        let screen_y = monitor_geo.y() as f32;
 
         window.move_(
-            (screen_width * 0.5 - (window.allocation().width() / 2) as f32) as i32,
-            (screen_height * 0.3) as i32,
+            ((screen_width * 0.5 - (window.allocation().width() / 2) as f32) + screen_x) as i32,
+            ((screen_height * 0.3) + screen_y) as i32,
         );
     }
 
