@@ -8,6 +8,12 @@ Type=forking
 ExitType=main
 ExecStart=/usr/bin/findex-daemon
 Restart=on-failure
+# Exponential CrashLoop Backoff
+RestartSteps=5
+RestartMaxDelaySec=60s
+# Give up after 6 tries
+StartLimitInterval=infinity
+StartLimitBurst=6
 
 [Install]
 WantedBy=graphical-session.target
