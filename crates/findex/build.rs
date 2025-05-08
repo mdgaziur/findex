@@ -2,7 +2,7 @@ use std::process::Command;
 
 fn main() {
     let git_commit = match Command::new("git")
-        .args(&["describe", "--tags"])
+        .args(["describe", "--tags"])
         .output() {
         Ok(output) => {
             if output.status.success() {

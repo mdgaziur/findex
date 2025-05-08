@@ -4,14 +4,13 @@ use nix::libc::time_t;
 use nix::time::ClockId;
 use shellexpand::tilde;
 use std::ffi::OsStr;
-use std::fs::{create_dir, File};
+use std::fs::File;
 use std::io::ErrorKind;
-use std::path::Path;
 use std::time::Duration;
 use subprocess::{ExitStatus, Popen, PopenConfig, Redirection};
 use sysinfo::{ProcessRefreshKind, RefreshKind, System, SystemExt};
 
-fn findex_daemon(current_time: time_t) {
+fn findex_daemon(current_time: time_t, logs_dir: &str, config_dir: &str) {
     fn spawn_findex(findex_output: File) -> Popen {
         Popen::create(
             &["findex"],
@@ -24,7 +23,7 @@ fn findex_daemon(current_time: time_t) {
     }
 
     let findex_output = File::create(&*tilde(&format!(
-        "~/.findex-logs/findex-{current_time}.log"
+        "{logs_dir}/findex-{current_time}.log"
     )))
     .expect("Failed to create file to store findex output");
 
@@ -34,8 +33,8 @@ fn findex_daemon(current_time: time_t) {
     let watch_mask = WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
     inotify
         .watches()
-        .add(&*tilde("~/.config/findex/"), watch_mask)
-        .expect("Failed to watch `~/.config/findex/`");
+        .add(config_dir, watch_mask)
+        .unwrap_or_else(|_| panic!("Failed to watch `{config_dir}`"));
     loop {
         if let Ok(Some(exit_status)) = findex_process.wait_timeout(Duration::from_millis(500)) {
             eprint!("[WARN] Findex exited unexpectedly");
@@ -87,12 +86,25 @@ fn main() {
         .unwrap()
         .tv_sec();
 
-    if !Path::new(&*tilde("~/.findex-logs")).is_dir() {
-        create_dir(&*tilde("~/.findex-logs")).unwrap();
-    }
+    let xdg_base_directories = xdg::BaseDirectories::new()
+        .expect("Failed to get XDG base directories");
+
+    let logs_dir = xdg_base_directories
+        .create_cache_directory("findex-logs")
+        .expect("Failed to create `findex-logs` folder to store logs");
+
+    let config_dir = xdg_base_directories
+        .create_config_directory("findex")
+        .expect("Failed to create` findex ` folder to store configs");
+
+    let config_dir_str = config_dir
+        .to_str()
+        .unwrap();
+
+    let logs_dir_str = logs_dir.to_str().unwrap();
 
     let logfile = File::create(&*tilde(&format!(
-        "~/.findex-logs/findex-daemon-{current_time}.log"
+        "{logs_dir_str}/findex-daemon-{current_time}.log"
     )))
     .expect("Failed to create file to store logs");
 
@@ -101,7 +113,7 @@ fn main() {
         .stderr(logfile.try_clone().unwrap());
 
     match daemon.start() {
-        Ok(_) => findex_daemon(current_time),
+        Ok(_) => findex_daemon(current_time, logs_dir_str, config_dir_str),
         Err(e) => eprintln!("[ERROR] Failed to start findex daemon: {e}"),
     }
 }
