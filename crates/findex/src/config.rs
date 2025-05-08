@@ -84,7 +84,6 @@ fn load_settings() -> Result<FindexConfig, String> {
 
     #[cfg(not(debug_assertions))]
     let settings_dir = xdg::BaseDirectories::new()
-        .expect("Failed to get XDG base directories")
         .create_config_directory("findex")
         .expect("Failed to create config directory");
 

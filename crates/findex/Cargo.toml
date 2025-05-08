@@ -11,15 +11,14 @@ license = "GPL3"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gtk = { version = "0.15.1", features = ["v3_22"] }
+gtk = { version = "0.18.2", features = ["v3_24"] }
 serde = { version = "1", features = ["derive"] }
 lazy_static = "1"
-toml = "0.5"
-libc = "0.2"
-shellexpand = "2.1.0"
+toml = "0.8.22"
+shellexpand = "3.1.1"
 sublime_fuzzy = "0.7.0"
-xdg = "2.4.1"
-inotify = "0.10.0"
+xdg = "3.0.0"
+inotify = "0.11.0"
 parking_lot = "0.12.1"
 regex = "1.6.0"
 keybinder = { version = "0.4.0" }

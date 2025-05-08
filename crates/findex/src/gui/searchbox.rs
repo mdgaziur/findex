@@ -4,15 +4,15 @@ use crate::gui::result_list::result_list_clear;
 use crate::gui::result_list_row::result_list_row;
 use abi_stable::std_types::*;
 use findex_plugin::findex_internal::KeyboardShortcut;
-use gtk::builders::BoxBuilder;
 use gtk::gdk::EventKey;
 use gtk::prelude::*;
-use gtk::{Container, Entry, Image, ListBox, Orientation};
+use gtk::{Box as GtkBox, Container, Entry, Image, ListBox, Orientation};
 use std::cmp::min;
+use gtk::glib::Propagation;
 use sublime_fuzzy::{best_match, format_simple};
 
 pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entry {
-    let container = BoxBuilder::new()
+    let container = GtkBox::builder()
         .orientation(Orientation::Horizontal)
         .expand(true)
         .parent(parent)
@@ -30,7 +30,7 @@ pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entr
     query_icon.style_context().add_class("findex-query-icon");
 
     let entry = Entry::builder()
-        .placeholder_text(&FINDEX_CONFIG.query_placeholder)
+        .placeholder_text(FINDEX_CONFIG.query_placeholder.as_str())
         .parent(&container)
         .has_focus(true)
         .can_focus(true)
@@ -47,7 +47,7 @@ pub fn searchbox_new(parent: &impl IsA<Container>, result_list: ListBox) -> Entr
     entry
 }
 
-fn on_key_pressed(entry: &Entry, eventkey: &EventKey) -> Inhibit {
+fn on_key_pressed(entry: &Entry, eventkey: &EventKey) -> Propagation {
     let keyboard_shortcut = KeyboardShortcut::from_eventkey(eventkey);
 
     // Check if any plugin has registered keyboard shortcut
@@ -55,11 +55,11 @@ fn on_key_pressed(entry: &Entry, eventkey: &EventKey) -> Inhibit {
         if plugin.keyboard_shortcut.as_ref() == Some(&keyboard_shortcut) {
             entry.set_text(&format!("{} ", plugin.prefix.as_str()));
             entry.select_region(-1, -1);
-            return Inhibit(true);
+            return Propagation::Stop;
         }
     }
 
-    Inhibit(false)
+    Propagation::Proceed
 }
 
 fn on_text_changed(entry: &Entry, result_list: &ListBox) {

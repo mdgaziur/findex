@@ -15,7 +15,7 @@ authors = ["MD Gaziur Rahman Noor <mdgaziurrahmannoor@gmail.com>"]
 findex_internals = ["dep:libloading", "dep:gtk", "dep:serde"]
 
 [dependencies]
-libloading = { version = "0.7.4", optional = true }
-gtk = { version = "0.15.1", features = ["v3_22"], optional = true }
+libloading = { version = "0.8.6", optional = true }
+gtk = { version = "0.18.2", features = ["v3_24"], optional = true }
 serde = { version = "1", features = ["derive"], optional = true }
 abi_stable = "0.11.1"

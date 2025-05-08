@@ -31,7 +31,7 @@ fn main() {
 
     let mut inotify = Inotify::init().expect("Failed to init inotify");
     let watch_mask = WatchMask::CREATE | WatchMask::MODIFY | WatchMask::MOVE | WatchMask::DELETE;
-    let base_directories = xdg::BaseDirectories::new().expect("Failed to get base directories");
+    let base_directories = xdg::BaseDirectories::new();
 
     for dir in base_directories.get_data_dirs() {
         let watch_dir = dir.join("applications");
@@ -44,7 +44,7 @@ fn main() {
         }
     }
 
-    let xdg_data_home = base_directories.get_data_home().join("applications");
+    let xdg_data_home = base_directories.get_data_home().unwrap().join("applications");
     if xdg_data_home.exists() {
         if let Err(e) = inotify.watches().add(&xdg_data_home, watch_mask) {
             eprintln!(

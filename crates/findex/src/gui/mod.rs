@@ -12,10 +12,10 @@ use crate::gui::searchbox::searchbox_new;
 use crate::show_dialog;
 use abi_stable::std_types::*;
 use findex_plugin::findex_internal::KeyboardShortcut;
-use gtk::builders::BoxBuilder;
 use gtk::gdk::{EventKey, EventMask, ModifierType, Screen};
 use gtk::prelude::*;
-use gtk::{gdk, Entry, ListBox, MessageType, Orientation, ScrolledWindow, Window, WindowType};
+use gtk::{Box as GtkBox, gdk, Entry, ListBox, MessageType, Orientation, ScrolledWindow, Window, WindowType};
+use gtk::glib::{ControlFlow, Priority, Propagation};
 use keybinder::KeyBinder;
 
 #[allow(clippy::upper_case_acronyms)]
@@ -50,7 +50,7 @@ impl GUI {
 
         match load_css() {
             Ok(provider) => gtk::StyleContext::add_provider_for_screen(
-                &window.screen().unwrap(),
+                &GtkWindowExt::screen(&window).unwrap(),
                 &provider,
                 gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
             ),
@@ -65,11 +65,11 @@ impl GUI {
             window.connect_focus_out_event(|window, _| {
                 Self::hide_window(window);
 
-                Inhibit(false)
+                Propagation::Proceed
             });
         }
 
-        let container = BoxBuilder::new()
+        let container = GtkBox::builder()
             .parent(&window)
             .orientation(Orientation::Vertical)
             .build();
@@ -170,7 +170,7 @@ impl GUI {
                 .watches()
                 .add(toggle_file, watch_mask)
                 .expect("Failed to add toggle file to inotify watch list");
-            let (tx, rx) = gdk::glib::MainContext::channel::<()>(gdk::glib::PRIORITY_DEFAULT);
+            let (tx, rx) = gdk::glib::MainContext::channel::<()>(Priority::default());
 
             std::thread::spawn(move || loop {
                 let mut buf = [0; 1024];
@@ -192,7 +192,7 @@ impl GUI {
                         search_box.get_ref(),
                         result_list.get_ref(),
                     );
-                    Continue(true)
+                    ControlFlow::Continue
                 }
             });
         }
@@ -252,17 +252,17 @@ fn keypress_handler(
     entry: Entry,
     list_box: ListBox,
     eventkey: &EventKey,
-) -> Inhibit {
+) -> Propagation {
     let modifier_type = KeyboardShortcut::clean_modifier_type(eventkey.state());
     let key_name = eventkey.keyval().name().unwrap();
 
     if key_name == "Escape" {
         GUI::hide_window(window);
-        Inhibit(true)
+        Propagation::Stop
     } else if key_name == "Down" || key_name == "j" && modifier_type == ModifierType::CONTROL_MASK {
         let row_len = list_box.children().len();
         if row_len == 0 {
-            return Inhibit(true);
+            return Propagation::Stop;
         }
 
         let mut row_index = 0;
@@ -279,11 +279,11 @@ fn keypress_handler(
             row.grab_focus()
         }
 
-        Inhibit(true)
+        Propagation::Stop
     } else if key_name == "Up" || key_name == "k" && modifier_type == ModifierType::CONTROL_MASK {
         let row_len = list_box.children().len();
         if row_len == 0 {
-            return Inhibit(true);
+            return Propagation::Stop;
         }
 
         let mut row_index = 0;
@@ -300,24 +300,24 @@ fn keypress_handler(
             row.grab_focus()
         }
 
-        Inhibit(true)
+        Propagation::Stop
     } else if key_name == "Return" {
         if let Some(row) = list_box.selected_row() {
             handle_enter(&row);
         }
 
-        Inhibit(true)
+        Propagation::Stop
     } else if modifier_type == ModifierType::CONTROL_MASK {
         if let Ok(row_idx) = key_name.parse::<i32>() {
             if let Some(row) = list_box.row_at_index(row_idx) {
                 handle_enter(&row);
 
-                Inhibit(true)
+                Propagation::Stop
             } else {
-                Inhibit(false)
+                Propagation::Proceed
             }
         } else {
-            Inhibit(false)
+            Propagation::Proceed
         }
     } else {
         if !entry.has_focus() {
@@ -325,6 +325,6 @@ fn keypress_handler(
             entry.select_region(-1, -1);
         }
 
-        Inhibit(false)
+        Propagation::Proceed
     }
 }

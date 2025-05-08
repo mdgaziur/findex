@@ -3,12 +3,11 @@ use crate::gui::dialog::show_dialog;
 use crate::FINDEX_CONFIG;
 use abi_stable::std_types::*;
 use findex_plugin::ApplicationCommand;
-use gtk::builders::BoxBuilder;
 use gtk::gdk_pixbuf::{Colorspace, Pixbuf};
 use gtk::gio::{AppLaunchContext, DesktopAppInfo};
 use gtk::pango::EllipsizeMode;
 use gtk::prelude::*;
-use gtk::{Align, IconLookupFlags, IconTheme, Image, Justification, Label, ListBox, ListBoxRow, MessageType, Orientation};
+use gtk::{Align, Box as GtkBox, IconLookupFlags, IconTheme, Image, Justification, Label, ListBox, ListBoxRow, MessageType, Orientation};
 use shlex::split;
 use std::process::Command;
 
@@ -20,7 +19,7 @@ pub fn result_list_row(
     app_cmd: &ApplicationCommand,
     trigger_idx: Option<usize>,
 ) -> ListBoxRow {
-    let box1 = BoxBuilder::new()
+    let box1 = GtkBox::builder()
         .orientation(Orientation::Horizontal)
         .expand(true)
         .build();
@@ -33,7 +32,7 @@ pub fn result_list_row(
         .build();
     app_icon.style_context().add_class("findex-result-icon");
 
-    let box2 = BoxBuilder::new()
+    let box2 = GtkBox::builder()
         .orientation(Orientation::Vertical)
         .valign(Align::Center)
         .parent(&box1)
@@ -45,7 +44,7 @@ pub fn result_list_row(
         let keyboard_shortcut_label = Label::builder()
             .parent(&box1)
             .use_markup(true)
-            .label(&format!("Ctrl+{trigger_idx}"))
+            .label(format!("Ctrl+{trigger_idx}"))
             .xalign(1f32)
             .expand(true)
             .build();

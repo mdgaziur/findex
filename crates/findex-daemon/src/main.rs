@@ -8,7 +8,7 @@ use std::fs::File;
 use std::io::ErrorKind;
 use std::time::Duration;
 use subprocess::{ExitStatus, Popen, PopenConfig, Redirection};
-use sysinfo::{ProcessRefreshKind, RefreshKind, System, SystemExt};
+use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 
 fn findex_daemon(current_time: time_t, logs_dir: &str, config_dir: &str) {
     fn spawn_findex(findex_output: File) -> Popen {
@@ -71,8 +71,8 @@ fn findex_daemon(current_time: time_t, logs_dir: &str, config_dir: &str) {
 }
 
 fn main() {
-    if System::new_with_specifics(RefreshKind::new().with_processes(ProcessRefreshKind::new()))
-        .processes_by_exact_name("findex")
+    if System::new_with_specifics(RefreshKind::everything().with_processes(ProcessRefreshKind::everything()))
+        .processes_by_exact_name(OsStr::new("findex"))
         .count()
         > 0
     {
@@ -86,8 +86,7 @@ fn main() {
         .unwrap()
         .tv_sec();
 
-    let xdg_base_directories = xdg::BaseDirectories::new()
-        .expect("Failed to get XDG base directories");
+    let xdg_base_directories = xdg::BaseDirectories::new();
 
     let logs_dir = xdg_base_directories
         .create_cache_directory("findex-logs")
