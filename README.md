@@ -235,4 +235,4 @@ fourth argument of the `define_plugin!` macro.
 
 
 ## Reporting Bugs
-If you find any bugs, please create an issue and include the latest log from `~/.findex-logs`.
+If you find any bugs, please create an issue and include the latest log from `${XDG_CACHE_HOME}/findex-logs`. `XDG_CACHE_HOME` is normally `~/.cache`.
