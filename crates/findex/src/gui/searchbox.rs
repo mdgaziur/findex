@@ -53,8 +53,14 @@ fn on_key_pressed(entry: &Entry, eventkey: &EventKey) -> Propagation {
     // Check if any plugin has registered keyboard shortcut
     for plugin in FINDEX_CONFIG.plugin_definitions.values() {
         if plugin.keyboard_shortcut.as_ref() == Some(&keyboard_shortcut) {
-            entry.set_text(&format!("{} ", plugin.prefix.as_str()));
-            entry.select_region(-1, -1);
+            if plugin.prefix.is_empty() {
+                entry.grab_focus();
+                entry.select_region(-1, -1);
+            } else {
+                // For plugins with prefix, insert the prefix
+                entry.set_text(&format!("{} ", plugin.prefix.as_str()));
+                entry.select_region(-1, -1);
+            }
             return Propagation::Stop;
         }
     }
@@ -67,15 +73,29 @@ fn on_text_changed(entry: &Entry, result_list: &ListBox) {
     let mut matches: Vec<AppInfo> = Vec::new();
     result_list_clear(result_list);
 
-    if let Some(plugin) = FINDEX_CONFIG
-        .plugin_definitions
-        .get(text.split_ascii_whitespace().next().unwrap_or(""))
-    {
-        let query = text.split_ascii_whitespace().collect::<Vec<_>>()[1..].join(" ");
-        matches = unsafe { plugin.plugin_query_handler(RStr::from(query.as_str())) }.to_vec();
-    } else {
-        let apps = APPS_LIST.lock();
+    let first_word = text.split_ascii_whitespace().next().unwrap_or("");
+    let mut plugin_matched = false;
 
+    // Check for prefix match.
+    for plugin in FINDEX_CONFIG.plugin_definitions.values() {
+        if !plugin.prefix.is_empty() && plugin.prefix.as_str() == first_word {
+            let query = text.split_ascii_whitespace().collect::<Vec<_>>()[1..].join(" ");
+            matches = unsafe { plugin.plugin_query_handler(RStr::from(query.as_str())) }.to_vec();
+            plugin_matched = true;
+            break;
+        }
+    }
+
+    // If no prefix plugin, check for plugins without prefix
+    if !plugin_matched {
+        for plugin in FINDEX_CONFIG.plugin_definitions.values() {
+            if plugin.prefix.is_empty() {
+                let plugin_results = unsafe { plugin.plugin_query_handler(RStr::from(text.as_str())) }.to_vec();
+                matches.extend(plugin_results);
+            }
+        }
+
+        let apps = APPS_LIST.lock();
         for app in &*apps {
             if let Some(match_) = best_match(&text, &app.name) {
                 let mut app = app.clone();

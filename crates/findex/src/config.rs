@@ -146,14 +146,8 @@ fn load_settings() -> Result<FindexConfig, String> {
                 plugin_definition.keyboard_shortcut = plugin.keyboard_shortcut;
             }
 
-            config.plugin_definitions.insert(
-                plugin
-                    .prefix
-                    .as_ref()
-                    .cloned()
-                    .unwrap_or_else(|| plugin_definition.prefix.clone()),
-                plugin_definition,
-            );
+            plugin_definition.name = name.clone();
+            config.plugin_definitions.insert(name.clone(), plugin_definition);
         }
     }
 

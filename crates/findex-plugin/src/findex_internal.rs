@@ -12,6 +12,7 @@ pub struct PluginDefinition {
     pub plugin: Library,
     pub prefix: RString,
     pub keyboard_shortcut: Option<KeyboardShortcut>,
+    pub name: RString,
 }
 
 impl PluginDefinition {
@@ -76,6 +77,7 @@ pub unsafe fn load_plugin(plugin_path: &str) -> Result<PluginDefinition, String>
         prefix: RString::from(**prefix),
         keyboard_shortcut,
         plugin,
+        name: RString::from(""), // Will be set by the configuration loader.
     })
 }
 
