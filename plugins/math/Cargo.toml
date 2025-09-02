@@ -1,0 +1,12 @@
+[package]
+name = "math"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+findex-plugin = { path = "../../crates/findex-plugin" }
+abi_stable = "0.11.1"
+fend-core = "1.5.7"
