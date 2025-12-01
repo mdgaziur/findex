@@ -41,7 +41,7 @@ pub enum ApplicationCommand {
 ///     // Set up your plugin using the config if necessary
 ///     // Return RErr if something went wrong
 ///
-///     // Returning this indicates that the plugin initalization is successful
+///     // Returning this indicates that the plugin initialization is successful
 ///     ROk(())
 /// }
 ///
