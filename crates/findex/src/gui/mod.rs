@@ -24,6 +24,7 @@ pub struct GUI {
     search_box: Entry,
     result_list: ListBox,
     keybinder: Option<KeyBinder<KeypressHandlerPayload>>,
+    use_toggle_file: bool,
 }
 
 impl GUI {
@@ -120,6 +121,7 @@ impl GUI {
         };
 
         Self {
+            use_toggle_file: FINDEX_CONFIG.always_use_toggle_file || keybinder.is_none(),
             keybinder,
             window,
             result_list,
@@ -148,7 +150,9 @@ impl GUI {
                 ),
                 "Failed to bind key"
             );
-        } else {
+        }
+
+        if self.use_toggle_file {
             use gtk::glib::thread_guard::ThreadGuard;
             use inotify::{Inotify, WatchMask};
             use shellexpand::tilde;

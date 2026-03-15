@@ -36,6 +36,7 @@ pub struct FindexConfig {
     pub min_score: isize,
     pub result_size: usize,
     pub plugins: HashMap<RString, Plugin>,
+    pub always_use_toggle_file: bool,
     #[serde(skip)]
     pub error: RString,
     /// This should get filled after configuration gets initialized
@@ -71,6 +72,7 @@ impl Default for FindexConfig {
             plugins: HashMap::new(),
             plugin_definitions: HashMap::new(),
             on_monitor: RNone,
+            always_use_toggle_file: false,
         }
     }
 }
